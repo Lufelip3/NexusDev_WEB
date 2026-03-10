@@ -6,7 +6,7 @@ $controller = new funcionarioController();
 
 $funcionarios = $controller->index();
 
-var_dump($funcionarios);
+//var_dump($funcionarios);
 
 ?>
 
