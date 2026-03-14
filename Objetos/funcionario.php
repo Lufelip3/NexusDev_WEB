@@ -5,20 +5,25 @@ class Funcionario
     public $nome;
     public $email;
     public $senha;
-    public $cargo;
+    public $funcao;
     public $CPF;
+    public $cep;
+    public $foto;
+    public $numero;
+    
+    public $telefone;
     private $bd;
 
     public function __construct($bd)
     {
         $this->bd = $bd;
+
     }
 
     public function lerTodos()
     {
         $sql = "SELECT * FROM funcionario";
         $resultado = $this->bd->query($sql);
-
         return $resultado->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -28,37 +33,56 @@ class Funcionario
         $resultado = $this->bd->prepare($sql);
         $resultado->bindParam(":CPF", $CPF);
         $resultado->execute();
-
         return $resultado->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function cadastrar()
     {
-        $sql = "INSERT INTO funcionario(nome, email, senha, cargo, CPF) 
-                VALUES(:nome, :email, :senha, :cargo, :CPF)";
-        $senha_hash = password_hash($this->senha, PASSWORD_DEFAULT);
-        $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":nome", $this->nome, PDO::PARAM_STR);
-        $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
-        $stmt->bindParam(":senha", $senha_hash, PDO::PARAM_STR);
-        $stmt->bindParam(":cargo", $this->cargo, PDO::PARAM_STR);
-        $stmt->bindParam(":CPF", $this->CPF, PDO::PARAM_STR);
+        $existente = $this->buscafuncionario($this->CPF);
 
-        return $stmt->execute();
+        if ($existente) {
+            return ['sucesso' => false, 'mensagem' => 'CPF já cadastrado.'];
+        }
+
+        $query = "INSERT INTO funcionario (CPF, Nome_Fun, Email_Fun, Senha_Fun, Funcao, Telefone_Fun, Cep_Fun, imagem,Num_Fun) 
+              VALUES (:cpf, :nome, :email, :senha, :cargo, :telefone, :cep, :foto,:numero)";
+        $senha_hash = password_hash($this->senha, PASSWORD_DEFAULT);
+        $stmt = $this->bd->prepare($query);
+
+        $stmt->bindParam(":cpf", $this->CPF, PDO::PARAM_STR);
+        $stmt->bindParam(":nome", $this->nome , PDO::PARAM_STR);
+        $stmt->bindParam(":email", $this->email , PDO::PARAM_STR);
+        $stmt->bindParam(":senha", $senha_hash,  PDO::PARAM_STR);
+        $stmt->bindParam(":cargo", $this->funcao , PDO::PARAM_STR);
+        $stmt->bindParam(":telefone", $this->telefone , PDO::PARAM_STR);
+        $stmt->bindParam(":cep", $this->cep ,PDO::PARAM_STR);
+        $stmt->bindParam(":foto", $this->foto , PDO::PARAM_STR);
+        $stmt->bindParam(":numero",$this->numero , PDO::PARAM_INT);
+
+        $resultado = $stmt->execute();
+        return ['sucesso' => $resultado, 'mensagem' => $resultado ? 'Funcionário cadastrado com sucesso.' : 'Erro ao cadastrar.'];
+
     }
 
     public function atualizar()
     {
         $senha_hash = password_hash($this->senha, PASSWORD_DEFAULT);
-        $sql = "UPDATE funcionario SET nome = :nome, email = :email, senha = :senha,
-                cargo = :cargo WHERE CPF = :CPF";
+        $sql = "UPDATE funcionario SET nome = :nome, email = :email,
+                senha = :senha, cargo = :cargo WHERE CPF = :CPF";
         $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":nome", $this->nome, PDO::PARAM_STR);
+        $stmt->bindParam(":nome",  $this->nome,  PDO::PARAM_STR);
         $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
-        $stmt->bindParam(":senha", $senha_hash, PDO::PARAM_STR);
+        $stmt->bindParam(":senha", $senha_hash,  PDO::PARAM_STR);
         $stmt->bindParam(":cargo", $this->cargo, PDO::PARAM_STR);
-        $stmt->bindParam(":CPF", $this->CPF, PDO::PARAM_STR);
+        $stmt->bindParam(":CPF",   $this->CPF,   PDO::PARAM_STR);
+        return $stmt->execute();
+    }
 
+    public function excluir()
+    {
+        $sql = "DELETE FROM funcionario WHERE CPF = :CPF";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":CPF", $this->CPF, PDO::PARAM_STR);
         return $stmt->execute();
     }
 
@@ -68,7 +92,6 @@ class Funcionario
         $resultado = $this->bd->prepare($sql);
         $resultado->bindParam(':CPF', $CPF);
         $resultado->execute();
-
         return $resultado->fetch(PDO::FETCH_OBJ);
     }
 }
