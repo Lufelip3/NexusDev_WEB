@@ -7,6 +7,7 @@ class FuncionarioController
 {
     private $bd;
     private $Funcionario;
+    private $img_name;
 
     public function __construct()
     {
@@ -108,7 +109,7 @@ class FuncionarioController
 
     public function upload($arquivo)
     {
-        $target_dir    = "uploads/";
+        $target_dir    = "../uploads/";
         $uploadOk      = 1;
         $target_file   = $target_dir . $arquivo['name']['fileToUpload'];
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -126,7 +127,7 @@ class FuncionarioController
             $uploadOk = 0;
         }
 
-        if ($arquivo['size']['fileToUpload'] > 1000000) {
+        if ($arquivo['size']['fileToUpload'] > 100000000) {
             echo "Arquivo muito grande.<br>";
             $uploadOk = 0;
         }

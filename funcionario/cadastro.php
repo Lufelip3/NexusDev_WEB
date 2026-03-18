@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
     $controller = new funcionarioController();
 
     if (isset($_POST["cadastrar"])) {
-        $a = $controller->cadastrarfuncionario($_POST["funcionario"], $_FILES["foto"]);
+        $a = $controller->cadastrarfuncionario($_POST["funcionario"], $_FILES["funcionario"]);
     }
 }
 //var_dump($cadastro);
@@ -70,7 +70,7 @@ if (isset($_SESSION["erro"])) {
     </select>
 <br><br>
     <label for="foto">Foto de Perfil:</label><br>
-    <input type="file" name="foto" id="foto"><br><br>
+    <input type="file" name="funcionario[fileToUpload]" id="foto"><br><br>
 
     <button type="submit" name="cadastrar">Cadastrar</button>
 </form>
