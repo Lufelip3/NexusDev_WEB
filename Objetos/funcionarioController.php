@@ -50,6 +50,7 @@ class FuncionarioController
         $this->Funcionario->senha = $dados['senha'];
         $this->Funcionario->funcao = $dados['funcao'];
         $this->Funcionario->CPF = $dados['cpf'];
+        $this->Funcionario->foto = $this->img_name;
 
         $resultado = $this->Funcionario->cadastrar();
 

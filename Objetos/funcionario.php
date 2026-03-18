@@ -39,9 +39,13 @@ class Funcionario
     public function cadastrar()
     {
         $existente = $this->buscafuncionario($this->CPF);
-
         if ($existente) {
             return ['sucesso' => false, 'mensagem' => 'CPF já cadastrado.'];
+        }
+
+        $existente = $this->buscaPorEmail($this->email);
+        if ($existente) {
+            return ['sucesso' => false, 'mensagem' => 'E-mail já cadastrado.'];
         }
 
         $query = "INSERT INTO funcionario (CPF, Nome_Fun, Email_Fun, Senha_Fun, Funcao, Telefone_Fun, Cep_Fun, imagem,Num_Fun) 
@@ -62,7 +66,10 @@ class Funcionario
         $resultado = $stmt->execute();
         return ['sucesso' => $resultado, 'mensagem' => $resultado ? 'Funcionário cadastrado com sucesso.' : 'Erro ao cadastrar.'];
 
+
+
     }
+
 
     public function atualizar()
     {
@@ -93,5 +100,14 @@ class Funcionario
         $resultado->bindParam(':CPF', $CPF);
         $resultado->execute();
         return $resultado->fetch(PDO::FETCH_OBJ);
+    }
+
+    public function buscaPorEmail($email)
+    {
+        $sql = "SELECT * FROM funcionario WHERE Email_Fun = :email";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":email", $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 }
