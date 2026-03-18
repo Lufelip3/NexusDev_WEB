@@ -102,4 +102,10 @@ public function excluir($cnpj){
         $stmt->bindParam(":cnpj",      $this->cnpj,      PDO::PARAM_STR);
         return $stmt->execute();
     }
+
+    public function lerExcluidos(){
+        $sql = "SELECT * FROM laboratorio WHERE Ativo_Lab = 0";
+        $resultado = $this->bd->query($sql);
+        return $resultado->fetchAll(PDO::FETCH_OBJ);
+    }
 }

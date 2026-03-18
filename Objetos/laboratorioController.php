@@ -21,12 +21,12 @@ class laboratorioController{
     }
 
     public function cadastrarLaboratorio($dados){
-        $this->laboratorio->nome      = $dados['nome']      ?? '';
-        $this->laboratorio->cnpj      = $dados['cnpj']      ?? '';
-        $this->laboratorio->telefone  = $dados['telefone']  ?? '';
-        $this->laboratorio->email     = $dados['email']     ?? '';
+        $this->laboratorio->nome = $dados['nome'] ?? '';
+        $this->laboratorio->cnpj = $dados['cnpj'] ?? '';
+        $this->laboratorio->telefone = $dados['telefone'] ?? '';
+        $this->laboratorio->email = $dados['email'] ?? '';
         $this->laboratorio->numerolab = $dados['numerolab'] ?? 0;
-        $this->laboratorio->cep       = $dados['cep']       ?? '';
+        $this->laboratorio->cep = $dados['cep'] ?? '';
 
 
         if($this->laboratorio->cnpjExiste($this->laboratorio->cnpj)){
@@ -43,12 +43,12 @@ class laboratorioController{
     }
 
     public function atualizarLaboratorio($dados){
-        $this->laboratorio->nome      = $dados['Nome_Lab']     ?? '';
-        $this->laboratorio->cnpj      = $dados['CNPJ_Lab']     ?? '';
-        $this->laboratorio->telefone  = $dados['Telefone_Lab'] ?? '';
-        $this->laboratorio->email     = $dados['Email_Lab']    ?? '';
-        $this->laboratorio->numerolab = $dados['Num_Lab']      ?? 0;
-        $this->laboratorio->cep       = $dados['Cep_Lab']      ?? '';
+        $this->laboratorio->nome = $dados['Nome_Lab'] ?? '';
+        $this->laboratorio->cnpj = $dados['CNPJ_Lab'] ?? '';
+        $this->laboratorio->telefone = $dados['Telefone_Lab'] ?? '';
+        $this->laboratorio->email = $dados['Email_Lab'] ?? '';
+        $this->laboratorio->numerolab = $dados['Num_Lab'] ?? 0;
+        $this->laboratorio->cep = $dados['Cep_Lab'] ?? '';
 
         if($this->laboratorio->atualizar()){
             header("location: index.php");
@@ -66,5 +66,15 @@ public function localizarLaboratorio($cnpj){
             exit();
         }
     }
+    public function excluidos(){
+        return $this->laboratorio->lerExcluidos();
+    }
 
+    public function reativarLaboratorio($cnpj){
+        $this->laboratorio->cnpj = $cnpj;
+        if($this->laboratorio->reativar()){
+            header("location: excluidos.php");
+            exit();
+        }
+    }
 }
