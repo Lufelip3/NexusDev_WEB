@@ -51,7 +51,6 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         <td>CodMed</td>
         <td>Nome</td>
     </tr>
-
     <?php if($a) : ?>
         <tr>
             <td><?= $a->codMed; ?></td>
