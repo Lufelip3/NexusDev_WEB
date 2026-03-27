@@ -34,6 +34,8 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Funcionários</title>
+    <a href="../index.php">Voltar</a><br>
+
     <style>
         table,tr,td {
             border: 1px solid black;

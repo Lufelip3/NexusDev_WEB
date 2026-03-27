@@ -126,7 +126,7 @@ class Funcionario
         if ($resultado) {
             if (password_verify($this->senha, $resultado->Senha_Fun)) {
                 session_start();
-                $_SESSION["usuario_logado"] = $resultado;
+                $_SESSION["login"] = $resultado;
                 header("Location: index.php");
                 exit();
             } else {
