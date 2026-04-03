@@ -16,8 +16,26 @@ class laboratorioController{
         return $this->laboratorio->lerTodos();
     }
 
-    public function pesquisarLaboratorio($cnpj){
-        return $this->laboratorio->buscar($cnpj);
+    public function pesquisarLaboratorio($tipo, $valor) {
+        if ($tipo == 'cnpj') {
+            // Remove qualquer símbolo (/, -, .) do valor pesquisado para comparar apenas números
+            $valor = preg_replace('/[^0-9]/', '', $valor);
+            $sql = "SELECT * FROM laboratorio 
+                    WHERE REPLACE(REPLACE(REPLACE(CNPJ_Lab, '.', ''), '/', ''), '-', '') = :busca 
+                    AND Ativo_Lab = 1";
+        } else if ($tipo == 'nome') {
+            $sql = "SELECT * FROM laboratorio WHERE Nome_Lab LIKE :busca AND Ativo_Lab = 1";
+            $valor = "%$valor%";
+        } else {
+            return null;
+        }
+
+        $resultado = $this->bd->prepare($sql);
+        $resultado->bindParam(':busca', $valor);
+        $resultado->execute();
+        
+        $dados = $resultado->fetchAll(PDO::FETCH_OBJ);
+        return count($dados) > 0 ? $dados : null;
     }
 
     public function cadastrarLaboratorio($dados){
