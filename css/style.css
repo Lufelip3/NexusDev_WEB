@@ -1246,9 +1246,9 @@ body.pharma-app {
 }
 
 .ph-lab-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
 
 .ph-lab-card {
@@ -1538,10 +1538,16 @@ body.pharma-app {
     flex-wrap: wrap;
   }
 
+  .ph-search-form {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
   .ph-lab-actions-col {
     flex-direction: row;
     align-items: center;
     width: 100%;
     justify-content: space-between;
+    margin-top: 10px;
   }
 }
