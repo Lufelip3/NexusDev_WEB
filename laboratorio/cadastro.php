@@ -4,7 +4,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     $controller = new laboratorioController();
 
     if(isset($_POST["cadastrar"])){
-        $a = $controller->cadastrarLaboratorio($_POST["laboratorio"]);
+        $a = $controller->cadastrarLaboratorio($_POST["laboratorio"], $_FILES["laboratorio"]);
     }
 }
 ?>
@@ -30,9 +30,13 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     <label>CNPJ</label>
     <input type="text" name="laboratorio[cnpj]"><br><br>
     <label>CEP</label>
-    <input type="text" name="laboratorio[cep]"><br><br>
+    <input type="text" name="laboratorio[cep]" value="<?= htmlspecialchars($form_data['cep'] ?? '') ?>"><br><br>
+    
     <label>Número do Lab</label>
-    <input type="text" name="laboratorio[num_lab]"><br><br>
+    <input type="text" name="laboratorio[numerolab]" value="<?= htmlspecialchars($form_data['num_lab'] ?? '') ?>"><br><br>
+
+    <label for="foto">Foto do Laboratório:</label><br>
+    <input type="file" name="laboratorio[fileToUpload]" id="foto"><br><br>
 
     <button name="cadastrar">Cadastrar</button>
 
