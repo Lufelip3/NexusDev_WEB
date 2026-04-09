@@ -40,13 +40,28 @@ class VendaController
         }
     }
 
+    public function iniciarVenda($cpf){
+        $this->venda->CPF = $cpf;
+        return $this->venda->iniciarRetornandoId();
+    }
+
+    public function finalizarVenda($notaFiscal, $valorTotal, $cnpj){
+        $sql = "UPDATE venda SET Valor_Venda = :Valor_Venda, CNPJ_Drog = :CNPJ_Drog WHERE NotaFiscal_Saida = :NotaFiscal_Saida";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":Valor_Venda", $valorTotal);
+        $stmt->bindParam(":CNPJ_Drog", $cnpj, PDO::PARAM_STR);
+        $stmt->bindParam(":NotaFiscal_Saida", $notaFiscal, PDO::PARAM_INT);
+        
+        if($stmt->execute()){
+            return true;
+        }
+        return false;
+    }
+
     public function excluirVenda($NotaFiscal_Saida)
     {
         $this->venda->NotaFiscal_Saida = $NotaFiscal_Saida;
-
-        if ($this->venda->excluir()) {
-            header("location: index.php");
-        }
+        $this->venda->excluir();
     }
 
     public function atualizarVenda($dados){
