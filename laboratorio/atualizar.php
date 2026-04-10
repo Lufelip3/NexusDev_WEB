@@ -6,7 +6,7 @@ $controller = new laboratorioController();
 if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["alterar"])){
     $a = $controller->localizarLaboratorio($_GET["alterar"]);
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["atualizar"])){
-    $controller->atualizarLaboratorio($_POST["laboratorio"], $_FILES["laboratorio"]);
+    $controller->atualizarLaboratorio($_POST["laboratorio"], $_FILES);
 } else {
     header("Location: index.php");
     exit();
@@ -43,8 +43,8 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["alterar"])){
     <label>Número</label>
     <input type="text" name="laboratorio[Num_Lab]" value="<?= $a["Num_Lab"] ?>"><br><br>
 
-    <label for="foto">Alterar Foto:</label><br>
-    <input type="file" name="laboratorio[fileToUpload]" id="foto"><br><br>
+    <label>Foto do Laboratório</label>
+    <input type="file" name="Foto_Lab" accept="image/*"><br><br>
 
     <button name="atualizar">Atualizar</button>
 </form>
