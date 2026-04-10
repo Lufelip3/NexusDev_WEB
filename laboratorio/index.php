@@ -130,8 +130,14 @@ $totalLabs = $laboratorio ? count($laboratorio) : 0;
         <div class="ph-lab-list">
           <?php foreach($a as $res): ?>
           <div class="ph-lab-card">
-            <div class="ph-lab-icon-wrap" style="background:#e8f0fe;">
-              <span class="ph-lab-icon">🔍</span>
+            <div class="ph-lab-icon-wrap" style="background:#e8f0fe; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+              <?php if (!empty($res->Foto_Lab)) : ?>
+                <img src="../uploads/laboratorios/<?= htmlspecialchars($res->Foto_Lab) ?>" 
+                     alt="<?= htmlspecialchars($res->Nome_Lab) ?>"
+                     style="width: 100%; height: 100%; object-fit: cover;">
+              <?php else : ?>
+                <span class="ph-lab-icon">🔍</span>
+              <?php endif; ?>
             </div>
             <div class="ph-lab-info">
               <span class="ph-lab-name"><?= htmlspecialchars($res->Nome_Lab ?? '') ?></span>
@@ -188,8 +194,14 @@ $totalLabs = $laboratorio ? count($laboratorio) : 0;
             ?>
             <div class="ph-lab-card">
 
-              <div class="ph-lab-icon-wrap" style="background:<?= $bg ?>;">
-                <span class="ph-lab-icon"><?= $icon ?></span>
+              <div class="ph-lab-icon-wrap" style="background:<?= $bg ?>; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <?php if (!empty($lab->Foto_Lab)) : ?>
+                  <img src="../uploads/laboratorios/<?= htmlspecialchars($lab->Foto_Lab) ?>" 
+                       alt="<?= htmlspecialchars($lab->Nome_Lab) ?>"
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                <?php else : ?>
+                  <span class="ph-lab-icon"><?= $icon ?></span>
+                <?php endif; ?>
               </div>
 
               <div class="ph-lab-info">

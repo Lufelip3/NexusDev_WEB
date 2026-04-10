@@ -6,6 +6,7 @@ Class laboratorio{
     public $telefone;
     public $cnpj;
     public $cep;
+    public $foto;
     private $bd;
 
 public function __construct($bd){
@@ -29,8 +30,8 @@ public function pesquisarLaboratorio($cnpj){
 
 
     public function cadastrar(){
-        $sql = "INSERT INTO laboratorio(Nome_Lab, Email_Lab, Telefone_Lab, Cep_Lab, Num_Lab, CNPJ_Lab) 
-        VALUES(:nome, :email, :telefone, :cep, :numerolab, :cnpj)";
+        $sql = "INSERT INTO laboratorio(Nome_Lab, Email_Lab, Telefone_Lab, Cep_Lab, Num_Lab, CNPJ_Lab, Foto_Lab) 
+        VALUES(:nome, :email, :telefone, :cep, :numerolab, :cnpj, :foto)";
 
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":nome",      $this->nome,      PDO::PARAM_STR);
@@ -39,6 +40,7 @@ public function pesquisarLaboratorio($cnpj){
         $stmt->bindParam(":cep",       $this->cep,       PDO::PARAM_STR);
         $stmt->bindParam(":numerolab", $this->numerolab, PDO::PARAM_INT);
         $stmt->bindParam(":cnpj",      $this->cnpj,      PDO::PARAM_STR);
+        $stmt->bindParam(":foto",      $this->foto,      PDO::PARAM_STR);
 
         return $stmt->execute();
     }
@@ -56,10 +58,17 @@ public function excluir($cnpj){
 }
 
     public function atualizar(){
-        $sql = "UPDATE laboratorio 
-            SET Nome_Lab=:nome, Num_Lab=:numerolab, Email_Lab=:email, 
-                Telefone_Lab=:telefone, Cep_Lab=:cep 
-            WHERE CNPJ_Lab=:cnpj";
+        if ($this->foto) {
+            $sql = "UPDATE laboratorio 
+                SET Nome_Lab=:nome, Num_Lab=:numerolab, Email_Lab=:email, 
+                    Telefone_Lab=:telefone, Cep_Lab=:cep, Foto_Lab=:foto 
+                WHERE CNPJ_Lab=:cnpj";
+        } else {
+            $sql = "UPDATE laboratorio 
+                SET Nome_Lab=:nome, Num_Lab=:numerolab, Email_Lab=:email, 
+                    Telefone_Lab=:telefone, Cep_Lab=:cep 
+                WHERE CNPJ_Lab=:cnpj";
+        }
 
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":nome",      $this->nome,      PDO::PARAM_STR);
@@ -68,6 +77,10 @@ public function excluir($cnpj){
         $stmt->bindParam(":telefone",  $this->telefone,  PDO::PARAM_STR);
         $stmt->bindParam(":cep",       $this->cep,       PDO::PARAM_STR);
         $stmt->bindParam(":cnpj",      $this->cnpj,      PDO::PARAM_STR);
+        
+        if ($this->foto) {
+            $stmt->bindParam(":foto",  $this->foto,      PDO::PARAM_STR);
+        }
 
         return $stmt->execute();
     }

@@ -6,7 +6,7 @@ $controller = new laboratorioController();
 if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["alterar"])){
     $a = $controller->localizarLaboratorio($_GET["alterar"]);
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["atualizar"])){
-    $controller->atualizarLaboratorio($_POST["laboratorio"]);
+    $controller->atualizarLaboratorio($_POST["laboratorio"], $_FILES);
 } else {
     header("Location: index.php");
     exit();
@@ -25,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["alterar"])){
 <h1>Labortório</h1>
 <a href="index.php">Voltar</a>
 
-<form action="atualizar.php" method="post">
+<form action="atualizar.php" method="post" enctype="multipart/form-data">
     <input type="hidden" name="laboratorio[CNPJ_Lab]" value="<?= $a["CNPJ_Lab"] ?>">
 
     <label>Nome</label>
@@ -42,6 +42,9 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["alterar"])){
 
     <label>Número</label>
     <input type="text" name="laboratorio[Num_Lab]" value="<?= $a["Num_Lab"] ?>"><br><br>
+
+    <label>Foto do Laboratório</label>
+    <input type="file" name="Foto_Lab" accept="image/*"><br><br>
 
     <button name="atualizar">Atualizar</button>
 </form>

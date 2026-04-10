@@ -4,40 +4,369 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     $controller = new laboratorioController();
 
     if(isset($_POST["cadastrar"])){
-        $a = $controller->cadastrarLaboratorio($_POST["laboratorio"]);
+        $a = $controller->cadastrarLaboratorio($_POST["laboratorio"], $_FILES);
     }
 }
 ?>
 
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastrar Laboratório</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Laboratório – PharmaPulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* Premium Form Styling */
+    .ph-form-wrapper {
+      padding: 32px 16px;
+      max-width: 800px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .ph-form-footer button[type="submit"].ph-btn-primary {
+  margin-top: 0 !important;
+}
+    .ph-form-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+    .ph-form-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+    }
+    .ph-form-header {
+      margin-bottom: 32px;
+    }
+    .ph-form-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+    .ph-form-subtitle {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+    .ph-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .ph-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ph-input-group.full {
+      grid-column: 1 / -1;
+    }
+    .ph-label {
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .ph-input {
+      padding: 14px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      color: #0f172a;
+      background: #f8fafc;
+      transition: all 0.3s ease;
+    }
+    .ph-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+    .ph-file-upload {
+      position: relative;
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 40px 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .ph-file-upload:hover {
+      border-color: #8b5cf6;
+      background: #f5f3ff;
+    }
+    .ph-file-upload input[type="file"] {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .ph-file-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .ph-file-text {
+      color: #475569;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .ph-form-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .ph-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 28px;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 600;
+      color: #475569;
+      background: #f1f5f9;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .ph-btn-secondary:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    .ph-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      height: 48px;
+      margin: 0;
+      border-radius: 12px;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .ph-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      .ph-form-grid { grid-template-columns: 1fr; }
+      .ph-form-card { padding: 24px; }
+    }
+  </style>
 </head>
-<body>
-<h1>Cadastro de Laboratórios</h1>
-<a href="index.php">Voltar</a>
+<body class="pharma-app">
 
-<form action="cadastro.php" method="post" enctype="multipart/form-data">
-    <label>Nome</label>
-    <input type="text" name="laboratorio[nome]"><br><br>
-    <label>E-mail</label>
-    <input type="text" name="laboratorio[email]"><br><br>
-    <label>Telefone</label>
-    <input type="text" name="laboratorio[telefone]"><br><br>
-    <label>CNPJ</label>
-    <input type="text" name="laboratorio[cnpj]"><br><br>
-    <label>CEP</label>
-    <input type="text" name="laboratorio[cep]"><br><br>
-    <label>Número do Lab</label>
-    <input type="text" name="laboratorio[num_lab]"><br><br>
+  <!-- ═══ SIDEBAR ══════════════════════════════ -->
+  <aside class="ph-sidebar" id="ph-sidebar">
+    <div class="ph-sidebar-brand">
+      <img src="../cfa_logo.png" alt="Logo CFA" class="ph-brand-logo">
+      <span class="ph-brand-name">Distribuidora<br>CFA Ltda.</span>
+    </div>
 
-    <button name="cadastrar">Cadastrar</button>
+    <nav class="ph-sidebar-nav">
+      <a href="../Medicamento/index.php" class="ph-nav-item">
+        <span class="ph-nav-icon">💊</span>
+        <span class="ph-nav-label">Medicamentos</span>
+      </a>
+      <a href="../index.php" class="ph-nav-item">
+        <span class="ph-nav-icon">👥</span>
+        <span class="ph-nav-label">Funcionários</span>
+      </a>
+      <a href="index.php" class="ph-nav-item ph-nav-active">
+        <span class="ph-nav-icon">🔬</span>
+        <span class="ph-nav-label">Laboratórios</span>
+      </a>
+      <a href="#" class="ph-nav-item">
+        <span class="ph-nav-icon">🏪</span>
+        <span class="ph-nav-label">Drogarias</span>
+      </a>
+      <a href="../Compra/index.php" class="ph-nav-item">
+        <span class="ph-nav-icon">🛒</span>
+        <span class="ph-nav-label">Compras</span>
+      </a>
+      <a href="../Venda/index.php" class="ph-nav-item">
+        <span class="ph-nav-icon">📈</span>
+        <span class="ph-nav-label">Vendas</span>
+      </a>
+    </nav>
 
-</form>
+    <div class="ph-sidebar-footer">
+      <a href="../index.php" class="ph-btn-exit">
+        <span>⏻</span> Sair
+      </a>
+    </div>
+  </aside>
 
+  <!-- ═══ MAIN ══════════════════════════════════ -->
+  <div class="ph-main" id="ph-main">
+
+    <!-- Top Bar -->
+    <header class="ph-topbar">
+      <div class="ph-topbar-left">
+        <button class="ph-hamburger" id="ph-hamburger" aria-label="Abrir menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="ph-topbar-titles">
+          <h1 class="ph-page-title">Novo Laboratório</h1>
+          <p class="ph-page-subtitle">Cadastre um novo parceiro clínico no sistema</p>
+        </div>
+      </div>
+      <div class="ph-topbar-right">
+        <div class="ph-avatar" title="Perfil do usuário">A</div>
+      </div>
+    </header>
+
+    <div class="ph-content">
+      <div class="ph-form-wrapper">
+        <div class="ph-form-card">
+          <div class="ph-form-header">
+            <h2 class="ph-form-title">Informações do Laboratório</h2>
+            <p class="ph-form-subtitle">Preencha os dados abaixo com as informações reais da unidade para registro no ERP.</p>
+          </div>
+          
+          <form action="cadastro.php" method="post" enctype="multipart/form-data">
+            <div class="ph-form-grid">
+              
+              <div class="ph-input-group full">
+                <label class="ph-label">Nome do Laboratório</label>
+                <input type="text" name="laboratorio[nome]" class="ph-input" placeholder="Ex: Lab Imagem & Vida Ltda." required>
+              </div>
+
+              <div class="ph-input-group">
+                <label class="ph-label">CNPJ</label>
+                <input type="text" name="laboratorio[cnpj]" class="ph-input" placeholder="00.000.000/0000-00" required>
+              </div>
+
+              <div class="ph-input-group">
+                <label class="ph-label">Telefone de Contato</label>
+                <input type="text" name="laboratorio[telefone]" class="ph-input" placeholder="(00) 00000-0000">
+              </div>
+
+              <div class="ph-input-group full">
+                <label class="ph-label">E-mail Comercial</label>
+                <input type="email" name="laboratorio[email]" class="ph-input" placeholder="contato@laboratorio.com.br" required>
+              </div>
+
+              <div class="ph-input-group">
+                <label class="ph-label">CEP</label>
+                <input type="text" name="laboratorio[cep]" class="ph-input" placeholder="00000-000">
+              </div>
+
+              <div class="ph-input-group">
+                <label class="ph-label">Número (Endereço)</label>
+                <input type="text" name="laboratorio[num_lab]" class="ph-input" placeholder="Ex: 123">
+              </div>
+
+              <div class="ph-input-group full">
+                <label class="ph-label">Foto / Logotipo do Laboratório</label>
+                <div class="ph-file-upload" tabindex="0">
+                  <span class="ph-file-icon">📸</span>
+                  <span class="ph-file-text">Clique ou arraste a imagem aqui para enviar</span>
+                  <input type="file" name="Foto_Lab" accept="image/*">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="ph-form-footer">
+              <a href="index.php" class="ph-btn-secondary">Cancelar</a>
+              <button type="submit" name="cadastrar" class="ph-btn-primary">Registrar Laboratório</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav Component from index -->
+  <nav class="ph-bottom-nav" aria-label="Navegação principal">
+    <a href="../index.php" class="ph-bottom-item" id="bn-home">
+      <span class="ph-bottom-icon">🏠</span>
+      <span class="ph-bottom-label">Home</span>
+    </a>
+    <a href="index.php" class="ph-bottom-item ph-bottom-active" id="bn-labs">
+      <span class="ph-bottom-icon">🔬</span>
+      <span class="ph-bottom-label">Labs</span>
+    </a>
+    <a href="#" class="ph-bottom-item" id="bn-scan">
+      <span class="ph-bottom-icon">📷</span>
+      <span class="ph-bottom-label">Scan</span>
+    </a>
+    <a href="#" class="ph-bottom-item" id="bn-reports">
+      <span class="ph-bottom-icon">📊</span>
+      <span class="ph-bottom-label">Reports</span>
+    </a>
+  </nav>
+
+  <script>
+    // Sidebar toggle para Mobile
+    const hamburger = document.getElementById('ph-hamburger');
+    const sidebar   = document.getElementById('ph-sidebar');
+    
+    if (hamburger && sidebar) {
+      hamburger.addEventListener('click', () => {
+        sidebar.classList.toggle('ph-sidebar--open');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (
+          sidebar.classList.contains('ph-sidebar--open') &&
+          !sidebar.contains(e.target) &&
+          !hamburger.contains(e.target)
+        ) {
+          sidebar.classList.remove('ph-sidebar--open');
+        }
+      });
+    }
+
+    // Interatividade de Preview do input de arquivo
+    const fileInput = document.querySelector('input[type="file"]');
+    const fileText = document.querySelector('.ph-file-text');
+
+    if (fileInput && fileText) {
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          fileText.textContent = '✔️ ' + e.target.files[0].name;
+          fileText.style.color = '#3b82f6';
+          fileText.style.fontWeight = '700';
+        } else {
+          fileText.textContent = 'Clique ou arraste a imagem aqui para enviar';
+          fileText.style.color = '#475569';
+          fileText.style.fontWeight = '500';
+        }
+      });
+    }
+  </script>
 </body>
 </html>
-
