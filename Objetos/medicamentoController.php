@@ -45,6 +45,26 @@ class medicamentoController{
         }
     }
 
+    public function cadastrarMedicamentoERetornarId($dados){
+        $this->medicamento->EAN_Med      = $dados['EAN_Med'] ?? null;
+        $this->medicamento->Nome         = $dados['Nome_Med'];
+        $this->medicamento->Descricao    = $dados['Desc_Med'];
+        $this->medicamento->DataValidade = $dados['DataVal_Med'];
+        $this->medicamento->Quantidade   = $dados['Qtd_Med'];
+        $this->medicamento->Valor        = $dados['Valor_Med'];
+        $this->medicamento->CodCategoria = $dados['Cod_CatMed'] ?? null;
+
+        return $this->medicamento->cadastrarERetornarId();
+    }
+
+    public function buscarPorEAN($ean) {
+        return $this->medicamento->buscarPorEAN($ean);
+    }
+
+    public function adicionarEstoqueProcedimento($cod_med, $qtd){
+        return $this->medicamento->adicionarEstoqueProcedimento($cod_med, $qtd);
+    }
+
     public function localizarMedicamento($cod_Med){
         return $this->medicamento->buscarMedicamento($cod_Med);
     }
@@ -68,5 +88,9 @@ class medicamentoController{
             header("location: index.php");
             exit();
         }
+    }
+
+    public function pesquisarPorTermo($termo){
+        return $this->medicamento->pesquisarPorTermo($termo);
     }
 }

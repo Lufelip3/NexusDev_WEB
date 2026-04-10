@@ -40,11 +40,11 @@ class compraController
         }
     }
 
-    public function excluirCompra($NotaFiscal_Saida)
+    public function excluirCompra($NotaFiscal_Entrada)
     {
-        $this->venda->NotaFiscal_Saida = $NotaFiscal_Saida;
+        $this->compra->NotaFiscal_Entrada = $NotaFiscal_Entrada;
 
-        if ($this->venda->excluir()) {
+        if ($this->compra->excluir()) {
             header("location: index.php");
         }
     }
@@ -64,5 +64,17 @@ class compraController
     public function localizarCompra($NotaFiscal_Entrada)
     {
         return $this->compra->buscarCompra($NotaFiscal_Entrada);
+    }
+
+    public function iniciarCompra($cpf, $cnpj)
+    {
+        $this->compra->CPF = $cpf;
+        $this->compra->CNPJ_Lab = $cnpj;
+        return $this->compra->cadastrarEretornarId();
+    }
+
+    public function finalizarCompra($notaFiscal, $valorTotal)
+    {
+        return $this->compra->atualizarValorTotal($notaFiscal, $valorTotal);
     }
 }

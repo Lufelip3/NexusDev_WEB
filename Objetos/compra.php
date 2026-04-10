@@ -51,6 +51,38 @@ class Compra
         }
     }
 
+    public function cadastrarEretornarId()
+    {
+        $sql = "INSERT INTO compra (Valor_Total, CPF, CNPJ_Lab)
+                VALUES (0, :CPF, :CNPJ_Lab)";
+
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":CPF", $this->CPF, PDO::PARAM_STR);
+        
+        if ($this->CNPJ_Lab === null || $this->CNPJ_Lab === '') {
+            $stmt->bindValue(":CNPJ_Lab", null, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindParam(":CNPJ_Lab", $this->CNPJ_Lab, PDO::PARAM_STR);
+        }
+
+        if ($stmt->execute()) {
+            return $this->bd->lastInsertId();
+        } else {
+            return null;
+        }
+    }
+
+    public function atualizarValorTotal($notaFiscalCorreta, $valorTotal)
+    {
+        $sql = "UPDATE compra SET Valor_Total = :Valor_Total WHERE NotaFiscal_Entrada = :NotaFiscal_Entrada";
+
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":Valor_Total", $valorTotal);
+        $stmt->bindParam(":NotaFiscal_Entrada", $notaFiscalCorreta, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
     public function excluir()
     {
         $sql = "DELETE FROM compra WHERE NotaFiscal_Entrada = :NotaFiscal_Entrada";

@@ -79,7 +79,7 @@ class Funcionario
         $stmt->bindParam(":nome", $this->nome, PDO::PARAM_STR);
         $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $stmt->bindParam(":senha", $senha_hash, PDO::PARAM_STR);
-        $stmt->bindParam(":cargo", $this->cargo, PDO::PARAM_STR);
+        $stmt->bindParam(":cargo", $this->funcao, PDO::PARAM_STR);
         $stmt->bindParam(":CPF", $this->CPF, PDO::PARAM_STR);
         return $stmt->execute();
     }
@@ -120,12 +120,13 @@ class Funcionario
 
         $resultado = $stmt->fetch(PDO::FETCH_OBJ);
 
-//        var_dump(password_verify($this->senha, $resultado->Senha_Fun));
+        //        var_dump(password_verify($this->senha, $resultado->Senha_Fun));
 //        die( );
 
         if ($resultado) {
             if (password_verify($this->senha, $resultado->Senha_Fun)) {
-                if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+                if (session_status() !== PHP_SESSION_ACTIVE)
+                    session_start();
                 $_SESSION["login"] = $resultado;
                 $_SESSION["cpf"] = $resultado->CPF;
                 header("Location: index.php");

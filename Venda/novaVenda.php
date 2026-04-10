@@ -16,7 +16,12 @@ if (!isset($_SESSION['carrinho_venda'])) {
 }
 
 $medController = new medicamentoController();
-$medicamentos = $medController->index();
+
+if (isset($_POST['pesquisa_med']) && !empty($_POST['termo_med'])) {
+    $medicamentos = $medController->pesquisarPorTermo($_POST['termo_med']);
+} else {
+    $medicamentos = $medController->index();
+}
 
 $drogController = new drogariaController();
 $drogarias = $drogController->index();
@@ -100,6 +105,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="container">
     <div class="column">
         <h2>Medicamentos Disponíveis</h2>
+        
+        <form method="POST" style="margin-bottom: 10px;">
+            <input type="text" name="termo_med" placeholder="Nome ou EAN..." value="<?= $_POST['termo_med'] ?? '' ?>">
+            <button type="submit" name="pesquisa_med">Pesquisar</button>
+            <?php if(isset($_POST['pesquisa_med'])): ?>
+                <a href="novaVenda.php?nota_fiscal_saida=<?= $nota_fiscal ?>">Limpar</a>
+            <?php endif; ?>
+        </form>
+
         <table>
             <tr>
                 <td>Código</td>
