@@ -1,4 +1,5 @@
 <?php
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 include_once "../objetos/vendaController.php";
 
 $controller = new VendaController();
@@ -7,6 +8,16 @@ $vendas = $controller->index();
 $a = null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["iniciar_venda"])) {
+        if(!isset($_SESSION['cpf']) || empty($_SESSION['cpf'])){
+            header("Location: ../login.php");
+            exit();
+        }
+        $id = $controller->iniciarVenda($_SESSION['cpf']);
+        header("Location: novaVenda.php?nota_fiscal_saida=" . $id);
+        exit();
+    }
+    
     if (isset($_POST["pesquisar"])) {
         $a = $controller->pesquisaVenda($_POST["pesquisar"]);
     }
@@ -39,7 +50,10 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
 <h1>Vendas</h1>
 <a href="../index.php">Voltar</a><br>
-<a href="cadastro.php">Cadastrar Venda</a>
+
+<form method="POST">
+    <button name="iniciar_venda">Iniciar Venda</button>
+</form>
 
 <h3>Pesquisar Venda</h3>
 

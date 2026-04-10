@@ -45,6 +45,14 @@ Class venda{
         }
     }
 
+    public function iniciarRetornandoId(){
+        $sql = "INSERT INTO venda (Data_Venda, Valor_Venda, CNPJ_Drog, CPF) VALUES (NOW(), 0.00, NULL, :CPF)";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":CPF", $this->CPF, PDO::PARAM_STR);
+        $stmt->execute();
+        return $this->bd->lastInsertId();
+    }
+
     public function excluir()
     {
         $sql = "DELETE FROM venda WHERE NotaFiscal_Saida = :NotaFiscal_Saida";

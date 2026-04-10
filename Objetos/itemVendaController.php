@@ -23,4 +23,15 @@ class ItemVendaController
     {
         return $this->itemVenda->buscaItemVenda($NotaFiscal_Saida);
     }
+
+    public function cadastrarItemVenda($dados)
+    {
+        $this->itemVenda->DataVal_ItemVenda = $dados["DataVal_ItemVenda"] ?? null;
+        $this->itemVenda->Qtd_ItemVenda = $dados["Qtd_ItemVenda"];
+        $this->itemVenda->Valor_ItemVenda = $dados["Valor_ItemVenda"];
+        $this->itemVenda->Cod_Med = $dados["Cod_Med"];
+        $this->itemVenda->NotaFiscal_Saida = $dados["NotaFiscal_Saida"];
+
+        return $this->itemVenda->cadastrarItemVenda();
+    }
 }

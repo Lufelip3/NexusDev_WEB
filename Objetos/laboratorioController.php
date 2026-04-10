@@ -5,6 +5,7 @@ include_once "laboratorio.php";
 class laboratorioController{
     private $bd;
     private $laboratorio;
+    private $img_name;
 
     public function __construct(){
         $banco = new Database();
@@ -118,5 +119,49 @@ public function localizarLaboratorio($cnpj){
             header("location: index.php");
             exit();
         }
+    }
+
+    public function upload($arquivo)
+    {
+        $target_dir    = "../uploads/laboratorios/";
+        $uploadOk      = 1;
+        $target_file   = $target_dir . $arquivo['name']['fileToUpload'];
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+        $random_name    = uniqid('lab_', true) . '.' . $imageFileType;
+        $this->img_name = $random_name;
+        $upload_file    = $target_dir . $random_name;
+
+        $check = getimagesize($arquivo['tmp_name']['fileToUpload']);
+        if ($check === false) {
+            $uploadOk = 0;
+        }
+
+        if (file_exists($upload_file)) {
+            $uploadOk = 0;
+        }
+
+        if ($arquivo['size']['fileToUpload'] > 10000000) { // 10MB limit
+            $uploadOk = 0;
+        }
+
+        if (
+            $imageFileType != "jpg"  &&
+            $imageFileType != "png"  &&
+            $imageFileType != "jpeg" &&
+            $imageFileType != "gif"
+        ) {
+            $uploadOk = 0;
+        }
+
+        if ($uploadOk == 0) {
+            return false;
+        }
+
+        if (move_uploaded_file($arquivo['tmp_name']['fileToUpload'], $upload_file)) {
+            return true;
+        }
+
+        return false;
     }
 }
