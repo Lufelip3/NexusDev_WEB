@@ -1,4 +1,5 @@
-<?php
+<!DOCTYPE html><?php
+ob_start();
 include_once("../Objetos/laboratorioController.php");
 
 $controller  = new LaboratorioController();
@@ -20,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 $totalLabs = $laboratorio ? count($laboratorio) : 0;
 ?>
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -55,7 +55,7 @@ $totalLabs = $laboratorio ? count($laboratorio) : 0;
         <span class="ph-nav-icon">🔬</span>
         <span class="ph-nav-label">Laboratórios</span>
       </a>
-      <a href="#" class="ph-nav-item">
+      <a href="../drogaria/index.php" class="ph-nav-item">
         <span class="ph-nav-icon">🏪</span>
         <span class="ph-nav-label">Drogarias</span>
       </a>
@@ -298,3 +298,4 @@ $totalLabs = $laboratorio ? count($laboratorio) : 0;
 
 </body>
 </html>
+<?php ob_end_flush(); ?>
