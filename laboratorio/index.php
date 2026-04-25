@@ -55,7 +55,7 @@ $totalLabs = $laboratorio ? count($laboratorio) : 0;
         <span class="ph-nav-icon">🔬</span>
         <span class="ph-nav-label">Laboratórios</span>
       </a>
-      <a href="#" class="ph-nav-item">
+      <a href="../drogaria/index.php" class="ph-nav-item">
         <span class="ph-nav-icon">🏪</span>
         <span class="ph-nav-label">Drogarias</span>
       </a>
