@@ -14,7 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 if($_SERVER["REQUEST_METHOD"] == "GET"){
     if(isset($_GET["excluir"])){
-        $a = $controller->excluirDrogaria($_GET["excluir"]);
+        $controller->excluirDrogaria($_GET["excluir"]);
     }
 }
 ?>
@@ -36,12 +36,12 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
 
 <h1>NexusDev</h1>
 <a href="../index.php">Voltar</a><br>
-<a href="cadastro.php">Cadastrar Laboratório</a><br>
+<a href="cadastro.php">Cadastrar Drogaria</a><br>
 <a href="excluidos.php">Ver Excluidos</a>
 
-<h3>Pesquisar Laboratório</h3>
+<h3>Pesquisar Drogaria</h3>
 <form method="POST" action="index.php">
-    <drogel>CNPJ</drogel>
+    <label>CNPJ</label>
     <input Type="number" name="pesquisar">
     <button>Pesquisar</button>
 </form>
@@ -69,7 +69,8 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
             <td>E-mail</td>
             <td>Telefone</td>
             <td>CEP</td>
-            <td>NumeroLab</td>
+            <td>Numero</td>
+            <td>Foto</td>
         </tr>
     <?php if($drogaria) : ?>
     <?php foreach($drogaria as $drog) : ?>
@@ -81,6 +82,13 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         <td><?= $drog->Telefone_Drog; ?></td>
         <td><?= $drog->Cep_Drog; ?></td>
         <td><?= $drog->Num_Drog; ?></td>
+        <td>
+            <?php if(isset($drog->Foto_Drog) && $drog->Foto_Drog): ?>
+                <img src="../uploads/drogarias/<?= $drog->Foto_Drog ?>" width="50" height="50">
+            <?php else: ?>
+                Sem foto
+            <?php endif; ?>
+        </td>
 
         <td><a href="atualizar.php?alterar=<?= $drog->CNPJ_Drog; ?>">Alterar</a> </td>
         <td><a href="index.php?excluir=<?= $drog->CNPJ_Drog; ?>">Excluir</a> </td>

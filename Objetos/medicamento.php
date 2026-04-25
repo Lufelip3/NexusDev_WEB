@@ -10,6 +10,7 @@ class medicamento {
     public $Quantidade;
     public $Valor;
     public $CodCategoria;
+    public $Foto;
 
     private $bd;
 
@@ -32,8 +33,8 @@ class medicamento {
     }
 
     public function cadastrar() {
-        $sql = "INSERT INTO medicamento (Nome_Med, Desc_Med, DataVal_Med, Qtd_Med, Valor_Med, Cod_CatMed) 
-                VALUES (:nomeMed, :descMed, :dataVal, :qtdMed, :valorMed, :codCat)";
+        $sql = "INSERT INTO medicamento (Nome_Med, Desc_Med, DataVal_Med, Qtd_Med, Valor_Med, Cod_CatMed, Foto_Med) 
+                VALUES (:nomeMed, :descMed, :dataVal, :qtdMed, :valorMed, :codCat, :foto)";
 
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":nomeMed",  $this->Nome,         PDO::PARAM_STR);
@@ -42,13 +43,14 @@ class medicamento {
         $stmt->bindParam(":qtdMed",   $this->Quantidade,   PDO::PARAM_INT);
         $stmt->bindParam(":valorMed", $this->Valor,        PDO::PARAM_STR);
         $stmt->bindParam(":codCat",   $this->CodCategoria, PDO::PARAM_INT);
+        $stmt->bindParam(":foto",     $this->Foto,         PDO::PARAM_STR);
 
         return $stmt->execute();
     }
 
     public function cadastrarERetornarId() {
-        $sql = "INSERT INTO medicamento (EAN_Med, Nome_Med, Desc_Med, DataVal_Med, Qtd_Med, Valor_Med, Cod_CatMed) 
-                VALUES (:ean, :nomeMed, :descMed, :dataVal, :qtdMed, :valorMed, :codCat)";
+        $sql = "INSERT INTO medicamento (EAN_Med, Nome_Med, Desc_Med, DataVal_Med, Qtd_Med, Valor_Med, Cod_CatMed, Foto_Med) 
+                VALUES (:ean, :nomeMed, :descMed, :dataVal, :qtdMed, :valorMed, :codCat, :foto)";
 
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":ean",      $this->EAN_Med,      PDO::PARAM_STR);
@@ -58,6 +60,7 @@ class medicamento {
         $stmt->bindParam(":qtdMed",   $this->Quantidade,   PDO::PARAM_INT);
         $stmt->bindParam(":valorMed", $this->Valor,        PDO::PARAM_STR);
         $stmt->bindParam(":codCat",   $this->CodCategoria, PDO::PARAM_INT);
+        $stmt->bindParam(":foto",     $this->Foto,         PDO::PARAM_STR);
 
         if($stmt->execute()){
             return $this->bd->lastInsertId();
@@ -85,7 +88,8 @@ class medicamento {
         $sql = "UPDATE medicamento 
                 SET Nome_Med = :nomeMed, Desc_Med = :descMed, 
                     DataVal_Med = :dataVal, Qtd_Med = :qtdMed, 
-                    Valor_Med = :valorMed, Cod_CatMed = :codCat
+                    Valor_Med = :valorMed, Cod_CatMed = :codCat,
+                    Foto_Med = :foto
                 WHERE Cod_Med = :codMed";
 
         $stmt = $this->bd->prepare($sql);
@@ -96,6 +100,7 @@ class medicamento {
         $stmt->bindParam(":qtdMed",   $this->Quantidade,   PDO::PARAM_INT);
         $stmt->bindParam(":valorMed", $this->Valor,        PDO::PARAM_STR);
         $stmt->bindParam(":codCat",   $this->CodCategoria, PDO::PARAM_INT);
+        $stmt->bindParam(":foto",     $this->Foto,         PDO::PARAM_STR);
 
         return $stmt->execute();
     }

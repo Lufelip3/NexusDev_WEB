@@ -957,11 +957,9 @@ body.pharma-app {
   grid-template-columns: 140px 1fr auto;
   gap: 12px;
   align-items: stretch;
-  /* Muda para stretch para alinhar alturas */
   box-sizing: border-box;
   width: 100%;
   height: 48px;
-  /* Altura fixa no formulário pai */
 }
 
 .ph-search-form * {
@@ -970,7 +968,6 @@ body.pharma-app {
 
 .ph-search-form>* {
   height: 48px !important;
-  /* Força todos os filhos diretos a terem 48px */
 }
 
 .ph-search-input-wrap {
@@ -1017,7 +1014,6 @@ body.pharma-app {
 .ph-search-input {
   width: 100%;
   padding: 12px 18px 12px 48px !important;
-  /* Aumentado padding para evitar sobreposição */
   border: 1.5px solid var(--ph-slate-200);
   border-radius: var(--ph-radius-pill);
   font-family: var(--ph-font);
@@ -1066,7 +1062,6 @@ body.pharma-app {
   margin: 0 !important;
   padding: 0 24px !important;
   line-height: 48px !important;
-  /* Alinhamento via line-height também */
   box-sizing: border-box !important;
   vertical-align: middle;
 }
@@ -1205,7 +1200,6 @@ body.pharma-app {
   gap: 6px;
   padding: 8px 20px;
   background: var(--ph-green);
-  /* Verde corporativo */
   color: #ffffff !important;
   border-radius: var(--ph-radius-pill);
   font-size: .82rem;
@@ -1518,10 +1512,6 @@ body.pharma-app {
     box-shadow: var(--ph-shadow-md);
   }
 
-  .ph-main {
-    /* No manual margin adjustment needed anymore thanks to CSS Grid */
-  }
-
   .ph-hamburger {
     display: flex;
   }
@@ -1590,7 +1580,6 @@ body.pharma-app {
     color: white !important;
   }
 
-  /* Corrige cor visited na sidebar PharmaPulse */
   .ph-nav-item:link,
   .ph-nav-item:visited,
   .ph-nav-item:hover,
@@ -1603,9 +1592,177 @@ body.pharma-app {
     color: #ffffff !important;
   }
 
-  /* Corrige o index.php raiz (sem classes) */
   .sidebar nav a:link,
   .sidebar nav a:visited {
     color: var(--cor-branco) !important;
   }
+}
+
+/* ============================================
+   BOOTSTRAP 5 OVERRIDES (Módulo Vendas)
+   Integração do BD com Componentes Bootstrap e 
+   identidade visual PharmaPulse.
+   ============================================ */
+
+/* Layout Principal (Sidebar + Main) */
+.b5-sidebar {
+  background-color: var(--ph-navy, #1a1c4b) !important;
+  --bs-offcanvas-bg: var(--ph-navy, #1a1c4b);
+  width: 260px;
+  min-height: 100vh;
+  color: #fff;
+  /* Removido o transition genérico pois conflita com as animações nativas do .offcanvas do Bootstrap */
+}
+
+.b5-sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  padding: 10px 20px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.b5-sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.b5-sidebar .nav-link.active {
+  background-color: var(--ph-green, #102c26);
+  color: #fff;
+  border-left: 4px solid #fff;
+}
+
+.b5-sidebar .nav-item {
+  background-color: transparent !important;
+}
+
+.b5-main {
+  flex: 1;
+  background-color: var(--ph-bg, #f2f4f8);
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Componentes Adaptados (Cards e Tabela) */
+.card-pharma {
+  border: none;
+  border-top: 4px solid var(--ph-navy, #1a1c4b);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  background-color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-pharma:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.table-pharma {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0;
+  background-color: #fff;
+}
+
+.table-pharma thead,
+.table-pharma thead tr {
+  background-color: var(--ph-navy, #1a1c4b) !important;
+}
+
+.table-pharma thead th {
+  background-color: var(--ph-navy, #1a1c4b) !important;
+  color: #fff !important;
+  font-weight: 600;
+  border: none;
+  padding: 12px 16px;
+}
+
+.table-pharma tbody td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.table-pharma tbody tr:hover {
+  background-color: var(--ph-bg, #f2f4f8);
+}
+
+/* Botões Baseados no Theme */
+.btn-pharma-primary,
+.btn-pharma-primary:visited {
+  background-color: var(--ph-navy, #1a1c4b);
+  color: #fff !important;
+  border: none;
+}
+
+.btn-pharma-primary:hover,
+.btn-pharma-primary:focus {
+  background-color: var(--ph-navy-hover, #2c2f8a);
+  color: #fff !important;
+}
+
+.btn-pharma-success,
+.btn-pharma-success:visited {
+  background-color: var(--ph-green, #102c26) !important;
+  color: #fff !important;
+  border: none;
+  display: inline-block !important;
+}
+
+.btn-pharma-success:disabled,
+.btn-pharma-success.disabled {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(40%);
+}
+
+.btn-pharma-success:hover,
+.btn-pharma-success:focus {
+  background-color: var(--ph-green-hover, #1a3d35) !important;
+  color: #fff !important;
+}
+
+/* Botões de Perigo/Exclusão (Vermelhos) */
+.btn-danger,
+.btn-danger:visited {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+.btn-danger:hover {
+  background-color: #bb2d3b !important;
+  border-color: #b02a37 !important;
+}
+
+.btn-outline-danger {
+  color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+/* ============================================
+   CORREÇÃO: Alinhamento de botões em containers
+   flex (Bootstrap .d-flex).
+   O estilo legado button[type="submit"] aplica
+   margin-top: 20px, quebrando o alinhamento
+   vertical quando os botões estão lado a lado.
+   ============================================ */
+.d-flex>button[type="submit"],
+.d-flex>button[type="button"],
+.d-flex>button[type="reset"],
+.d-flex>.btn {
+  margin-top: 0 !important;
 }

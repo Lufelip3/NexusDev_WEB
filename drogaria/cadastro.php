@@ -1,10 +1,10 @@
 <?php
-include_once("../objetos/drogariaController.php");
+include_once("../Objetos/drogariaController.php");
 if($_SERVER["REQUEST_METHOD"] === "POST"){
     $controller = new drogariaController();
 
     if(isset($_POST["cadastrar"])){
-        $a = $controller->cadastrarDrogaria($_POST["drogaria"]);
+        $a = $controller->cadastrarDrogaria($_POST["drogaria"], $_FILES["drogaria"] ?? null);
     }
 }
 ?>
@@ -14,25 +14,33 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastrar Laboratório</title>
+    <title>Cadastrar Drogaria</title>
 </head>
 <body>
-<h1>Cadastro de Laboratórios</h1>
+<h1>Cadastro de Drogarias</h1>
 <a href="index.php">Voltar</a>
 
 <form action="cadastro.php" method="post" enctype="multipart/form-data">
-    <drogel>Nome</drogel>
+    <label>Nome</label>
     <input type="text" name="drogaria[nome]"><br><br>
-    <drogel>E-mail</drogel>
-    <input type="text" name="drogaria[email]"><br><br>
-    <drogel>Telefone</drogel>
+    
+    <label>E-mail</label>
+    <input type="email" name="drogaria[email]"><br><br>
+    
+    <label>Telefone</label>
     <input type="text" name="drogaria[telefone]"><br><br>
-    <drogel>CNPJ</drogel>
+    
+    <label>CNPJ</label>
     <input type="text" name="drogaria[cnpj]"><br><br>
-    <drogel>CEP</drogel>
+    
+    <label>CEP</label>
     <input type="text" name="drogaria[cep]"><br><br>
-    <drogel>Número do Lab</drogel>
-    <input type="text" name="drogaria[num_drog]"><br><br>
+    
+    <label>Número</label>
+    <input type="number" name="drogaria[numerodrog]"><br><br>
+
+    <label>Foto da Drogaria</label>
+    <input type="file" name="drogaria[Foto_Drog]"><br><br>
 
     <button name="cadastrar">Cadastrar</button>
 
@@ -40,4 +48,3 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
 </body>
 </html>
-

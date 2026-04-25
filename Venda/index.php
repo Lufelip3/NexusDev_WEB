@@ -1,11 +1,25 @@
 <?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
-include_once "../objetos/vendaController.php";
+include_once "../Objetos/vendaController.php";
+include_once "../Objetos/drogariaController.php";
 
 $controller = new VendaController();
+$drogController = new drogariaController();
+
 $vendas = $controller->index();
+$drogarias = $drogController->index();
+
+$logado = isset($_SESSION['cpf']) && !empty($_SESSION['cpf']);
+
+if (isset($_GET['auto_iniciar']) && $_GET['auto_iniciar'] == 1 && $logado) {
+    $id = $controller->iniciarVenda($_SESSION['cpf']);
+    header("Location: novaVenda.php?nota_fiscal_saida=" . $id);
+    exit();
+}
 
 $a = null;
+$status_selecionado = "";
+$cnpj_selecionado = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["iniciar_venda"])) {
@@ -18,106 +32,302 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
     
-    if (isset($_POST["pesquisar"])) {
-        $a = $controller->pesquisaVenda($_POST["pesquisar"]);
+    if (isset($_POST["pesquisa_nf"]) && !empty($_POST["pesquisa_nf"])) {
+        $a = $controller->pesquisaVenda($_POST["pesquisa_nf"]);
     }
+
+    $status_selecionado = $_POST["filtro_status"] ?? "";
+    $cnpj_selecionado = $_POST["filtro_drogaria"] ?? "";
+    $vendas = $controller->filtrarVendas($_POST["pesquisa_nf"] ?? null, $status_selecionado, $cnpj_selecionado);
+} else {
+    $status_selecionado = "";
+    $cnpj_selecionado = "";
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if (isset($_GET["excluir"])) {
         $controller->excluirVenda($_GET["excluir"]);
+        header("Location: index.php");
+        exit();
     }
 }
+
+$totalVendas = $vendas ? count($vendas) : 0;
 ?>
-
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Vendas Cadastradas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendas – PharmaPulse (Bootstrap 5)</title>
 
-    <style>
-        table,tr,td{
-            border:1px solid black;
-            border-collapse:collapse;
-            padding:5px;
-        }
-    </style>
-
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- CSS Customizado (Atualizado com regras B5) -->
+  <link rel="stylesheet" href="../css/style.css">
 </head>
+<body class="d-flex flex-nowrap" style="font-family: 'Manrope', sans-serif;">
 
-<body>
+  <!-- Sidebar Bootstrap Customizada (Agora com Offcanvas Responsivo) -->
+  <aside class="b5-sidebar offcanvas-lg offcanvas-start p-3" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+    <div class="offcanvas-header d-lg-none border-bottom border-opacity-25 border-light mb-3">
+      <h5 class="offcanvas-title fw-bold text-white text-uppercase" id="menuLateralLabel">Distribuidora CFA</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#menuLateral" aria-label="Fechar"></button>
+    </div>
+    
+    <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
+      <a href="../index.php"
+        class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25"
+        style="border-color: #fff;">
+        <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
+      </a>
+    
+    <ul class="nav nav-pills flex-column mb-auto gap-2">
+      <li class="nav-item">
+        <a href="../Medicamento/index.php" class="nav-link">
+          <span class="fs-5">💊</span> Medicamentos
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="../index.php" class="nav-link">
+          <span class="fs-5">👥</span> Funcionários
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="../Laboratorio/index.php" class="nav-link">
+          <span class="fs-5">🔬</span> Laboratórios
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="../drogaria/index.php" class="nav-link">
+          <span class="fs-5">🏪</span> Drogarias
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="../Compra/index.php" class="nav-link">
+          <span class="fs-5">🛒</span> Compras
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="index.php" class="nav-link active" aria-current="page">
+          <span class="fs-5">📈</span> Vendas
+        </a>
+      </li>
+    </ul>
 
-<h1>Vendas</h1>
-<a href="../index.php">Voltar</a><br>
+      <hr class="border-secondary mt-auto">
+      <div class="ph-sidebar-footer">
+        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none">
+          <span class="fs-5">⏻</span> Sair do Sistema
+        </a>
+      </div>
+    </div>
+  </aside>
 
-<form method="POST">
-    <button name="iniciar_venda">Iniciar Venda</button>
-</form>
+  <!-- Conteúdo Principal -->
+  <main class="b5-main p-4 p-md-5">
 
-<h3>Pesquisar Venda</h3>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4 gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <!-- Botão Hamburger (Aparece apenas em telas < lg) -->
+        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral">
+          <span class="fs-4">☰</span>
+        </button>
+        <div>
+          <h1 class="display-6 fw-bold text-dark m-0" style="color: #1a1c4b !important;">Painel de Vendas</h1>
+          <p class="text-secondary mb-0">Central de faturamento e notas fiscais.</p>
+        </div>
+      </div>
+      <div>
+        <form method="POST" class="m-0">
+          <?php if($logado): ?>
+            <button type="submit" name="iniciar_venda" class="btn btn-pharma-success btn-lg px-4 shadow-sm fw-bold">
+              + Nova Venda
+            </button>
+          <?php else: ?>
+            <button type="button" class="btn btn-pharma-success btn-lg px-4 shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#loginModal">
+              + Nova Venda
+            </button>
+          <?php endif; ?>
+        </form>
+      </div>
+    </div>
 
-<form method="POST">
-    <label>Nota Fiscal</label>
-    <input type="number" name="pesquisar">
-    <button>Pesquisar</button>
-</form>
+    <!-- Seção de Busca -->
+    <div class="card card-pharma mb-4">
+      <div class="card-body p-4">
+        <form method="POST" class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label for="pesquisa_nf" class="form-label fw-bold">Pesquisar NF</label>
+            <input type="number" class="form-control" id="pesquisa_nf" name="pesquisa_nf" placeholder="Ex: 105" value="<?= isset($_POST['pesquisa_nf']) ? htmlspecialchars($_POST['pesquisa_nf']) : '' ?>">
+          </div>
+          <div class="col-md-3">
+            <label for="filtro_drogaria" class="form-label fw-bold">Filtrar por Drogaria</label>
+            <select name="filtro_drogaria" id="filtro_drogaria" class="form-select">
+              <option value="">Todas as Drogarias</option>
+              <?php if($drogarias): ?>
+                <?php foreach($drogarias as $d): ?>
+                  <option value="<?= $d->CNPJ_Drog ?>" <?= $cnpj_selecionado == $d->CNPJ_Drog ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($d->Nome_Drog) ?>
+                  </option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="filtro_status" class="form-label fw-bold">Situação</label>
+            <select name="filtro_status" id="filtro_status" class="form-select">
+              <option value="">Todas as Situações</option>
+              <option value="1" <?= $status_selecionado === "1" ? "selected" : "" ?>>Finalizada</option>
+              <option value="0" <?= $status_selecionado === "0" ? "selected" : "" ?>>Em Aberto / Rascunho</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Aplicar Filtros</button>
+          </div>
+        </form>
 
-<table>
+        <?php if ($a): ?>
+          <hr class="my-4">
+          <h5 class="fw-bold mb-3 text-success">Resultado Encontrado:</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Nota Fiscal</th>
+                  <th>Data</th>
+                  <th>Valor</th>
+                  <th>CPF</th>
+                  <th>Drogaria</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="fw-bold fs-5">#<?= htmlspecialchars($a->NotaFiscal_Saida) ?></td>
+                  <td><?= date("d/m/Y", strtotime($a->Data_Venda)) ?></td>
+                  <td>R$ <?= number_format($a->Valor_Venda ?? 0, 2, ',', '.') ?></td>
+                  <td><?= htmlspecialchars($a->CPF) ?></td>
+                  <td><?= htmlspecialchars($a->CNPJ_Drog ?? 'N/A') ?></td>
+                  <td>
+                    <a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $a->NotaFiscal_Saida ?>" class="btn btn-sm btn-outline-primary">Ver Itens</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
 
-    <tr>
-        <td>Nota Fiscal</td>
-        <td>Data</td>
-        <td>Valor</td>
-        <td>CNPJ Drogaria</td>
-        <td>CPF</td>
-    </tr>
+    <!-- Indicadores -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card border-0 bg-white shadow-sm" style="border-left: 4px solid #1a1c4b !important;">
+          <div class="card-body">
+            <h6 class="text-secondary mb-1">Total de Vendas no Sistema</h6>
+            <h2 class="fw-bold mb-0" style="color: #1a1c4b;"><?= $totalVendas ?></h2>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <?php if($a) : ?>
+    <!-- Lista de Vendas -->
+    <h3 class="fw-bold mb-3" style="color: #1a1c4b;">Vendas Registradas</h3>
+    
+    <div class="card card-pharma">
+      <div class="card-body p-0">
+        <?php if ($vendas): ?>
+        <div class="table-responsive">
+          <table class="table table-pharma mb-0 align-middle">
+            <thead>
+              <tr>
+                <th scope="col" class="ps-4">Nota Fiscal</th>
+                <th scope="col">Data da Venda</th>
+                <th scope="col">Valor Total</th>
+                <th scope="col">Drogaria</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-end pe-4">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($vendas as $venda): ?>
+              <tr>
+                <td class="ps-4 fw-bold fs-6">#<?= htmlspecialchars($venda->NotaFiscal_Saida) ?></td>
+                <td><?= date("d/m/Y", strtotime($venda->Data_Venda)) ?></td>
+                <td class="fw-bold text-success">R$ <?= number_format($venda->Valor_Venda ?? 0, 2, ',', '.') ?></td>
+                <td>
+                  <span class="text-secondary small fw-bold text-uppercase">
+                    <?= htmlspecialchars($venda->Nome_Drog ?? 'Venda Direta') ?>
+                  </span>
+                </td>
+                <td>
+                  <?php if($venda->Finalizada): ?>
+                    <span class="badge bg-success px-3 py-2">Finalizada</span>
+                  <?php else: ?>
+                    <span class="badge bg-warning text-dark px-3 py-2">Em Aberto/Rascunho</span>
+                  <?php endif; ?>
+                </td>
+                <td class="text-end pe-4">
+                  <?php if(!$venda->Finalizada): ?>
+                    <a href="novaVenda.php?nota_fiscal_saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
+                  <?php endif; ?>
+                  
+                  <a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-pharma-primary me-1">Ver Itens</a>
+                  
+                  <?php if(!$venda->Finalizada): ?>
+                    <a href="index.php?excluir=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta venda?')">🗑</a>
+                  <?php endif; ?>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <?php else: ?>
+        <div class="p-5 text-center">
+          <p class="text-secondary fs-5 mb-0">Nenhuma venda encontrada.</p>
+        </div>
+        <?php endif; ?>
+      </div>
+    </div>
 
-        <tr>
+  </main>
 
-            <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $a->NotaFiscal_Saida ?>"><?= $a->NotaFiscal_Saida ?></a></td>
-            <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $a->NotaFiscal_Saida ?>"><?= $a->Data_Venda ?></a></td>
-            <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $a->NotaFiscal_Saida ?>"><?= $a->Valor_Venda ?></a></td>
-            <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $a->NotaFiscal_Saida ?>"><?= $a->CNPJ_Drog ?></a></td>
-            <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $a->NotaFiscal_Saida ?>"><?= $a->CPF ?></a></td>
+  <!-- Modal de Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+        <div class="modal-header border-0 p-4" style="background-color: #1a1c4b;">
+          <h5 class="modal-title fw-bold text-white" id="loginModalLabel">🔒 Área Restrita</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-secondary mb-4">Apenas funcionários autenticados podem iniciar uma nova venda. Por favor, identifique-se.</p>
+          <form method="POST" action="../login.php">
+            <input type="hidden" name="redirect" value="Venda/index.php?auto_iniciar=1">
+            <div class="mb-3">
+              <label for="login" class="form-label fw-bold">E-mail ou Login</label>
+              <input type="text" class="form-control" id="login" name="login" placeholder="seu@email.com" required style="padding: 12px; border-radius: 8px;">
+            </div>
+            <div class="mb-4">
+              <label for="senha" class="form-label fw-bold">Senha</label>
+              <input type="password" class="form-control" id="senha" name="senha" placeholder="••••••••" required style="padding: 12px; border-radius: 8px;">
+            </div>
+            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold py-3 shadow-sm" style="border-radius: 8px;">Entrar e Continuar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        </tr>
-
-    <?php endif; ?>
-
-</table>
-
-<h2>Vendas cadastradas</h2>
-
-<table>
-
-    <tr>
-        <td>Nota Fiscal</td>
-        <td>Data</td>
-        <td>Valor</td>
-        <td>CNPJ Drogaria</td>
-        <td>CPF</td>
-    </tr>
-
-    <?php if($vendas) : ?>
-        <?php foreach($vendas as $venda) : ?>
-
-            <tr>
-
-                <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>"><?= $venda->NotaFiscal_Saida ?></a></td>
-                <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>"><?= $venda->Data_Venda ?></a></td>
-                <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>"><?= $venda->Valor_Venda ?></a></td>
-                <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>"><?= $venda->CNPJ_Drog ?></a></td>
-                <td><a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>"><?= $venda->CPF ?></a></td>
-
-            </tr>
-
-        <?php endforeach; ?>
-    <?php endif; ?>
-
-</table>
-
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

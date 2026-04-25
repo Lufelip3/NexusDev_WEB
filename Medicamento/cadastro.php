@@ -4,7 +4,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     $controller = new medicamentoController();
 
     if(isset($_POST["cadastrar"])){
-        $a = $controller->cadastrarMedicamento($_POST["medicamento"]);
+        $a = $controller->cadastrarMedicamento($_POST["medicamento"], $_FILES["medicamento"] ?? null);
     }
 }
 ?>
@@ -20,7 +20,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 <h1>Cadastro de Medicamento</h1>
 <a href="index.php">Voltar</a>
 
-<form action="cadastro.php" method="post">
+<form action="cadastro.php" method="post" enctype="multipart/form-data">
     <label>Nome Medicamento</label>
     <input type="text" name="medicamento[Nome_Med]"><br><br>
 
@@ -36,9 +36,11 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     <label>Valor</label>
     <input type="number" step="0.01" name="medicamento[Valor_Med]"><br><br>
 
+    <label>Foto do Medicamento</label>
+    <input type="file" name="medicamento[Foto_Med]"><br><br>
+
     <button name="cadastrar">Cadastrar</button>
 </form>
 
-</form>
 </body>
 </html>

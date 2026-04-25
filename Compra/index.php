@@ -111,16 +111,34 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         <td>Data Compra</td>
         <td>CPF</td>
         <td>CNPJ Laboratório</td>
+        <td>Status</td>
+        <td>Ações</td>
     </tr>
 
     <?php if($compras) : ?>
         <?php foreach($compras as $compra) : ?>
             <tr>
-                <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>"><?= $compra->NotaFiscal_Entrada ?></a></td>
-                <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>"><?= $compra->Valor_Total ?></a></td>
-                <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>"><?= $compra->Data_Compra ?></a></td>
-                <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>"><?= $compra->CPF ?></a></td>
-                <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>"><?= $compra->CNPJ_Lab ?></a></td>
+                <td><?= $compra->NotaFiscal_Entrada ?></td>
+                <td>R$ <?= number_format($compra->Valor_Total ?? 0, 2, ',', '.') ?></td>
+                <td><?= $compra->Data_Compra ?></td>
+                <td><?= $compra->CPF ?></td>
+                <td><?= $compra->CNPJ_Lab ?></td>
+                <td>
+                    <?php if($compra->Finalizada): ?>
+                        <span style="background:#27ae60;color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;">Finalizada</span>
+                    <?php else: ?>
+                        <span style="background:#f39c12;color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;">Em Aberto</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if(!$compra->Finalizada): ?>
+                        <a href="itensCompra.php?nota_fiscal_entrada=<?= $compra->NotaFiscal_Entrada ?>&cnpj_lab=<?= $compra->CNPJ_Lab ?>">&#9998; Editar</a> |
+                    <?php endif; ?>
+                    <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>">&#128065; Ver</a>
+                    <?php if(!$compra->Finalizada): ?>
+                        | <a href="index.php?excluir=<?= $compra->NotaFiscal_Entrada ?>" onclick="return confirm('Excluir esta compra?')">&#128465; Excluir</a>
+                    <?php endif; ?>
+                </td>
             </tr>
         <?php endforeach; ?>
     <?php endif; ?>
@@ -128,4 +146,4 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 </table>
 
 </body>
-</html>
+</html>

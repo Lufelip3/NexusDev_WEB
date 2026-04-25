@@ -86,6 +86,7 @@ CREATE TABLE compra (
   Data_Compra DATE DEFAULT (CURRENT_DATE),
   CPF VARCHAR(14),
   CNPJ_Lab VARCHAR(18),
+  Finalizada TINYINT(1) NOT NULL DEFAULT 0,
   FOREIGN KEY (CPF) REFERENCES funcionario(CPF),
   FOREIGN KEY (CNPJ_Lab) REFERENCES laboratorio(CNPJ_Lab)
 );
@@ -99,6 +100,7 @@ CREATE TABLE venda (
   Valor_Venda DECIMAL(10,2),
   CNPJ_Drog VARCHAR(18),
   CPF VARCHAR(14),
+  Finalizada TINYINT(1) NOT NULL DEFAULT 0,
   FOREIGN KEY (CNPJ_Drog) REFERENCES drogaria(CNPJ_Drog),
   FOREIGN KEY (CPF) REFERENCES funcionario(CPF)
 );
@@ -405,34 +407,32 @@ DELIMITER ;
 
 DELIMITER $$
 DROP TRIGGER IF EXISTS trg_baixa_estoque_apos_venda $$
-CREATE TRIGGER trg_baixa_estoque_apos_venda
-AFTER INSERT ON item_venda
-FOR EACH ROW
-BEGIN
-    DECLARE v_cod_med INT;
-    DECLARE v_qtd_vendida INT;
-    SET v_cod_med = NEW.Cod_Med;
-    SET v_qtd_vendida = NEW.Qtd_ItemVenda;
-
-    IF v_cod_med IS NOT NULL THEN
-        UPDATE medicamento SET Qtd_Med = Qtd_Med - v_qtd_vendida WHERE Cod_Med = v_cod_med;
-    END IF;
-END $$
-DELIMITER ;
-
-DELIMITER $$
 DROP TRIGGER IF EXISTS trg_baixa_estoque_apos_compra $$
-CREATE TRIGGER trg_baixa_estoque_apos_compra
-AFTER INSERT ON item
+
+-- Trigger: decrementa estoque de medicamentos ao FINALIZAR uma venda
+CREATE TRIGGER trg_finalizar_venda
+AFTER UPDATE ON venda
 FOR EACH ROW
 BEGIN
-    DECLARE v_cod_cat INT;
-    DECLARE v_qtd_comprada INT;
-    SET v_cod_cat = NEW.Cod_CatMed;
-    SET v_qtd_comprada = NEW.Qtd_Item;
-
-    IF v_cod_cat IS NOT NULL THEN
-        UPDATE catalogo_medicamento SET quantidade = quantidade - v_qtd_comprada WHERE Cod_CatMed = v_cod_cat;
+    IF NEW.Finalizada = 1 AND OLD.Finalizada = 0 THEN
+        UPDATE medicamento m
+        JOIN item_venda iv ON m.Cod_Med = iv.Cod_Med
+        SET m.Qtd_Med = m.Qtd_Med - iv.Qtd_ItemVenda
+        WHERE iv.NotaFiscal_Saida = NEW.NotaFiscal_Saida;
     END IF;
 END $$
+
+-- Trigger: decrementa estoque do catálogo ao FINALIZAR uma compra
+CREATE TRIGGER trg_finalizar_compra
+AFTER UPDATE ON compra
+FOR EACH ROW
+BEGIN
+    IF NEW.Finalizada = 1 AND OLD.Finalizada = 0 THEN
+        UPDATE catalogo_medicamento cm
+        JOIN item i ON cm.Cod_CatMed = i.Cod_CatMed
+        SET cm.quantidade = cm.quantidade - i.Qtd_Item
+        WHERE i.NotaFiscal_Entrada = NEW.NotaFiscal_Entrada;
+    END IF;
+END $$
+
 DELIMITER ;

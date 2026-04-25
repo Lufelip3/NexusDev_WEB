@@ -4,7 +4,8 @@ include_once "Objetos/funcionarioController.php";
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if(isset($_POST["login"]) && isset($_POST["senha"])){
         $controller = new funcionarioController();
-        $controller->login($_POST["login"], $_POST["senha"]);
+        $redirect = $_POST["redirect"] ?? "index.php";
+        $controller->login($_POST["login"], $_POST["senha"], $redirect);
     } else {
         echo "Falha";
     }

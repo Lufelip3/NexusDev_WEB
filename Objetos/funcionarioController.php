@@ -87,13 +87,30 @@ class FuncionarioController
         }
     }
 
-    public function atualizarFuncionario($dados)
+    public function atualizarFuncionario($dados, $arquivo = null)
     {
-        $this->Funcionario->CPF   = $dados['CPF']   ;
-        $this->Funcionario->nome  = $dados['nome']  ;
-        $this->Funcionario->email = $dados['email'] ;
-        $this->Funcionario->senha = $dados['senha'] ;
-        $this->Funcionario->cargo = $dados['cargo'] ;
+        $temArquivo = isset($arquivo['name']['fileToUpload'])
+            && $arquivo['name']['fileToUpload'] !== ""
+            && isset($arquivo['error']['fileToUpload'])
+            && $arquivo['error']['fileToUpload'] === UPLOAD_ERR_OK;
+
+        if ($temArquivo && !$this->upload($arquivo)) {
+            return false;
+        }
+
+        $this->Funcionario->CPF    = $dados['CPF'];
+        $this->Funcionario->nome   = $dados['nome'];
+        $this->Funcionario->email  = $dados['email'];
+        $this->Funcionario->senha  = $dados['senha'];
+        $this->Funcionario->funcao = $dados['funcao'] ?? $dados['cargo'] ?? null;
+        
+        if ($temArquivo) {
+            $this->Funcionario->foto = $this->img_name;
+        } else {
+            // Keep existing photo if no new one uploaded
+            $existing = $this->localizarFuncionario($dados['CPF']);
+            $this->Funcionario->foto = $existing->imagem ?? null;
+        }
 
         if ($this->Funcionario->atualizar()) {
             header("location: index.php");
@@ -108,7 +125,7 @@ class FuncionarioController
 
     public function upload($arquivo)
     {
-        $target_dir    = "../uploads/";
+        $target_dir    = "../uploads/funcionarios/";
         $uploadOk      = 1;
         $target_file   = $target_dir . $arquivo['name']['fileToUpload'];
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -152,10 +169,10 @@ class FuncionarioController
         return false;
     }
 
-    public function login($email, $senha)
+    public function login($email, $senha, $redirect = "index.php")
     {
         $this->Funcionario->email = $email;
         $this->Funcionario->senha = $senha;
-        return $this->Funcionario->login();
+        return $this->Funcionario->login($redirect);
     }
 }

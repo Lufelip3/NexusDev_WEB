@@ -7,7 +7,7 @@ global $medicamento;
 $a = null;
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    if(isset($_POST["medicamento"])){
+    if(isset($_POST["pesquisar"])){
         $a = $controller->pesquisarMedicamento($_POST["pesquisar"]);
     }
 }
@@ -68,6 +68,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
         <td>Datava Validade</td>
         <td>Quantidade</td>
         <td>Valor</td>
+        <td>Foto</td>
     </tr>
     <?php if($medicamento) : ?>
         <?php foreach($medicamento as $med) : ?>
@@ -78,6 +79,13 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
                 <td><?= $med->DataVal_Med; ?></td>
                 <td><?= $med->Qtd_Med; ?></td>
                 <td><?= $med->Valor_Med; ?></td>
+                <td>
+                    <?php if(isset($med->Foto_Med) && $med->Foto_Med): ?>
+                        <img src="../uploads/medicamentos/<?= $med->Foto_Med ?>" width="50" height="50">
+                    <?php else: ?>
+                        Sem foto
+                    <?php endif; ?>
+                </td>
 
                 <td><a href="atualizar.php?alterar=<?= $med->Cod_Med; ?>">Alterar</a> </td>
                 <td><a href="index.php?excluir=<?= $med->Cod_Med; ?>">Excluir</a> </td>

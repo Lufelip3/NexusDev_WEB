@@ -6,6 +6,7 @@ Class drogaria{
     public $telefone;
     public $cnpj;
     public $cep;
+    public $foto;
     private $bd;
 
 public function __construct($bd){
@@ -29,8 +30,8 @@ public function pesquisarDrogaria($cnpj){
 
 
     public function cadastrar(){
-        $sql = "INSERT INTO drogaria(Nome_Drog, Email_Drog, Telefone_Drog, Cep_Drog, Num_Drog, CNPJ_Drog) 
-        VALUES(:nome, :email, :telefone, :cep, :numerodrog, :cnpj)";
+        $sql = "INSERT INTO drogaria(Nome_Drog, Email_Drog, Telefone_Drog, Cep_Drog, Num_Drog, CNPJ_Drog, Foto_Drog) 
+        VALUES(:nome, :email, :telefone, :cep, :numerodrog, :cnpj, :foto)";
 
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":nome",      $this->nome,      PDO::PARAM_STR);
@@ -39,6 +40,7 @@ public function pesquisarDrogaria($cnpj){
         $stmt->bindParam(":cep",       $this->cep,       PDO::PARAM_STR);
         $stmt->bindParam(":numerodrog", $this->numerodrog, PDO::PARAM_INT);
         $stmt->bindParam(":cnpj",      $this->cnpj,      PDO::PARAM_STR);
+        $stmt->bindParam(":foto",      $this->foto,      PDO::PARAM_STR);
 
         return $stmt->execute();
     }
@@ -58,7 +60,7 @@ public function excluir($cnpj){
     public function atualizar(){
         $sql = "UPDATE drogaria 
             SET Nome_Drog=:nome, Num_Drog=:numerodrog, Email_Drog=:email, 
-                Telefone_Drog=:telefone, Cep_Drog=:cep 
+                Telefone_Drog=:telefone, Cep_Drog=:cep, Foto_Drog=:foto 
             WHERE CNPJ_Drog=:cnpj";
 
         $stmt = $this->bd->prepare($sql);
@@ -68,6 +70,7 @@ public function excluir($cnpj){
         $stmt->bindParam(":telefone",  $this->telefone,  PDO::PARAM_STR);
         $stmt->bindParam(":cep",       $this->cep,       PDO::PARAM_STR);
         $stmt->bindParam(":cnpj",      $this->cnpj,      PDO::PARAM_STR);
+        $stmt->bindParam(":foto",      $this->foto,      PDO::PARAM_STR);
 
         return $stmt->execute();
     }

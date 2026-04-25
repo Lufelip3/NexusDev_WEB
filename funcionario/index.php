@@ -17,12 +17,12 @@ $a =null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["pesquisar"])){
-        $a = $controller->pesquisafuncionarios($_POST["pesquisar"]);
+        $a = $controller->pesquisaFuncionario($_POST["pesquisar"]);
     }
 }
 if($_SERVER["REQUEST_METHOD"] === "GET") {
     if (isset($_GET["excluir"])) {
-        $a = $controller->excluirfuncionarios($_GET["excluir"]);
+        $controller->excluirFuncionario($_GET["excluir"]);
     }
 }
 //var_dump($funcionarios);
@@ -62,6 +62,7 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
         <td>Numero</td>
         <td>Email</td>
         <td>Senha</td>
+        <td>Foto</td>
     </tr>
     <?php if($funcionarios) : ?>
     <?php foreach($funcionarios as $funcionario) : ?>
@@ -73,6 +74,13 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
         <td><?= $funcionario->Num_Fun ?></td>
         <td><?= $funcionario->Email_Fun ?></td>
         <td><?= $funcionario->Senha_Fun ?></td>
+        <td>
+            <?php if(isset($funcionario->imagem) && $funcionario->imagem): ?>
+                <img src="../uploads/funcionarios/<?= $funcionario->imagem ?>" width="50" height="50">
+            <?php else: ?>
+                Sem foto
+            <?php endif; ?>
+        </td>
 
         <td><a href="atualizar.php?alterar=<?= $funcionario->CPF ?>">Alterar</a></td>
         <td><a href="index.php?excluir=<?= $funcionario->CPF ?>">Excluir</a></td>

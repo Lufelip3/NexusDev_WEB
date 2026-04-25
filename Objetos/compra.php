@@ -7,6 +7,7 @@ class Compra
     public $Data_Compra;
     public $CPF;
     public $CNPJ_Lab;
+    public $Finalizada;
     public $bd;
 
     public function __construct($bd)
@@ -122,5 +123,22 @@ class Compra
         $resultado->execute();
 
         return $resultado->fetch(PDO::FETCH_OBJ);
+    }
+
+    public function finalizarStatus($NotaFiscal_Entrada)
+    {
+        $sql = "UPDATE compra SET Finalizada = 1 WHERE NotaFiscal_Entrada = :NotaFiscal_Entrada";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":NotaFiscal_Entrada", $NotaFiscal_Entrada, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function salvarRascunho($NotaFiscal_Entrada, $Valor_Total)
+    {
+        $sql = "UPDATE compra SET Valor_Total = :Valor_Total WHERE NotaFiscal_Entrada = :NotaFiscal_Entrada";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":Valor_Total", $Valor_Total);
+        $stmt->bindParam(":NotaFiscal_Entrada", $NotaFiscal_Entrada, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }

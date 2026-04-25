@@ -20,25 +20,43 @@ class ItemCompra {
         $sql = "INSERT INTO item (DataVal_Item, Qtd_Item, Valor_Item, Data_Venda, NotaFiscal_Entrada, Cod_CatMed, Cod_Med) 
                 VALUES (:dataVal, :qtd, :valor, :dataVenda, :notaFiscal, :codCatMed, :codMed)";
         $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":dataVal", $this->DataVal_Item, PDO::PARAM_STR);
-        $stmt->bindParam(":qtd", $this->Qtd_Item, PDO::PARAM_INT);
-        $stmt->bindParam(":valor", $this->Valor_Item, PDO::PARAM_STR);
-        $stmt->bindParam(":dataVenda", $this->Data_Venda, PDO::PARAM_STR);
-        $stmt->bindParam(":notaFiscal", $this->NotaFiscal_Entrada, PDO::PARAM_INT);
-        $stmt->bindParam(":codCatMed", $this->Cod_CatMed, PDO::PARAM_INT);
-        $stmt->bindParam(":codMed", $this->Cod_Med, PDO::PARAM_INT);
-
+        $stmt->bindParam(":dataVal",    $this->DataVal_Item,        PDO::PARAM_STR);
+        $stmt->bindParam(":qtd",        $this->Qtd_Item,            PDO::PARAM_INT);
+        $stmt->bindParam(":valor",      $this->Valor_Item,          PDO::PARAM_STR);
+        $stmt->bindParam(":dataVenda",  $this->Data_Venda,          PDO::PARAM_STR);
+        $stmt->bindParam(":notaFiscal", $this->NotaFiscal_Entrada,  PDO::PARAM_INT);
+        $stmt->bindParam(":codCatMed",  $this->Cod_CatMed,          PDO::PARAM_INT);
+        if ($this->Cod_Med === null) {
+            $stmt->bindValue(":codMed", null, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindParam(":codMed", $this->Cod_Med, PDO::PARAM_INT);
+        }
         return $stmt->execute();
     }
 
     public function lerPorNotaFiscal($notaFiscal) {
-        $sql = "SELECT i.*, m.Nome_Med 
+        $sql = "SELECT i.*, cm.Nome_CatMed AS Nome_Med, cm.EAN_Med, cm.dataValItemCat, cm.Desc_CatMed
                 FROM item i 
-                JOIN medicamento m ON i.Cod_Med = m.Cod_Med 
+                JOIN catalogo_medicamento cm ON i.Cod_CatMed = cm.Cod_CatMed
                 WHERE i.NotaFiscal_Entrada = :notaFiscal";
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":notaFiscal", $notaFiscal, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function excluir($Cod_Item) {
+        $sql = "DELETE FROM item WHERE Cod_Item = :Cod_Item";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":Cod_Item", $Cod_Item, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function atualizarCodMed($Cod_Item, $Cod_Med) {
+        $sql = "UPDATE item SET Cod_Med = :Cod_Med WHERE Cod_Item = :Cod_Item";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":Cod_Med", $Cod_Med, PDO::PARAM_INT);
+        $stmt->bindParam(":Cod_Item", $Cod_Item, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }
