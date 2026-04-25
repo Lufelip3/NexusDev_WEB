@@ -1,56 +1,17 @@
 <?php
-<<<<<<< HEAD
-include_once("../Objetos/drogariaController.php");
-if($_SERVER["REQUEST_METHOD"] === "POST"){
-    $controller = new drogariaController();
-
-    if(isset($_POST["cadastrar"])){
-        $a = $controller->cadastrarDrogaria($_POST["drogaria"], $_FILES["drogaria"] ?? null);
-=======
 include_once("../objetos/drogariaController.php");
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $controller = new drogariaController();
-    if (isset($_POST["cadastrar"])) {
-        $a = $controller->cadastrarDrogaria($_POST["drogaria"]);
->>>>>>> c10428bab887fe52fce0ce24eca8f8fc24d3f195
-    }
+  $controller = new drogariaController();
+  if (isset($_POST["cadastrar"])) {
+    $a = $controller->cadastrarDrogaria($_POST["drogaria"]);
+  }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<<<<<<< HEAD
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastrar Drogaria</title>
-</head>
-<body>
-<h1>Cadastro de Drogarias</h1>
-<a href="index.php">Voltar</a>
-
-<form action="cadastro.php" method="post" enctype="multipart/form-data">
-    <label>Nome</label>
-    <input type="text" name="drogaria[nome]"><br><br>
-    
-    <label>E-mail</label>
-    <input type="email" name="drogaria[email]"><br><br>
-    
-    <label>Telefone</label>
-    <input type="text" name="drogaria[telefone]"><br><br>
-    
-    <label>CNPJ</label>
-    <input type="text" name="drogaria[cnpj]"><br><br>
-    
-    <label>CEP</label>
-    <input type="text" name="drogaria[cep]"><br><br>
-    
-    <label>Número</label>
-    <input type="number" name="drogaria[numerodrog]"><br><br>
-
-    <label>Foto da Drogaria</label>
-    <input type="file" name="drogaria[Foto_Drog]"><br><br>
-=======
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastrar Drogaria – PharmaPulse</title>
@@ -66,22 +27,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       margin: 0 auto;
       animation: fadeIn 0.5s ease-out forwards;
     }
+
     .ph-form-card {
       background: #ffffff;
       border-radius: 20px;
       padding: 40px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
       border: 1px solid rgba(226, 232, 240, 0.8);
       position: relative;
       overflow: hidden;
     }
+
     .ph-form-card::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0; height: 6px;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
       background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
     }
-    .ph-form-header { margin-bottom: 32px; }
+
+    .ph-form-header {
+      margin-bottom: 32px;
+    }
+
     .ph-form-title {
       font-size: 1.5rem;
       font-weight: 700;
@@ -89,20 +59,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       margin-bottom: 8px;
       font-family: 'Inter', sans-serif;
     }
-    .ph-form-subtitle { color: #64748b; font-size: 0.95rem; }
+
+    .ph-form-subtitle {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
     .ph-form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
     }
-    .ph-input-group { display: flex; flex-direction: column; gap: 8px; }
-    .ph-input-group.full { grid-column: 1 / -1; }
+
+    .ph-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ph-input-group.full {
+      grid-column: 1 / -1;
+    }
+
     .ph-label {
       font-weight: 600;
       color: #334155;
       font-size: 0.9rem;
       font-family: 'Inter', sans-serif;
     }
+
     .ph-input {
       padding: 14px 16px;
       border: 1px solid #cbd5e1;
@@ -113,12 +98,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       background: #f8fafc;
       transition: all 0.3s ease;
     }
+
     .ph-input:focus {
       outline: none;
       border-color: #3b82f6;
       background: #ffffff;
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     }
+
     .ph-form-footer {
       display: flex;
       justify-content: flex-end;
@@ -128,6 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       padding-top: 24px;
       border-top: 1px solid #e2e8f0;
     }
+
     .ph-btn-secondary {
       display: inline-flex;
       align-items: center;
@@ -142,7 +130,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       font-family: 'Inter', sans-serif;
       transition: all 0.2s;
     }
-    .ph-btn-secondary:hover { background: #e2e8f0; color: #1e293b; }
+
+    .ph-btn-secondary:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
     .ph-btn-primary {
       display: inline-flex;
       align-items: center;
@@ -159,20 +152,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       font-family: 'Inter', sans-serif;
       transition: all 0.3s ease;
     }
+
     .ph-btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     @media (max-width: 768px) {
-      .ph-form-grid { grid-template-columns: 1fr; }
-      .ph-form-card { padding: 24px; }
+      .ph-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ph-form-card {
+        padding: 24px;
+      }
     }
   </style>
 </head>
+
 <body class="pharma-app">
 
   <!-- ═══ SIDEBAR ══════════════════════════════ -->
@@ -211,7 +220,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <a href="../index.php" class="ph-btn-exit"><span>⏻</span> Sair</a>
     </div>
   </aside>
->>>>>>> c10428bab887fe52fce0ce24eca8f8fc24d3f195
 
   <!-- ═══ MAIN ══════════════════════════════════ -->
   <div class="ph-main" id="ph-main">
@@ -245,7 +253,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
               <div class="ph-input-group full">
                 <label class="ph-label">Nome da Drogaria</label>
-                <input type="text" name="drogaria[nome]" class="ph-input" placeholder="Ex: Farmácia Central Ltda." required>
+                <input type="text" name="drogaria[nome]" class="ph-input" placeholder="Ex: Farmácia Central Ltda."
+                  required>
               </div>
 
               <div class="ph-input-group">
@@ -260,7 +269,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
               <div class="ph-input-group full">
                 <label class="ph-label">E-mail Comercial</label>
-                <input type="email" name="drogaria[email]" class="ph-input" placeholder="contato@drogaria.com.br" required>
+                <input type="email" name="drogaria[email]" class="ph-input" placeholder="contato@drogaria.com.br"
+                  required>
               </div>
 
               <div class="ph-input-group">
@@ -313,7 +323,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   <script>
     const hamburger = document.getElementById('ph-hamburger');
-    const sidebar   = document.getElementById('ph-sidebar');
+    const sidebar = document.getElementById('ph-sidebar');
 
     hamburger.addEventListener('click', () => {
       sidebar.classList.toggle('ph-sidebar--open');
@@ -329,8 +339,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     });
   </script>
 </body>
-<<<<<<< HEAD
-</html>
-=======
+<<<<<<< HEAD </html>
+  =======
+
 </html>
 >>>>>>> c10428bab887fe52fce0ce24eca8f8fc24d3f195

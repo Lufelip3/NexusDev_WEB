@@ -1,33 +1,29 @@
-<!DOCTYPE html><?php
+<!DOCTYPE html>
+<?php
 ob_start();
 include_once("../Objetos/drogariaController.php");
 
 $controller = new DrogariaController();
-$drogaria   = $controller->index();
+$drogaria = $controller->index();
 global $drogaria;
 $a = null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["pesquisar"])) {
-        $a = $controller->pesquisarDrogaria($_POST["pesquisar"]);
-    }
+  if (isset($_POST["pesquisar"])) {
+    $a = $controller->pesquisarDrogaria($_POST["pesquisar"]);
+  }
 }
 
-<<<<<<< HEAD
-if($_SERVER["REQUEST_METHOD"] == "GET"){
-    if(isset($_GET["excluir"])){
-        $controller->excluirDrogaria($_GET["excluir"]);
-=======
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET["excluir"])) {
-        $a = $controller->excluirDrogaria($_GET["excluir"]);
->>>>>>> c10428bab887fe52fce0ce24eca8f8fc24d3f195
-    }
+  if (isset($_GET["excluir"])) {
+    $a = $controller->excluirDrogaria($_GET["excluir"]);
+  }
 }
 
 $totalDrogs = $drogaria ? count($drogaria) : 0;
 ?>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,21 +34,9 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body class="pharma-app">
 
-<<<<<<< HEAD
-<h1>NexusDev</h1>
-<a href="../index.php">Voltar</a><br>
-<a href="cadastro.php">Cadastrar Drogaria</a><br>
-<a href="excluidos.php">Ver Excluidos</a>
-
-<h3>Pesquisar Drogaria</h3>
-<form method="POST" action="index.php">
-    <label>CNPJ</label>
-    <input Type="number" name="pesquisar">
-    <button>Pesquisar</button>
-</form>
-=======
   <!-- ═══ SIDEBAR ══════════════════════════════ -->
   <aside class="ph-sidebar" id="ph-sidebar">
 
@@ -60,7 +44,6 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
       <img src="../cfa_logo.png" alt="Logo CFA" class="ph-brand-logo">
       <span class="ph-brand-name">Distribuidora<br>CFA Ltda.</span>
     </div>
->>>>>>> c10428bab887fe52fce0ce24eca8f8fc24d3f195
 
     <nav class="ph-sidebar-nav">
       <a href="../Medicamento/index.php" class="ph-nav-item">
@@ -97,35 +80,6 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
 
   </aside>
 
-<<<<<<< HEAD
-<table>
-        <tr>
-            <td>CNPJ</td>
-            <td>Nome</td>
-            <td>E-mail</td>
-            <td>Telefone</td>
-            <td>CEP</td>
-            <td>Numero</td>
-            <td>Foto</td>
-        </tr>
-    <?php if($drogaria) : ?>
-    <?php foreach($drogaria as $drog) : ?>
-
-    <tr>
-        <td><?= $drog->CNPJ_Drog; ?></td>
-        <td><?= $drog->Nome_Drog; ?></td>
-        <td><?= $drog->Email_Drog; ?></td>
-        <td><?= $drog->Telefone_Drog; ?></td>
-        <td><?= $drog->Cep_Drog; ?></td>
-        <td><?= $drog->Num_Drog; ?></td>
-        <td>
-            <?php if(isset($drog->Foto_Drog) && $drog->Foto_Drog): ?>
-                <img src="../uploads/drogarias/<?= $drog->Foto_Drog ?>" width="50" height="50">
-            <?php else: ?>
-                Sem foto
-            <?php endif; ?>
-        </td>
-=======
   <!-- ═══ MAIN ══════════════════════════════════ -->
   <div class="ph-main" id="ph-main">
 
@@ -144,7 +98,6 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
         <div class="ph-avatar" title="Perfil do usuário">A</div>
       </div>
     </header>
->>>>>>> c10428bab887fe52fce0ce24eca8f8fc24d3f195
 
     <!-- Scrollable content -->
     <div class="ph-content">
@@ -154,13 +107,8 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
         <form method="POST" action="index.php" class="ph-search-form">
           <div class="ph-search-input-wrap">
             <span class="ph-search-icon">🔍</span>
-            <input
-              type="text"
-              name="pesquisar"
-              class="ph-search-input"
-              placeholder="Digite o CNPJ para buscar..."
-              value=""
-            >
+            <input type="text" name="pesquisar" class="ph-search-input" placeholder="Digite o CNPJ para buscar..."
+              value="">
           </div>
           <button type="submit" class="ph-filter-btn">
             <span>⚙</span> Filtrar
@@ -169,43 +117,44 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
       </section>
 
       <!-- ── Resultado da pesquisa ──────────── -->
-      <?php if ($a && is_array($a)) : ?>
-      <section class="ph-search-result" aria-label="Resultado da busca">
-        <p class="ph-result-label">Resultado da busca</p>
-        <div class="ph-lab-list">
-          <div class="ph-lab-card">
-            <div class="ph-lab-icon-wrap" style="background:#e8f0fe; display:flex; align-items:center; justify-content:center;">
-              <span class="ph-lab-icon">🏪</span>
-            </div>
-            <div class="ph-lab-info">
-              <span class="ph-lab-name"><?= htmlspecialchars($a['Nome_Drog'] ?? '') ?></span>
-              <span class="ph-lab-cnpj">CNPJ: <?= htmlspecialchars($a['CNPJ_Drog'] ?? '') ?></span>
-            </div>
-            <div class="ph-lab-actions-col">
-              <span class="ph-badge ph-badge--active">ENCONTRADO</span>
-              <div class="ph-action-btns">
-                <a href="atualizar.php?alterar=<?= $a['CNPJ_Drog'] ?>"
-                   class="ph-btn ph-btn--edit"
-                   title="Alterar">✏</a>
-                <a href="visualizar.php?id=<?= $a['CNPJ_Drog'] ?>"
-                   class="ph-btn ph-btn--view"
-                   title="Visualizar">👁</a>
-                <a href="index.php?excluir=<?= $a['CNPJ_Drog'] ?>"
-                   class="ph-btn ph-btn--delete"
-                   title="Excluir"
-                   onclick="return confirm('Deseja excluir esta drogaria?')">🗑</a>
+      <?php if ($a && is_array($a)): ?>
+        <section class="ph-search-result" aria-label="Resultado da busca">
+          <p class="ph-result-label">Resultado da busca</p>
+          <div class="ph-lab-list">
+            <div class="ph-lab-card">
+              <div class="ph-lab-icon-wrap"
+                style="background:#e8f0fe; display:flex; align-items:center; justify-content:center;">
+                <span class="ph-lab-icon">🏪</span>
+              </div>
+              <div class="ph-lab-info">
+                <span class="ph-lab-name">
+                  <?= htmlspecialchars($a['Nome_Drog'] ?? '') ?>
+                </span>
+                <span class="ph-lab-cnpj">CNPJ:
+                  <?= htmlspecialchars($a['CNPJ_Drog'] ?? '') ?>
+                </span>
+              </div>
+              <div class="ph-lab-actions-col">
+                <span class="ph-badge ph-badge--active">ENCONTRADO</span>
+                <div class="ph-action-btns">
+                  <a href="atualizar.php?alterar=<?= $a['CNPJ_Drog'] ?>" class="ph-btn ph-btn--edit" title="Alterar">✏</a>
+                  <a href="visualizar.php?id=<?= $a['CNPJ_Drog'] ?>" class="ph-btn ph-btn--view" title="Visualizar">👁</a>
+                  <a href="index.php?excluir=<?= $a['CNPJ_Drog'] ?>" class="ph-btn ph-btn--delete" title="Excluir"
+                    onclick="return confirm('Deseja excluir esta drogaria?')">🗑</a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
       <?php endif; ?>
 
       <!-- ── KPI Cards ──────────────────────── -->
       <section class="ph-kpi-section" aria-label="Indicadores">
         <div class="ph-kpi-card ph-kpi-card--primary">
           <div class="ph-kpi-left">
-            <span class="ph-kpi-value"><?= $totalDrogs ?></span>
+            <span class="ph-kpi-value">
+              <?= $totalDrogs ?>
+            </span>
             <span class="ph-kpi-label">Drogarias Ativas</span>
           </div>
           <div class="ph-kpi-icon">🏪</div>
@@ -229,52 +178,55 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
 
         <div class="ph-lab-list" id="ph-drog-list">
 
-          <?php if ($drogaria) : ?>
+          <?php if ($drogaria): ?>
             <?php
-              $icon_bgs = ['#e8f0fe','#e8f5e9','#fff3e0','#fce4ec','#e3f2fd','#f3e5f5'];
-              $icons    = ['🏪','💊','🏥','🧴','💉','🩺'];
-              $i = 0;
-              foreach ($drogaria as $drog) :
-                $bg   = $icon_bgs[$i % count($icon_bgs)];
-                $icon = $icons[$i % count($icons)];
-                $i++;
-            ?>
-            <div class="ph-lab-card">
+            $icon_bgs = ['#e8f0fe', '#e8f5e9', '#fff3e0', '#fce4ec', '#e3f2fd', '#f3e5f5'];
+            $icons = ['🏪', '💊', '🏥', '🧴', '💉', '🩺'];
+            $i = 0;
+            foreach ($drogaria as $drog):
+              $bg = $icon_bgs[$i % count($icon_bgs)];
+              $icon = $icons[$i % count($icons)];
+              $i++;
+              ?>
+              <div class="ph-lab-card">
 
-              <div class="ph-lab-icon-wrap" style="background:<?= $bg ?>; display:flex; align-items:center; justify-content:center;">
-                <span class="ph-lab-icon"><?= $icon ?></span>
-              </div>
-
-              <div class="ph-lab-info">
-                <span class="ph-lab-name"><?= htmlspecialchars($drog->Nome_Drog) ?></span>
-                <span class="ph-lab-cnpj">CNPJ: <?= htmlspecialchars($drog->CNPJ_Drog) ?></span>
-                <span class="ph-lab-meta">
-                  <?= htmlspecialchars($drog->Email_Drog) ?>
-                  &nbsp;·&nbsp;
-                  <?= htmlspecialchars($drog->Telefone_Drog) ?>
-                </span>
-              </div>
-
-              <div class="ph-lab-actions-col">
-                <span class="ph-badge ph-badge--active">ATIVA</span>
-                <div class="ph-action-btns">
-                  <a href="atualizar.php?alterar=<?= $drog->CNPJ_Drog ?>"
-                     class="ph-btn ph-btn--edit"
-                     title="Alterar">✏</a>
-                  <a href="visualizar.php?id=<?= $drog->CNPJ_Drog ?>"
-                     class="ph-btn ph-btn--view"
-                     title="Visualizar">👁</a>
-                  <a href="index.php?excluir=<?= $drog->CNPJ_Drog ?>"
-                     class="ph-btn ph-btn--delete"
-                     title="Excluir"
-                     onclick="return confirm('Deseja excluir esta drogaria?')">🗑</a>
+                <div class="ph-lab-icon-wrap"
+                  style="background:<?= $bg ?>; display:flex; align-items:center; justify-content:center;">
+                  <span class="ph-lab-icon">
+                    <?= $icon ?>
+                  </span>
                 </div>
-              </div>
 
-            </div>
+                <div class="ph-lab-info">
+                  <span class="ph-lab-name">
+                    <?= htmlspecialchars($drog->Nome_Drog) ?>
+                  </span>
+                  <span class="ph-lab-cnpj">CNPJ:
+                    <?= htmlspecialchars($drog->CNPJ_Drog) ?>
+                  </span>
+                  <span class="ph-lab-meta">
+                    <?= htmlspecialchars($drog->Email_Drog) ?>
+                    &nbsp;·&nbsp;
+                    <?= htmlspecialchars($drog->Telefone_Drog) ?>
+                  </span>
+                </div>
+
+                <div class="ph-lab-actions-col">
+                  <span class="ph-badge ph-badge--active">ATIVA</span>
+                  <div class="ph-action-btns">
+                    <a href="atualizar.php?alterar=<?= $drog->CNPJ_Drog ?>" class="ph-btn ph-btn--edit"
+                      title="Alterar">✏</a>
+                    <a href="visualizar.php?id=<?= $drog->CNPJ_Drog ?>" class="ph-btn ph-btn--view"
+                      title="Visualizar">👁</a>
+                    <a href="index.php?excluir=<?= $drog->CNPJ_Drog ?>" class="ph-btn ph-btn--delete" title="Excluir"
+                      onclick="return confirm('Deseja excluir esta drogaria?')">🗑</a>
+                  </div>
+                </div>
+
+              </div>
             <?php endforeach; ?>
 
-          <?php else : ?>
+          <?php else: ?>
             <div class="ph-empty-state">
               <span class="ph-empty-icon">🏪</span>
               <p>Nenhuma drogaria cadastrada ainda.</p>
@@ -318,7 +270,7 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
 
   <script>
     const hamburger = document.getElementById('ph-hamburger');
-    const sidebar   = document.getElementById('ph-sidebar');
+    const sidebar = document.getElementById('ph-sidebar');
 
     hamburger.addEventListener('click', () => {
       sidebar.classList.toggle('ph-sidebar--open');
@@ -336,5 +288,6 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
   </script>
 
 </body>
+
 </html>
 <?php ob_end_flush(); ?>
