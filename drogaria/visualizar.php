@@ -1,14 +1,15 @@
 <?php
-include_once("../objetos/laboratorioController.php");
+ob_start();
+include_once("../Objetos/drogariaController.php");
 
-$controller = new laboratorioController();
-$lab = null;
+$controller = new drogariaController();
+$drog = null;
 
 if (isset($_GET["id"])) {
-    $lab = $controller->localizarLaboratorio($_GET["id"]);
+    $drog = $controller->localizarDrogaria($_GET["id"]);
 }
 
-if (!$lab) {
+if (!$drog) {
     header("Location: index.php");
     exit();
 }
@@ -19,13 +20,15 @@ if (!$lab) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualizar Laboratório – PharmaPulse</title>
+  <meta name="description" content="Detalhes da drogaria – PharmaPulse ERP">
+  <title>Visualizar Drogaria – PharmaPulse</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <style>
+    /* Estilos específicos para a visualização premium */
     .ph-view-wrapper {
       padding: 32px 16px;
       max-width: 900px;
@@ -40,14 +43,14 @@ if (!$lab) {
       border: 1px solid rgba(226, 232, 240, 0.8);
     }
     .ph-view-header {
-      background: linear-gradient(135deg, #1a1c4b 0%, #2c2f8a 100%);
+      background: linear-gradient(135deg, #102c26 0%, #1a3d35 100%);
       padding: 40px;
       display: flex;
       align-items: center;
       gap: 32px;
       color: white;
     }
-    .ph-view-photo-wrap {
+    .ph-view-icon-wrap {
       width: 120px;
       height: 120px;
       border-radius: 24px;
@@ -59,13 +62,8 @@ if (!$lab) {
       overflow: hidden;
       border: 2px solid rgba(255, 255, 255, 0.2);
     }
-    .ph-view-photo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .ph-view-photo-placeholder {
-      font-size: 3rem;
+    .ph-view-icon-placeholder {
+      font-size: 3.5rem;
     }
     .ph-view-title-area h2 {
       font-size: 2rem;
@@ -74,7 +72,7 @@ if (!$lab) {
       color: white;
       font-family: 'Inter', sans-serif;
     }
-    .ph-view-title-area h2::before { display: none; } /* Remove legacy border */
+    .ph-view-title-area h2::before { display: none; }
     .ph-view-status {
       display: inline-flex;
       align-items: center;
@@ -175,11 +173,11 @@ if (!$lab) {
         <span class="ph-nav-icon">👥</span>
         <span class="ph-nav-label">Funcionários</span>
       </a>
-      <a href="index.php" class="ph-nav-item ph-nav-active">
+      <a href="../laboratorio/index.php" class="ph-nav-item">
         <span class="ph-nav-icon">🔬</span>
         <span class="ph-nav-label">Laboratórios</span>
       </a>
-      <a href="../drogaria/index.php" class="ph-nav-item">
+      <a href="index.php" class="ph-nav-item ph-nav-active">
         <span class="ph-nav-icon">🏪</span>
         <span class="ph-nav-label">Drogarias</span>
       </a>
@@ -205,8 +203,8 @@ if (!$lab) {
           <span></span><span></span><span></span>
         </button>
         <div class="ph-topbar-titles">
-          <h1 class="ph-page-title">Ficha do Laboratório</h1>
-          <p class="ph-page-subtitle">Detalhes cadastrais e rastreamento</p>
+          <h1 class="ph-page-title">Ficha da Drogaria</h1>
+          <p class="ph-page-subtitle">Detalhes cadastrais e localização da unidade</p>
         </div>
       </div>
       <div class="ph-topbar-right">
@@ -219,51 +217,47 @@ if (!$lab) {
         <div class="ph-view-card">
           
           <div class="ph-view-header">
-            <div class="ph-view-photo-wrap">
-              <?php if (!empty($lab['Foto_Lab'])) : ?>
-                <img src="../uploads/laboratorios/<?= htmlspecialchars($lab['Foto_Lab']) ?>" alt="<?= htmlspecialchars($lab['Nome_Lab']) ?>">
-              <?php else : ?>
-                <span class="ph-view-photo-placeholder">🔬</span>
-              <?php endif; ?>
+            <div class="ph-view-icon-wrap">
+              <span class="ph-view-icon-placeholder">🏪</span>
             </div>
             <div class="ph-view-title-area">
               <span class="ph-view-status">● Unidade Ativa</span>
-              <h2><?= htmlspecialchars($lab['Nome_Lab']) ?></h2>
-              <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Registrado no sistema PharmaPulse</p>
+              <h2><?= htmlspecialchars($drog['Nome_Drog'] ?? '') ?></h2>
+              <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Registrada no sistema PharmaPulse ERP</p>
             </div>
           </div>
 
           <div class="ph-view-body">
             <div class="ph-info-item">
-              <span class="ph-info-label">Razão Social / Nome</span>
-              <span class="ph-info-value"><?= htmlspecialchars($lab['Nome_Lab']) ?></span>
+              <span class="ph-info-label">Nome da Unidade</span>
+              <span class="ph-info-value"><?= htmlspecialchars($drog['Nome_Drog'] ?? '') ?></span>
             </div>
             <div class="ph-info-item">
               <span class="ph-info-label">CNPJ</span>
-              <span class="ph-info-value"><?= htmlspecialchars($lab['CNPJ_Lab']) ?></span>
+              <span class="ph-info-value"><?= htmlspecialchars($drog['CNPJ_Drog'] ?? '') ?></span>
             </div>
             <div class="ph-info-item">
               <span class="ph-info-label">E-mail Comercial</span>
-              <span class="ph-info-value"><?= htmlspecialchars($lab['Email_Lab']) ?></span>
+              <span class="ph-info-value"><?= htmlspecialchars($drog['Email_Drog'] ?? '') ?></span>
             </div>
             <div class="ph-info-item">
-              <span class="ph-info-label">Telefone</span>
-              <span class="ph-info-value"><?= htmlspecialchars($lab['Telefone_Lab']) ?></span>
+              <span class="ph-info-label">Telefone de Contato</span>
+              <span class="ph-info-value"><?= htmlspecialchars($drog['Telefone_Drog'] ?? '') ?></span>
             </div>
             <div class="ph-info-item">
               <span class="ph-info-label">CEP</span>
-              <span class="ph-info-value"><?= htmlspecialchars($lab['Cep_Lab']) ?></span>
+              <span class="ph-info-value"><?= htmlspecialchars($drog['Cep_Drog'] ?? '') ?></span>
             </div>
             <div class="ph-info-item">
               <span class="ph-info-label">Número</span>
-              <span class="ph-info-value"><?= htmlspecialchars($lab['Num_Lab']) ?></span>
+              <span class="ph-info-value"><?= htmlspecialchars($drog['Num_Drog'] ?? '') ?></span>
             </div>
           </div>
 
           <div class="ph-view-footer">
             <a href="index.php" class="ph-btn-back"><span>←</span> Voltar para a lista</a>
             <div class="ph-view-actions">
-              <a href="atualizar.php?alterar=<?= $lab['CNPJ_Lab'] ?>" class="ph-action-link ph-action-edit">Editar Laboratório</a>
+              <a href="atualizar.php?alterar=<?= $drog['CNPJ_Drog'] ?>" class="ph-action-link ph-action-edit">Editar Drogaria</a>
             </div>
           </div>
 
@@ -272,14 +266,15 @@ if (!$lab) {
     </div>
   </div>
 
+  <!-- ═══ BOTTOM NAV (mobile) ══════════════════ -->
   <nav class="ph-bottom-nav">
     <a href="../index.php" class="ph-bottom-item">
       <span class="ph-bottom-icon">🏠</span>
       <span class="ph-bottom-label">Home</span>
     </a>
     <a href="index.php" class="ph-bottom-item ph-bottom-active">
-      <span class="ph-bottom-icon">🔬</span>
-      <span class="ph-bottom-label">Labs</span>
+      <span class="ph-bottom-icon">🏪</span>
+      <span class="ph-bottom-label">Drogarias</span>
     </a>
     <a href="#" class="ph-bottom-item">
       <span class="ph-bottom-icon">📷</span>
@@ -294,3 +289,4 @@ if (!$lab) {
   </script>
 </body>
 </html>
+<?php ob_end_flush(); ?>
