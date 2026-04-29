@@ -2,7 +2,7 @@
 
 class Database
 {
-    private $host = "localhost:3306";
+    private $host = "localhost:3316";
     private $usuario = "root";
     private $senha = "123456";
     private $banco = "drogariaWEB";
