@@ -20,6 +20,8 @@ if (isset($_GET['auto_iniciar']) && $_GET['auto_iniciar'] == 1 && $logado) {
 $a = null;
 $status_selecionado = "";
 $cnpj_selecionado = "";
+$data_inicio = "";
+$data_fim    = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["iniciar_venda"])) {
@@ -37,11 +39,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $status_selecionado = $_POST["filtro_status"] ?? "";
-    $cnpj_selecionado = $_POST["filtro_drogaria"] ?? "";
-    $vendas = $controller->filtrarVendas($_POST["pesquisa_nf"] ?? null, $status_selecionado, $cnpj_selecionado);
+    $cnpj_selecionado   = $_POST["filtro_drogaria"] ?? "";
+    $data_inicio        = $_POST["data_inicio"] ?? "";
+    $data_fim           = $_POST["data_fim"] ?? "";
+    $vendas = $controller->filtrarVendas(
+        $_POST["pesquisa_nf"] ?? null,
+        $status_selecionado,
+        $cnpj_selecionado,
+        $data_inicio ?: null,
+        $data_fim ?: null
+    );
 } else {
     $status_selecionado = "";
-    $cnpj_selecionado = "";
+    $cnpj_selecionado   = "";
+    $data_inicio        = "";
+    $data_fim           = "";
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
@@ -163,11 +175,11 @@ $totalVendas = $vendas ? count($vendas) : 0;
     <div class="card card-pharma mb-4">
       <div class="card-body p-4">
         <form method="POST" class="row g-3 align-items-end">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label for="pesquisa_nf" class="form-label fw-bold">Pesquisar NF</label>
             <input type="number" class="form-control" id="pesquisa_nf" name="pesquisa_nf" placeholder="Ex: 105" value="<?= isset($_POST['pesquisa_nf']) ? htmlspecialchars($_POST['pesquisa_nf']) : '' ?>">
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label for="filtro_drogaria" class="form-label fw-bold">Filtrar por Drogaria</label>
             <select name="filtro_drogaria" id="filtro_drogaria" class="form-select">
               <option value="">Todas as Drogarias</option>
@@ -180,7 +192,7 @@ $totalVendas = $vendas ? count($vendas) : 0;
               <?php endif; ?>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label for="filtro_status" class="form-label fw-bold">Situação</label>
             <select name="filtro_status" id="filtro_status" class="form-select">
               <option value="">Todas as Situações</option>
@@ -188,7 +200,15 @@ $totalVendas = $vendas ? count($vendas) : 0;
               <option value="0" <?= $status_selecionado === "0" ? "selected" : "" ?>>Em Aberto / Rascunho</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
+            <label for="data_inicio_venda" class="form-label fw-bold">Data Início</label>
+            <input type="date" id="data_inicio_venda" name="data_inicio" class="form-control" value="<?= htmlspecialchars($data_inicio) ?>">
+          </div>
+          <div class="col-md-2">
+            <label for="data_fim_venda" class="form-label fw-bold">Data Fim</label>
+            <input type="date" id="data_fim_venda" name="data_fim" class="form-control" value="<?= htmlspecialchars($data_fim) ?>">
+          </div>
+          <div class="col-md-2">
             <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Aplicar Filtros</button>
           </div>
         </form>

@@ -4,146 +4,291 @@ include_once "../Objetos/compraController.php";
 include_once "../Objetos/laboratorioController.php";
 
 $controller = new CompraController();
-$compras = $controller->index();
-
 $labController = new laboratorioController();
 $laboratorios = $labController->index();
 
-$a = null;
+// ── Variáveis de filtro ──
+$a                   = null;
+$status_selecionado  = "";
+$cnpj_lab_selecionado = "";
+$data_inicio         = "";
+$data_fim            = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Iniciar nova compra
     if (isset($_POST["iniciar_compra"])) {
         if(!isset($_SESSION['cpf']) || empty($_SESSION['cpf'])){
             header("Location: ../login.php");
             exit();
         }
-        $cnpj_lab = trim($_POST['cnpj_lab']);
+        $cnpj_lab = trim($_POST['cnpj_lab'] ?? '');
         if(empty($cnpj_lab)) {
-            echo "<script>alert('Selecione um laboratório para iniciar a compra!');</script>";
+            $erro_iniciar = 'Selecione um fornecedor/laboratório para iniciar a compra!';
         } else {
             $id_nota_fiscal = $controller->iniciarCompra($_SESSION['cpf'], $cnpj_lab);
-            header("Location: itensCompra.php?nota_fiscal_entrada=" . $id_nota_fiscal . "&cnpj_lab=" . $cnpj_lab);
+            header("Location: itensCompra.php?nota_fiscal_entrada=" . $id_nota_fiscal . "&cnpj_lab=" . urlencode($cnpj_lab));
             exit();
         }
     }
 
-    if (isset($_POST["pesquisar"])) {
-        $a = $controller->pesquisaCompra($_POST["pesquisar"]);
+    // Pesquisa por NF
+    if (isset($_POST["pesquisa_nf"]) && !empty($_POST["pesquisa_nf"])) {
+        $a = $controller->pesquisaCompra($_POST["pesquisa_nf"]);
     }
-}
 
-if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    // Filtros combinados
+    $status_selecionado   = $_POST["filtro_status"] ?? "";
+    $cnpj_lab_selecionado = $_POST["filtro_lab"]    ?? "";
+    $data_inicio          = $_POST["data_inicio"]   ?? "";
+    $data_fim             = $_POST["data_fim"]       ?? "";
+
+    $compras = $controller->filtrarCompras(
+        $_POST["pesquisa_nf"]  ?? null,
+        $cnpj_lab_selecionado  ?: null,
+        $status_selecionado    !== "" ? $status_selecionado : null,
+        $data_inicio           ?: null,
+        $data_fim              ?: null
+    );
+
+} else {
+
+    $compras = $controller->index();
+
     if (isset($_GET["excluir"])) {
         $controller->excluirCompra($_GET["excluir"]);
+        header("Location: index.php");
+        exit();
     }
 }
+
+$totalCompras = $compras ? count($compras) : 0;
 ?>
-
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Compras Cadastradas</title>
-
-    <style>
-        table,tr,td{
-            border:1px solid black;
-            border-collapse:collapse;
-            padding:5px;
-        }
-    </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compras – PharmaPulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
+<body class="d-flex flex-nowrap" style="font-family: 'Manrope', sans-serif;">
 
-<body>
+  <aside class="b5-sidebar offcanvas-lg offcanvas-start p-3" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+    <div class="offcanvas-header d-lg-none border-bottom border-opacity-25 border-light mb-3">
+      <h5 class="offcanvas-title fw-bold text-white text-uppercase" id="menuLateralLabel">Distribuidora CFA</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#menuLateral" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
+      <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
+        <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
+      </a>
+      <ul class="nav nav-pills flex-column mb-auto gap-2">
+        <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
+        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
+        <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
+        <li class="nav-item"><a href="index.php" class="nav-link active" aria-current="page"><span class="fs-5">🛒</span> Compras</a></li>
+        <li class="nav-item"><a href="../Venda/index.php" class="nav-link"><span class="fs-5">📈</span> Vendas</a></li>
+      </ul>
+      <hr class="border-secondary mt-auto">
+      <div class="ph-sidebar-footer">
+        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none"><span class="fs-5">⏻</span> Sair do Sistema</a>
+      </div>
+    </div>
+  </aside>
 
-<h1>Compras</h1>
-<a href="../index.php">Voltar</a><br><br>
+  <main class="b5-main p-4 p-md-5">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4 gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"><span class="fs-4">☰</span></button>
+        <div>
+          <h1 class="display-6 fw-bold m-0" style="color:#1a1c4b;">Painel de Compras</h1>
+          <p class="text-secondary mb-0">Central de notas fiscais de entrada.</p>
+        </div>
+      </div>
+    </div>
 
-<form method="POST">
-    <label>Selecione o Laboratório para a nova compra:</label><br>
-    <select name="cnpj_lab" required>
-        <option value="">Selecione...</option>
-        <?php if($laboratorios): ?>
-            <?php foreach($laboratorios as $lab): ?>
-                <option value="<?= $lab->CNPJ_Lab ?>"><?= $lab->Nome_Lab ?> - <?= $lab->CNPJ_Lab ?></option>
-            <?php endforeach; ?>
+    <!-- Iniciar Nova Compra -->
+    <div class="card card-pharma mb-4">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3" style="color:#1a1c4b;">🛒 Iniciar Nova Compra</h5>
+        <?php if (!empty($erro_iniciar)): ?>
+          <div class="alert alert-warning mb-3"><?= htmlspecialchars($erro_iniciar) ?></div>
         <?php endif; ?>
-    </select>
-    <button name="iniciar_compra">Iniciar Compra</button>
-</form>
-<br>
+        <form method="POST" class="row g-3 align-items-end">
+          <div class="col-md-8">
+            <label for="cnpj_lab" class="form-label fw-bold">Selecione o Fornecedor / Laboratório</label>
+            <select name="cnpj_lab" id="cnpj_lab" class="form-select" required>
+              <option value="">Selecione...</option>
+              <?php if($laboratorios): ?>
+                <?php foreach($laboratorios as $lab): ?>
+                  <option value="<?= $lab->CNPJ_Lab ?>"><?= htmlspecialchars($lab->Nome_Lab) ?> — <?= $lab->CNPJ_Lab ?></option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" name="iniciar_compra" class="btn btn-pharma-success w-100 fw-bold">+ Iniciar Compra</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-<h3>Pesquisar Compra</h3>
+    <!-- Filtros (espelhando Venda/index.php) -->
+    <div class="card card-pharma mb-4">
+      <div class="card-body p-4">
+        <form method="POST" class="row g-3 align-items-end">
+          <!-- NF -->
+          <div class="col-md-2">
+            <label for="pesquisa_nf" class="form-label fw-bold">Pesquisar NF</label>
+            <input type="number" class="form-control" id="pesquisa_nf" name="pesquisa_nf"
+                   placeholder="Ex: 12"
+                   value="<?= isset($_POST['pesquisa_nf']) ? htmlspecialchars($_POST['pesquisa_nf']) : '' ?>">
+          </div>
+          <!-- Filtrar por Fornecedor (≡ Drogaria em Venda) -->
+          <div class="col-md-2">
+            <label for="filtro_lab" class="form-label fw-bold">Filtrar por Fornecedor</label>
+            <select name="filtro_lab" id="filtro_lab" class="form-select">
+              <option value="">Todos os Fornecedores</option>
+              <?php if($laboratorios): ?>
+                <?php foreach($laboratorios as $lab): ?>
+                  <option value="<?= $lab->CNPJ_Lab ?>" <?= $cnpj_lab_selecionado == $lab->CNPJ_Lab ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($lab->Nome_Lab) ?>
+                  </option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </select>
+          </div>
+          <!-- Situação (≡ Situação em Venda) -->
+          <div class="col-md-2">
+            <label for="filtro_status" class="form-label fw-bold">Situação</label>
+            <select name="filtro_status" id="filtro_status" class="form-select">
+              <option value="">Todas as Situações</option>
+              <option value="1" <?= $status_selecionado === "1" ? "selected" : "" ?>>Finalizada</option>
+              <option value="0" <?= $status_selecionado === "0" ? "selected" : "" ?>>Em Aberto / Rascunho</option>
+            </select>
+          </div>
+          <!-- Data Início -->
+          <div class="col-md-2">
+            <label for="data_inicio_compra" class="form-label fw-bold">Data Início</label>
+            <input type="date" id="data_inicio_compra" name="data_inicio" class="form-control" value="<?= htmlspecialchars($data_inicio) ?>">
+          </div>
+          <!-- Data Fim -->
+          <div class="col-md-2">
+            <label for="data_fim_compra" class="form-label fw-bold">Data Fim</label>
+            <input type="date" id="data_fim_compra" name="data_fim" class="form-control" value="<?= htmlspecialchars($data_fim) ?>">
+          </div>
+          <!-- Botão -->
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Aplicar Filtros</button>
+          </div>
+        </form>
 
-<form method="POST">
-    <label>Nota Fiscal</label>
-    <input type="number" name="pesquisar">
-    <button>Pesquisar</button>
-</form>
-
-<table>
-    <tr>
-        <td>Nota Fiscal</td>
-        <td>Valor Total</td>
-        <td>Data Compra</td>
-        <td>CPF</td>
-        <td>CNPJ Laboratório</td>
-    </tr>
-
-    <?php if($a) : ?>
-        <tr>
-            <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $a->NotaFiscal_Entrada ?>"><?= $a->NotaFiscal_Entrada ?></a></td>
-            <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $a->NotaFiscal_Entrada ?>"><?= $a->Valor_Total ?></a></td>
-            <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $a->NotaFiscal_Entrada ?>"><?= $a->Data_Compra ?></a></td>
-            <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $a->NotaFiscal_Entrada ?>"><?= $a->CPF ?></a></td>
-            <td><a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $a->NotaFiscal_Entrada ?>"><?= $a->CNPJ_Lab ?></a></td>
-        </tr>
-    <?php endif; ?>
-</table>
-
-<h2>Compras cadastradas</h2>
-
-<table>
-    <tr>
-        <td>Nota Fiscal</td>
-        <td>Valor Total</td>
-        <td>Data Compra</td>
-        <td>CPF</td>
-        <td>CNPJ Laboratório</td>
-        <td>Status</td>
-        <td>Ações</td>
-    </tr>
-
-    <?php if($compras) : ?>
-        <?php foreach($compras as $compra) : ?>
-            <tr>
-                <td><?= $compra->NotaFiscal_Entrada ?></td>
-                <td>R$ <?= number_format($compra->Valor_Total ?? 0, 2, ',', '.') ?></td>
-                <td><?= $compra->Data_Compra ?></td>
-                <td><?= $compra->CPF ?></td>
-                <td><?= $compra->CNPJ_Lab ?></td>
+        <?php if ($a): ?>
+        <hr class="my-4">
+        <h5 class="fw-bold mb-3 text-success">Resultado Encontrado:</h5>
+        <div class="table-responsive">
+          <table class="table table-pharma mb-0 align-middle">
+            <thead><tr>
+              <th class="ps-4">NF</th><th>Valor Total</th><th>Data</th><th>CPF</th><th>CNPJ Lab</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td class="ps-4 fw-bold">#<?= $a->NotaFiscal_Entrada ?></td>
+                <td class="text-success fw-bold">R$ <?= number_format($a->Valor_Total ?? 0, 2, ',', '.') ?></td>
+                <td><?= $a->Data_Compra ? date('d/m/Y', strtotime($a->Data_Compra)) : '—' ?></td>
+                <td><?= htmlspecialchars($a->CPF) ?></td>
+                <td><?= htmlspecialchars($a->CNPJ_Lab) ?></td>
                 <td>
-                    <?php if($compra->Finalizada): ?>
-                        <span style="background:#27ae60;color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;">Finalizada</span>
-                    <?php else: ?>
-                        <span style="background:#f39c12;color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;">Em Aberto</span>
-                    <?php endif; ?>
+                  <?php if($a->Finalizada): ?>
+                    <span class="badge bg-success px-3 py-2">Finalizada</span>
+                  <?php else: ?>
+                    <span class="badge bg-warning text-dark px-3 py-2">Em Aberto</span>
+                  <?php endif; ?>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <?php endif; ?>
+      </div>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card border-0 bg-white shadow-sm" style="border-left: 4px solid #1a1c4b !important;">
+          <div class="card-body">
+            <h6 class="text-secondary mb-1">Total de Compras no Sistema</h6>
+            <h2 class="fw-bold mb-0" style="color:#1a1c4b;"><?= $totalCompras ?></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de compras -->
+    <h3 class="fw-bold mb-3" style="color:#1a1c4b;">Compras Registradas</h3>
+    <div class="card card-pharma">
+      <div class="card-body p-0">
+        <?php if($compras): ?>
+        <div class="table-responsive">
+          <table class="table table-pharma mb-0 align-middle">
+            <thead>
+              <tr>
+                <th class="ps-4">Nota Fiscal</th>
+                <th>Data da Compra</th>
+                <th>Valor Total</th>
+                <th>Fornecedor</th>
+                <th>Status</th>
+                <th class="text-end pe-4">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach($compras as $compra): ?>
+              <tr>
+                <td class="ps-4 fw-bold fs-6">#<?= $compra->NotaFiscal_Entrada ?></td>
+                <td><?= $compra->Data_Compra ? date('d/m/Y', strtotime($compra->Data_Compra)) : '—' ?></td>
+                <td class="fw-bold text-success">R$ <?= number_format($compra->Valor_Total ?? 0, 2, ',', '.') ?></td>
+                <td>
+                  <span class="text-secondary small fw-bold text-uppercase">
+                    <?= htmlspecialchars($compra->Nome_Lab ?? $compra->CNPJ_Lab ?? 'N/A') ?>
+                  </span>
                 </td>
                 <td>
-                    <?php if(!$compra->Finalizada): ?>
-                        <a href="itensCompra.php?nota_fiscal_entrada=<?= $compra->NotaFiscal_Entrada ?>&cnpj_lab=<?= $compra->CNPJ_Lab ?>">&#9998; Editar</a> |
-                    <?php endif; ?>
-                    <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>">&#128065; Ver</a>
-                    <?php if(!$compra->Finalizada): ?>
-                        | <a href="index.php?excluir=<?= $compra->NotaFiscal_Entrada ?>" onclick="return confirm('Excluir esta compra?')">&#128465; Excluir</a>
-                    <?php endif; ?>
+                  <?php if($compra->Finalizada): ?>
+                    <span class="badge bg-success px-3 py-2">Finalizada</span>
+                  <?php else: ?>
+                    <span class="badge bg-warning text-dark px-3 py-2">Em Aberto / Rascunho</span>
+                  <?php endif; ?>
                 </td>
-            </tr>
-        <?php endforeach; ?>
-    <?php endif; ?>
+                <td class="text-end pe-4">
+                  <?php if(!$compra->Finalizada): ?>
+                    <a href="itensCompra.php?nota_fiscal_entrada=<?= $compra->NotaFiscal_Entrada ?>&cnpj_lab=<?= urlencode($compra->CNPJ_Lab ?? '') ?>" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
+                  <?php endif; ?>
+                  <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-pharma-primary me-1">Ver Itens</a>
+                  <?php if(!$compra->Finalizada): ?>
+                    <a href="index.php?excluir=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta compra?')">🗑</a>
+                  <?php endif; ?>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <?php else: ?>
+        <div class="p-5 text-center">
+          <p class="text-secondary fs-5 mb-0">Nenhuma compra registrada.</p>
+        </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </main>
 
-</table>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html>

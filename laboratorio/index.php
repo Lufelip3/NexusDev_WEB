@@ -1,26 +1,26 @@
-<!DOCTYPE html><?php
+<?php
 ob_start();
 include_once("../Objetos/laboratorioController.php");
 
 $controller  = new LaboratorioController();
 $laboratorio = $controller->index();
-global $laboratorio;
-$a = null;
+$resultados  = null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["pesquisar"]) && isset($_POST["tipo_busca"])) {
-        $a = $controller->pesquisarLaboratorio($_POST["tipo_busca"], $_POST["pesquisar"]);
+        $resultados = $controller->pesquisarLaboratorio($_POST["tipo_busca"], $_POST["pesquisar"]);
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET["excluir"])) {
-        $a = $controller->excluirLaboratorio($_GET["excluir"]);
-    }
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["excluir"])) {
+    $controller->excluirLaboratorio($_GET["excluir"]);
 }
 
 $totalLabs = $laboratorio ? count($laboratorio) : 0;
+
+// Função labInitials removida conforme solicitação
 ?>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -30,272 +30,172 @@ $totalLabs = $laboratorio ? count($laboratorio) : 0;
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="pharma-app">
+<body class="d-flex flex-nowrap" style="font-family: 'Manrope', sans-serif;">
 
-  <!-- ═══ SIDEBAR ══════════════════════════════ -->
-  <aside class="ph-sidebar" id="ph-sidebar">
-
-    <div class="ph-sidebar-brand">
-      <img src="../cfa_logo.png" alt="Logo CFA" class="ph-brand-logo">
-      <span class="ph-brand-name">Distribuidora<br>CFA Ltda.</span>
+  <!-- Sidebar -->
+  <aside class="b5-sidebar offcanvas-lg offcanvas-start p-3" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+    <div class="offcanvas-header d-lg-none border-bottom border-opacity-25 border-light mb-3">
+      <h5 class="offcanvas-title fw-bold text-white text-uppercase" id="menuLateralLabel">Distribuidora CFA</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#menuLateral" aria-label="Fechar"></button>
     </div>
-
-    <nav class="ph-sidebar-nav">
-      <a href="../Medicamento/index.php" class="ph-nav-item">
-        <span class="ph-nav-icon">💊</span>
-        <span class="ph-nav-label">Medicamentos</span>
+    <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
+      <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
+        <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
       </a>
-      <a href="../index.php" class="ph-nav-item">
-        <span class="ph-nav-icon">👥</span>
-        <span class="ph-nav-label">Funcionários</span>
-      </a>
-      <a href="index.php" class="ph-nav-item ph-nav-active">
-        <span class="ph-nav-icon">🔬</span>
-        <span class="ph-nav-label">Laboratórios</span>
-      </a>
-      <a href="../drogaria/index.php" class="ph-nav-item">
-        <span class="ph-nav-icon">🏪</span>
-        <span class="ph-nav-label">Drogarias</span>
-      </a>
-      <a href="../Compra/index.php" class="ph-nav-item">
-        <span class="ph-nav-icon">🛒</span>
-        <span class="ph-nav-label">Compras</span>
-      </a>
-      <a href="../Venda/index.php" class="ph-nav-item">
-        <span class="ph-nav-icon">📈</span>
-        <span class="ph-nav-label">Vendas</span>
-      </a>
-    </nav>
-
-    <div class="ph-sidebar-footer">
-      <a href="../index.php" class="ph-btn-exit">
-        <span>⏻</span> Sair
-      </a>
+      <ul class="nav nav-pills flex-column mb-auto gap-2">
+        <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
+        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <li class="nav-item"><a href="index.php" class="nav-link active" aria-current="page"><span class="fs-5">🔬</span> Laboratórios</a></li>
+        <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
+        <li class="nav-item"><a href="../Compra/index.php" class="nav-link"><span class="fs-5">🛒</span> Compras</a></li>
+        <li class="nav-item"><a href="../Venda/index.php" class="nav-link"><span class="fs-5">📈</span> Vendas</a></li>
+      </ul>
+      <hr class="border-secondary mt-auto">
+      <div class="ph-sidebar-footer">
+        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none">
+          <span class="fs-5">⏻</span> Sair do Sistema
+        </a>
+      </div>
     </div>
-
   </aside>
 
-  <!-- ═══ MAIN ══════════════════════════════════ -->
-  <div class="ph-main" id="ph-main">
+  <!-- Conteúdo Principal -->
+  <main class="b5-main p-4 p-md-5">
 
-    <!-- Top Bar -->
-    <header class="ph-topbar">
-      <div class="ph-topbar-left">
-        <button class="ph-hamburger" id="ph-hamburger" aria-label="Abrir menu">
-          <span></span><span></span><span></span>
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-4 gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral">
+          <span class="fs-4">☰</span>
         </button>
-        <div class="ph-topbar-titles">
-          <h1 class="ph-page-title">Laboratórios</h1>
-          <p class="ph-page-subtitle">Controle e rastreio de unidades clínicas</p>
+        <div>
+          <h1 class="display-6 fw-bold m-0" style="color:#1a1c4b;">Laboratórios</h1>
+          <p class="text-secondary mb-0">Controle e rastreio de unidades clínicas.</p>
         </div>
       </div>
-      <div class="ph-topbar-right">
-        <div class="ph-avatar" title="Perfil do usuário">A</div>
+      <div class="d-flex gap-2">
+        <a href="excluidos.php" class="btn btn-outline-secondary fw-bold shadow-sm">🗑 Ver Excluídos</a>
+        <a href="cadastro.php" class="btn btn-pharma-success fw-bold shadow-sm px-4">+ Novo Lab</a>
       </div>
-    </header>
+    </div>
 
-    <!-- Scrollable content -->
-    <div class="ph-content">
-
-      <!-- ── Busca ───────────────────────────── -->
-      <section class="ph-search-section" aria-label="Pesquisar laboratório">
-        <form method="POST" action="index.php" class="ph-search-form">
-          <select name="tipo_busca" class="ph-select">
-            <option value="nome" <?= (isset($_POST['tipo_busca']) && $_POST['tipo_busca'] == 'nome') ? 'selected' : '' ?>>Nome</option>
-            <option value="cnpj" <?= (isset($_POST['tipo_busca']) && $_POST['tipo_busca'] == 'cnpj') ? 'selected' : '' ?>>CNPJ</option>
-          </select>
-          <div class="ph-search-input-wrap">
-            <span class="ph-search-icon">🔍</span>
-            <input
-              type="text"
-              id="pesquisar"
-              name="pesquisar"
-              class="ph-search-input"
-              placeholder="Digite o termo buscando..."
-              value=""
-            >
+    <!-- Bloco de filtro/busca -->
+    <div class="card card-pharma mb-4">
+      <div class="card-body p-4">
+        <form method="POST" action="index.php" class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label for="tipo_busca" class="form-label fw-bold">Buscar por</label>
+            <select name="tipo_busca" id="tipo_busca" class="form-select">
+              <option value="nome" <?= (isset($_POST['tipo_busca']) && $_POST['tipo_busca'] == 'nome') ? 'selected' : '' ?>>Nome</option>
+              <option value="cnpj" <?= (isset($_POST['tipo_busca']) && $_POST['tipo_busca'] == 'cnpj') ? 'selected' : '' ?>>CNPJ</option>
+            </select>
           </div>
-          <button type="submit" class="ph-filter-btn" id="btn-filtrar">
-            <span>⚙</span> Filtrar
-          </button>
+          <div class="col-md-6">
+            <label for="pesquisar" class="form-label fw-bold">Termo</label>
+            <input type="text" id="pesquisar" name="pesquisar" class="form-control" placeholder="Digite o termo..." value="<?= htmlspecialchars($_POST['pesquisar'] ?? '') ?>">
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Filtrar</button>
+          </div>
         </form>
-      </section>
 
-      <!-- ── Resultado da pesquisa ──────────── -->
-      <?php if ($a && is_array($a)) : ?>
-      <section class="ph-search-result" aria-label="Resultado da busca">
-        <p class="ph-result-label">Resultado da busca</p>
+        <?php if ($resultados && count($resultados) > 0): ?>
+        <hr class="my-4">
+        <h5 class="fw-bold mb-3 text-success">Resultados encontrados (<?= count($resultados) ?>):</h5>
         <div class="ph-lab-list">
-          <?php foreach($a as $res): ?>
+          <?php foreach ($resultados as $res): ?>
           <div class="ph-lab-card">
-            <div class="ph-lab-icon-wrap" style="background:#e8f0fe; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-              <?php if (!empty($res->Foto_Lab)) : ?>
-                <img src="../uploads/laboratorios/<?= htmlspecialchars($res->Foto_Lab) ?>" 
-                     alt="<?= htmlspecialchars($res->Nome_Lab) ?>"
-                     style="width: 100%; height: 100%; object-fit: cover;">
-              <?php else : ?>
-                <span class="ph-lab-icon">🔍</span>
+            <div class="ph-lab-icon-wrap" <?= empty($res->Foto_Lab) ? 'style="background:transparent;"' : '' ?>>
+              <?php if (!empty($res->Foto_Lab)): ?>
+                <img src="../uploads/laboratorios/<?= htmlspecialchars($res->Foto_Lab) ?>" alt="Logo" style="width: 46px; height: 46px; border-radius: var(--ph-radius-sm); object-fit: cover;">
+              <?php else: ?>
+                <span style="font-size:2rem;">🔬</span>
               <?php endif; ?>
             </div>
-            <div class="ph-lab-info">
-              <span class="ph-lab-name"><?= htmlspecialchars($res->Nome_Lab ?? '') ?></span>
-              <span class="ph-lab-cnpj">CNPJ: <?= htmlspecialchars($res->CNPJ_Lab ?? '') ?></span>
+            <div class="ph-lab-body">
+              <strong><?= htmlspecialchars($res->Nome_Lab ?? '') ?></strong>
+              <span>📋 <?= htmlspecialchars($res->CNPJ_Lab ?? '') ?></span>
+              <span>✉ <?= htmlspecialchars($res->Email_Lab ?? '') ?></span>
+              <span>📞 <?= htmlspecialchars($res->Telefone_Lab ?? '') ?></span>
             </div>
-            <div class="ph-lab-actions-col">
-              <span class="ph-badge ph-badge--active">ENCONTRADO</span>
+            <div class="ph-lab-actions">
+              <span class="ph-badge--active">● Ativo</span>
+              <div class="ph-card-btns">
+                <a href="atualizar.php?alterar=<?= $res->CNPJ_Lab ?>" class="ph-btn--edit">✏ Editar</a>
+                <a href="visualizar.php?id=<?= $res->CNPJ_Lab ?>" class="ph-btn--view">👁 Ver</a>
+                <a href="index.php?excluir=<?= $res->CNPJ_Lab ?>" class="ph-btn--delete" onclick="return confirm('Excluir este laboratório?')">🗑</a>
+              </div>
             </div>
           </div>
           <?php endforeach; ?>
         </div>
-      </section>
-      <?php endif; ?>
+        <?php elseif (isset($_POST['pesquisar'])): ?>
+        <hr class="my-4">
+        <p class="text-secondary mb-0">Nenhum resultado encontrado.</p>
+        <?php endif; ?>
+      </div>
+    </div>
 
-      <!-- ── KPI Cards ──────────────────────── -->
-      <section class="ph-kpi-section" aria-label="Indicadores">
-
-        <div class="ph-kpi-card ph-kpi-card--primary">
-          <div class="ph-kpi-left">
-            <span class="ph-kpi-value"><?= $totalLabs ?></span>
-            <span class="ph-kpi-label">Labs Ativos</span>
-          </div>
-          <div class="ph-kpi-icon">🔬</div>
-        </div>
-
-      </section>
-
-      <!-- ── Lista de Laboratórios ──────────── -->
-      <section class="ph-list-section" aria-label="Unidades registradas">
-
-        <div class="ph-list-header">
-          <h2 class="ph-section-title">Unidades Registradas</h2>
-          <div style="display: flex; gap: 12px; align-items: center;">
-            <a href="excluidos.php" class="ph-action-btn-secondary">
-              <span style="font-size: 1rem; line-height: 1;">🗑</span> Ver Excluídos
-            </a>
-            <a href="cadastro.php" class="ph-action-btn-primary" id="link-novo-lab">
-              <span style="font-size: 1.1rem; line-height: 1; margin-right: -2px;">+</span> Novo Lab
-            </a>
+    <!-- Indicador -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card border-0 bg-white shadow-sm" style="border-left: 4px solid #1a1c4b !important;">
+          <div class="card-body">
+            <h6 class="text-secondary mb-1">Laboratórios Ativos</h6>
+            <h2 class="fw-bold mb-0" style="color:#1a1c4b;"><?= $totalLabs ?></h2>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="ph-lab-list" id="ph-lab-list">
+    <!-- Lista em Cartões -->
+    <h3 class="fw-bold mb-3" style="color:#1a1c4b;">Unidades Registradas</h3>
 
-          <?php if ($laboratorio) : ?>
-            <?php
-              $icon_bgs = ['#e8f0fe','#e8f5e9','#fff3e0','#fce4ec','#e3f2fd','#f3e5f5'];
-              $icons    = ['🔬','🧪','⚗️','🧫','🧬','💉'];
-              $i = 0;
-              foreach ($laboratorio as $lab) :
-                $bg   = $icon_bgs[$i % count($icon_bgs)];
-                $icon = $icons[$i % count($icons)];
-                $i++;
-            ?>
-            <div class="ph-lab-card">
-
-              <div class="ph-lab-icon-wrap" style="background:<?= $bg ?>; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <?php if (!empty($lab->Foto_Lab)) : ?>
-                  <img src="../uploads/laboratorios/<?= htmlspecialchars($lab->Foto_Lab) ?>" 
-                       alt="<?= htmlspecialchars($lab->Nome_Lab) ?>"
-                       style="width: 100%; height: 100%; object-fit: cover;">
-                <?php else : ?>
-                  <span class="ph-lab-icon"><?= $icon ?></span>
-                <?php endif; ?>
-              </div>
-
-              <div class="ph-lab-info">
-                <span class="ph-lab-name"><?= htmlspecialchars($lab->Nome_Lab) ?></span>
-                <span class="ph-lab-cnpj">CNPJ: <?= htmlspecialchars($lab->CNPJ_Lab) ?></span>
-                <span class="ph-lab-meta">
-                  <?= htmlspecialchars($lab->Email_Lab) ?>
-                  &nbsp;·&nbsp;
-                  <?= htmlspecialchars($lab->Telefone_Lab) ?>
-                </span>
-              </div>
-
-              <div class="ph-lab-actions-col">
-                <span class="ph-badge ph-badge--active">ATIVA</span>
-                <div class="ph-action-btns">
-                  <a href="atualizar.php?alterar=<?= $lab->CNPJ_Lab ?>"
-                     class="ph-btn ph-btn--edit"
-                     title="Alterar">✏</a>
-                  <a href="visualizar.php?id=<?= $lab->CNPJ_Lab ?>"
-                     class="ph-btn ph-btn--view"
-                     title="Visualizar">👁</a>
-                  <a href="index.php?excluir=<?= $lab->CNPJ_Lab ?>"
-                     class="ph-btn ph-btn--delete"
-                     title="Excluir"
-                     onclick="return confirm('Deseja excluir este laboratório?')">🗑</a>
-                </div>
-              </div>
-
-            </div>
-            <?php endforeach; ?>
-
-          <?php else : ?>
-            <div class="ph-empty-state">
-              <span class="ph-empty-icon">🔬</span>
-              <p>Nenhum laboratório cadastrado ainda.</p>
-            </div>
+    <?php if ($laboratorio): ?>
+    <div class="ph-lab-list">
+      <?php foreach ($laboratorio as $lab): ?>
+      <div class="ph-lab-card">
+        <!-- Foto / Avatar -->
+        <div class="ph-lab-icon-wrap" <?= empty($lab->Foto_Lab) ? 'style="background:transparent;"' : '' ?>>
+          <?php if (!empty($lab->Foto_Lab)): ?>
+            <img src="../uploads/laboratorios/<?= htmlspecialchars($lab->Foto_Lab) ?>" alt="Logo" style="width: 46px; height: 46px; border-radius: var(--ph-radius-sm); object-fit: cover;">
+          <?php else: ?>
+            <span style="font-size:2rem;">🔬</span>
           <?php endif; ?>
+        </div>
 
-        </div><!-- .ph-lab-list -->
+        <!-- Dados -->
+        <div class="ph-lab-body">
+          <strong><?= htmlspecialchars($lab->Nome_Lab) ?></strong>
+          <span>📋 <?= htmlspecialchars($lab->CNPJ_Lab) ?></span>
+          <span>✉ <?= htmlspecialchars($lab->Email_Lab) ?></span>
+          <span>📞 <?= htmlspecialchars($lab->Telefone_Lab) ?></span>
+        </div>
 
-      </section>
+        <!-- Ações -->
+        <div class="ph-lab-actions">
+          <span class="ph-badge--active">● Ativo</span>
+          <div class="ph-card-btns">
+            <a href="atualizar.php?alterar=<?= $lab->CNPJ_Lab ?>" class="ph-btn--edit">✏ Editar</a>
+            <a href="visualizar.php?id=<?= $lab->CNPJ_Lab ?>" class="ph-btn--view">👁 Ver</a>
+            <a href="index.php?excluir=<?= $lab->CNPJ_Lab ?>" class="ph-btn--delete" onclick="return confirm('Deseja excluir este laboratório?')">🗑</a>
+          </div>
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    <?php else: ?>
+    <div class="card card-pharma p-5 text-center">
+      <p class="text-secondary fs-5 mb-0">Nenhum laboratório cadastrado.</p>
+    </div>
+    <?php endif; ?>
 
-    </div><!-- .ph-content -->
+  </main>
 
-    <!-- Footer -->
-    <footer class="ph-footer">
-      <p>Desenvolvido por <strong>NexusDev</strong> &copy; 2026</p>
-    </footer>
-
-  </div><!-- .ph-main -->
-
-  <!-- ═══ FAB ═══════════════════════════════════ -->
-  <a href="cadastro.php" class="ph-fab" id="ph-fab" title="Novo Laboratório">+</a>
-
-  <!-- ═══ BOTTOM NAV (mobile) ══════════════════ -->
-  <nav class="ph-bottom-nav" aria-label="Navegação principal">
-    <a href="../index.php" class="ph-bottom-item" id="bn-home">
-      <span class="ph-bottom-icon">🏠</span>
-      <span class="ph-bottom-label">Home</span>
-    </a>
-    <a href="index.php" class="ph-bottom-item ph-bottom-active" id="bn-labs">
-      <span class="ph-bottom-icon">🔬</span>
-      <span class="ph-bottom-label">Labs</span>
-    </a>
-    <a href="#" class="ph-bottom-item" id="bn-scan">
-      <span class="ph-bottom-icon">📷</span>
-      <span class="ph-bottom-label">Scan</span>
-    </a>
-    <a href="#" class="ph-bottom-item" id="bn-reports">
-      <span class="ph-bottom-icon">📊</span>
-      <span class="ph-bottom-label">Reports</span>
-    </a>
-  </nav>
-
-  <script>
-    const hamburger = document.getElementById('ph-hamburger');
-    const sidebar   = document.getElementById('ph-sidebar');
-
-    hamburger.addEventListener('click', () => {
-      sidebar.classList.toggle('ph-sidebar--open');
-    });
-
-    // Fecha sidebar ao clicar fora (mobile)
-    document.addEventListener('click', (e) => {
-      if (
-        sidebar.classList.contains('ph-sidebar--open') &&
-        !sidebar.contains(e.target) &&
-        !hamburger.contains(e.target)
-      ) {
-        sidebar.classList.remove('ph-sidebar--open');
-      }
-    });
-  </script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 <?php ob_end_flush(); ?>
