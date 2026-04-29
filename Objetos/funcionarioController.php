@@ -25,6 +25,19 @@ class FuncionarioController
         return $this->Funcionario->pesquisaFuncionario($CPF);
     }
 
+    /**
+     * Pesquisa por CPF (exact) ou Nome (LIKE) conforme $tipo.
+     * Retorna array de objetos ou array vazio.
+     */
+    public function pesquisarFuncionarioPorTipo(string $tipo, string $valor): array
+    {
+        if ($tipo === 'nome') {
+            return $this->Funcionario->pesquisarPorNome($valor) ?: [];
+        }
+        // default: cpf
+        return $this->Funcionario->pesquisaFuncionario($valor) ?: [];
+    }
+
     public function cadastrarFuncionario($dados, $arquivo)
     {
 

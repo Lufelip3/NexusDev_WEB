@@ -36,6 +36,16 @@ class Funcionario
         return $resultado->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function pesquisarPorNome($nome)
+    {
+        $like = "%$nome%";
+        $sql = "SELECT * FROM funcionario WHERE Nome_Fun LIKE :nome";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(':nome', $like, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function cadastrar()
     {
         $existente = $this->buscafuncionario($this->CPF);

@@ -25,9 +25,9 @@ class VendaController
         return $this->venda->lerPorStatus($status);
     }
 
-    public function filtrarVendas($nf, $status, $cnpj)
+    public function filtrarVendas($nf, $status, $cnpj, $data_inicio = null, $data_fim = null)
     {
-        return $this->venda->filtrar($nf, $status, $cnpj);
+        return $this->venda->filtrar($nf, $status, $cnpj, $data_inicio, $data_fim);
     }
 
     public function pesquisaVenda($NotaFiscal_Saida)

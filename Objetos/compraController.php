@@ -25,6 +25,11 @@ class CompraController
         return $this->compra->pesquisarCompra($NotaFiscal_Entrada);
     }
 
+    public function filtrarCompras($nf, $cnpj_lab, $status, $data_inicio = null, $data_fim = null)
+    {
+        return $this->compra->filtrar($nf, $cnpj_lab, $status, $data_inicio, $data_fim);
+    }
+
     public function iniciarCompra($cpf, $cnpj)
     {
         $this->compra->CPF = $cpf;
