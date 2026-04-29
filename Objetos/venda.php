@@ -35,22 +35,26 @@ Class venda{
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function filtrar($nf, $status, $cnpj){
+    public function filtrar($nf, $status, $cnpj, $data_inicio = null, $data_fim = null){
         $sql = "SELECT v.*, d.Nome_Drog 
                 FROM venda v 
                 LEFT JOIN drogaria d ON v.CNPJ_Drog = d.CNPJ_Drog
                 WHERE 1=1";
         
-        if($nf) $sql .= " AND v.NotaFiscal_Saida = :nf";
-        if($status !== "" && $status !== null) $sql .= " AND v.Finalizada = :status";
-        if($cnpj) $sql .= " AND v.CNPJ_Drog = :cnpj";
+        if($nf)                                  $sql .= " AND v.NotaFiscal_Saida = :nf";
+        if($status !== "" && $status !== null)   $sql .= " AND v.Finalizada = :status";
+        if($cnpj)                                $sql .= " AND v.CNPJ_Drog = :cnpj";
+        if($data_inicio)                         $sql .= " AND v.Data_Venda >= :data_inicio";
+        if($data_fim)                            $sql .= " AND v.Data_Venda <= :data_fim";
         
         $sql .= " ORDER BY v.NotaFiscal_Saida DESC";
         
         $stmt = $this->bd->prepare($sql);
-        if($nf) $stmt->bindParam(":nf", $nf, PDO::PARAM_INT);
-        if($status !== "" && $status !== null) $stmt->bindParam(":status", $status, PDO::PARAM_INT);
-        if($cnpj) $stmt->bindParam(":cnpj", $cnpj, PDO::PARAM_STR);
+        if($nf)                                  $stmt->bindParam(':nf',          $nf,          PDO::PARAM_INT);
+        if($status !== "" && $status !== null)   $stmt->bindParam(':status',      $status,      PDO::PARAM_INT);
+        if($cnpj)                                $stmt->bindParam(':cnpj',        $cnpj,        PDO::PARAM_STR);
+        if($data_inicio)                         $stmt->bindParam(':data_inicio', $data_inicio, PDO::PARAM_STR);
+        if($data_fim)                            $stmt->bindParam(':data_fim',    $data_fim,    PDO::PARAM_STR);
         
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);
