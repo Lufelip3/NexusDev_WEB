@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfólio – [Seu Nome]</title>
+</head>
+<body>
+
+  <header>
+    <h1>Seu Nome</h1>
+    <p>Estudante de Desenvolvimento de Sistemas - SENAC Rio Claro</p>
+  </header>
+
+  <nav>
+    <a href="#sobre">Sobre</a> |
+    <a href="#habilidades">Habilidades</a> |
+    <a href="#contato">Contato</a>
+  </nav>
+
+  <main>
+
+    <section id="sobre">
+      <h2>Sobre mim</h2>
+      <img src="imagens/foto.jpg" alt="Foto de [nome]" width="320">
+      <p>Seu parágrafo de apresentação aqui.</p>
+    </section>
+
+    <section id="habilidades">
+      <h2>Habilidades</h2>
+      <ul>
+        <li>HTML5</li>
+        <li>CSS3 (aprendendo)</li>
+        <li>JavaScript (em breve)</li>
+      </ul>
+    </section>
+
+    <section id="favoritos">
+      <h2>Minhas 3 coisas favoritas</h2>
+      <ol>
+        <li>...</li>
+        <li>...</li>
+        <li>...</li>
+      </ol>
+    </section>
+
+    <section id="contato">
+      <h2>Contato</h2>
+      <p>
+        <a href="https://github.com" target="_blank">GitHub</a> |
+        <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Desenvolvido por [Seu Nome] - UC15 SENAC 2026</p>
+  </footer>
+
+</body>
+</html>

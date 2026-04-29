@@ -1,0 +1,36 @@
+    <section id="horarios">
+    <h2>Horário de Aulas</h2>
+
+    <table>
+        <caption>Grade semanal — UC15</caption>
+
+        <thead>
+        <tr>
+            <th scope="col">Horário</th>
+            <th scope="col">Segunda</th>
+            <th scope="col">Quarta</th>
+            <th scope="col">Sexta</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <th scope="row">08:00 – 10:00</th>
+            <td colspan="2">Desenvolvimento Front-End</td>
+            <td>Livre</td>
+        </tr>
+        <tr>
+            <th scope="row">10:00 – 12:00</th>
+            <td>Banco de Dados</td>
+            <td rowspan="2">Projeto Integrador</td>
+            <td>Front-End (cont.)</td>
+        </tr>
+        <tr>
+            <th scope="row">13:00 – 15:00</th>
+            <td>Livre</td>
+            <td>Livre</td>
+        </tr>
+        </tbody>
+
+    </table>
+    </section>
