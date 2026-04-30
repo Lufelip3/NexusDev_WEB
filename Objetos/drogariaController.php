@@ -17,8 +17,8 @@ class drogariaController{
         return $this->drogaria->lerTodos();
     }
 
-    public function pesquisarDrogaria($cnpj){
-        return $this->drogaria->buscar($cnpj);
+    public function pesquisarDrogaria($termo){
+        return $this->drogaria->pesquisarGeral($termo);
     }
 
     public function cadastrarDrogaria($dados, $arquivo = null){
@@ -134,4 +134,4 @@ public function localizarDrogaria($cnpj){
 
         return false;
     }
-}
+}

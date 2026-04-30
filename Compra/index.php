@@ -185,7 +185,7 @@ $totalCompras = $compras ? count($compras) : 0;
           </div>
           <!-- Botão -->
           <div class="col-md-2">
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Aplicar Filtros</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold">Aplicar Filtros</button>
           </div>
         </form>
 
@@ -270,7 +270,7 @@ $totalCompras = $compras ? count($compras) : 0;
                   <?php if(!$compra->Finalizada): ?>
                     <a href="itensCompra.php?nota_fiscal_entrada=<?= $compra->NotaFiscal_Entrada ?>&cnpj_lab=<?= urlencode($compra->CNPJ_Lab ?? '') ?>" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
                   <?php endif; ?>
-                  <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-pharma-primary me-1">Ver Itens</a>
+                  <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-pharma-success me-1">Ver Itens</a>
                   <?php if(!$compra->Finalizada): ?>
                     <a href="index.php?excluir=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta compra?')">🗑</a>
                   <?php endif; ?>

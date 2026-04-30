@@ -214,7 +214,7 @@ unset($_SESSION['erro_venda']);
             <form method="POST" class="d-flex gap-2 mb-4 align-items-center">
               <input type="text" name="termo_med" class="form-control" placeholder="Nome do medicamento ou cód..."
                 value="<?= htmlspecialchars($_POST['termo_med'] ?? '') ?>">
-              <button type="submit" name="pesquisa_med" class="btn btn-pharma-primary px-4 fw-bold">Buscar</button>
+              <button type="submit" name="pesquisa_med" class="btn btn-pharma-success px-4 fw-bold">Buscar</button>
               <?php if (isset($_POST['pesquisa_med'])): ?>
                 <a href="novaVenda.php?nota_fiscal_saida=<?= $nota_fiscal ?>" class="btn btn-outline-secondary">X</a>
               <?php endif; ?>

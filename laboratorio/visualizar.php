@@ -108,7 +108,7 @@ if (!$lab) {
       </div>
       <!-- Footer -->
       <div class="card-footer bg-light d-flex justify-content-end gap-2 p-3">
-        <a href="atualizar.php?alterar=<?= $lab['CNPJ_Lab'] ?>" class="btn btn-pharma-primary px-4 fw-bold">✏ Editar Laboratório</a>
+        <a href="atualizar.php?alterar=<?= $lab['CNPJ_Lab'] ?>" class="btn btn-pharma-success px-4 fw-bold">✏ Editar Laboratório</a>
       </div>
     </div>
   </main>

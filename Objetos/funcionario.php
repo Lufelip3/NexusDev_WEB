@@ -46,6 +46,26 @@ class Funcionario
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function pesquisarGeral($termo)
+    {
+        $busca = "%$termo%";
+        $valorNumerico = preg_replace('/[^0-9]/', '', $termo);
+        
+        if (!empty($valorNumerico)) {
+            $buscaNumerica = "%$valorNumerico%";
+            $sql = "SELECT * FROM funcionario WHERE (Nome_Fun LIKE :busca OR REPLACE(REPLACE(CPF, '.', ''), '-', '') LIKE :buscaNumerica)";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(':busca', $busca, PDO::PARAM_STR);
+            $stmt->bindParam(':buscaNumerica', $buscaNumerica, PDO::PARAM_STR);
+        } else {
+            $sql = "SELECT * FROM funcionario WHERE Nome_Fun LIKE :busca";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(':busca', $busca, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function cadastrar()
     {
         $existente = $this->buscafuncionario($this->CPF);
@@ -123,10 +143,20 @@ class Funcionario
 
     public function login($redirect = "index.php")
     {
+        $login_cred = $this->email;
+        $cred_numerico = preg_replace('/[^0-9]/', '', $login_cred);
 
-        $sql = "SELECT * FROM funcionario WHERE Email_Fun = :email";
-        $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
+        if (!empty($cred_numerico)) {
+            $sql = "SELECT * FROM funcionario WHERE Email_Fun = :cred OR Nome_Fun = :cred OR REPLACE(REPLACE(CPF, '.', ''), '-', '') = :cred_num";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(":cred", $login_cred, PDO::PARAM_STR);
+            $stmt->bindParam(":cred_num", $cred_numerico, PDO::PARAM_STR);
+        } else {
+            $sql = "SELECT * FROM funcionario WHERE Email_Fun = :cred OR Nome_Fun = :cred";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(":cred", $login_cred, PDO::PARAM_STR);
+        }
+        
         $stmt->execute();
 
         $resultado = $stmt->fetch(PDO::FETCH_OBJ);
@@ -140,9 +170,10 @@ class Funcionario
                 header("Location: " . $redirect);
                 exit();
             } else {
-                header("Location: login.php");
-                exit();
+                return "Senha incorreta.";
             }
+        } else {
+            return "Usuário não encontrado.";
         }
     }
 }

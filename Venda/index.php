@@ -209,7 +209,7 @@ $totalVendas = $vendas ? count($vendas) : 0;
             <input type="date" id="data_fim_venda" name="data_fim" class="form-control" value="<?= htmlspecialchars($data_fim) ?>">
           </div>
           <div class="col-md-2">
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Aplicar Filtros</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold">Aplicar Filtros</button>
           </div>
         </form>
 
@@ -299,7 +299,7 @@ $totalVendas = $vendas ? count($vendas) : 0;
                     <a href="novaVenda.php?nota_fiscal_saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
                   <?php endif; ?>
                   
-                  <a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-pharma-primary me-1">Ver Itens</a>
+                  <a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-pharma-success me-1">Ver Itens</a>
                   
                   <?php if(!$venda->Finalizada): ?>
                     <a href="index.php?excluir=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta venda?')">🗑</a>
@@ -340,7 +340,7 @@ $totalVendas = $vendas ? count($vendas) : 0;
               <label for="senha" class="form-label fw-bold">Senha</label>
               <input type="password" class="form-control" id="senha" name="senha" placeholder="••••••••" required style="padding: 12px; border-radius: 8px;">
             </div>
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold py-3 shadow-sm" style="border-radius: 8px;">Entrar e Continuar</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold py-3 shadow-sm" style="border-radius: 8px;">Entrar e Continuar</button>
           </form>
         </div>
       </div>

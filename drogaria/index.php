@@ -88,11 +88,11 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
       <div class="card-body p-4">
         <form method="POST" action="index.php" class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label for="pesquisar" class="form-label fw-bold">Pesquisar por CNPJ</label>
-            <input type="text" id="pesquisar" name="pesquisar" class="form-control" placeholder="Digite o CNPJ para buscar..." value="<?= htmlspecialchars($_POST['pesquisar'] ?? '') ?>">
+            <label for="pesquisar" class="form-label fw-bold">Pesquisar</label>
+            <input type="text" id="pesquisar" name="pesquisar" class="form-control" placeholder="Digite o nome ou CNPJ para buscar..." value="<?= htmlspecialchars($_POST['pesquisar'] ?? '') ?>">
           </div>
           <div class="col-md-3">
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Filtrar</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold">Filtrar</button>
           </div>
         </form>
 

@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <input type="text" id="pesquisar" name="pesquisar" class="form-control" placeholder="Digite o nome ou código do medicamento...">
           </div>
           <div class="col-md-3">
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Filtrar</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold">Filtrar</button>
           </div>
         </form>
 
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <td><?= htmlspecialchars($a->DataVal_Med) ?></td>
                 <td class="fw-bold text-success">R$ <?= number_format($a->Valor_Med, 2, ',', '.') ?></td>
                 <td class="text-end pe-4">
-                  <a href="atualizar.php?alterar=<?= $a->Cod_Med ?>" class="btn btn-sm btn-pharma-primary me-1">✏ Editar</a>
+                  <a href="atualizar.php?alterar=<?= $a->Cod_Med ?>" class="btn btn-sm btn-pharma-success me-1">✏ Editar</a>
                   <a href="index.php?excluir=<?= $a->Cod_Med ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir este medicamento?')">🗑</a>
                 </td>
               </tr>
@@ -150,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <td><?= htmlspecialchars($med->DataVal_Med) ?></td>
                 <td class="fw-bold text-success">R$ <?= number_format($med->Valor_Med, 2, ',', '.') ?></td>
                 <td class="text-end pe-4">
-                  <a href="atualizar.php?alterar=<?= $med->Cod_Med ?>" class="btn btn-sm btn-pharma-primary me-1">✏</a>
+                  <a href="atualizar.php?alterar=<?= $med->Cod_Med ?>" class="btn btn-sm btn-pharma-success me-1">✏</a>
                   <a href="index.php?excluir=<?= $med->Cod_Med ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir este medicamento?')">🗑</a>
                 </td>
               </tr>

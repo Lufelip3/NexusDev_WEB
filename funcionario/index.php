@@ -13,8 +13,7 @@ $resultados   = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST["pesquisar"]) && $_POST["pesquisar"] !== '') {
-        $tipo = $_POST["tipo_busca"] ?? 'cpf';
-        $resultados = $controller->pesquisarFuncionarioPorTipo($tipo, $_POST["pesquisar"]);
+        $resultados = $controller->pesquisarFuncionarioGeral($_POST["pesquisar"]);
     }
 }
 
@@ -90,21 +89,14 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
     <div class="card card-pharma mb-4">
       <div class="card-body p-4">
         <form method="POST" action="index.php" class="row g-3 align-items-end">
-          <div class="col-md-3">
-            <label for="tipo_busca" class="form-label fw-bold">Buscar por</label>
-            <select name="tipo_busca" id="tipo_busca" class="form-select">
-              <option value="cpf"  <?= (isset($_POST['tipo_busca']) && $_POST['tipo_busca'] === 'cpf')  ? 'selected' : '' ?>>CPF</option>
-              <option value="nome" <?= (isset($_POST['tipo_busca']) && $_POST['tipo_busca'] === 'nome') ? 'selected' : '' ?>>Nome</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="pesquisar" class="form-label fw-bold">Termo</label>
+          <div class="col-md-9">
+            <label for="pesquisar" class="form-label fw-bold">Pesquisar</label>
             <input type="text" id="pesquisar" name="pesquisar" class="form-control"
-                   placeholder="Digite o CPF ou nome..."
+                   placeholder="Digite o nome ou CPF..."
                    value="<?= htmlspecialchars($_POST['pesquisar'] ?? '') ?>">
           </div>
           <div class="col-md-3">
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Filtrar</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold">Filtrar</button>
           </div>
         </form>
 

@@ -102,7 +102,7 @@ if (!$drog) {
         </div>
       </div>
       <div class="card-footer bg-light d-flex justify-content-end gap-2 p-3">
-        <a href="atualizar.php?alterar=<?= $drog['CNPJ_Drog'] ?>" class="btn btn-pharma-primary px-4 fw-bold">✏ Editar Drogaria</a>
+        <a href="atualizar.php?alterar=<?= $drog['CNPJ_Drog'] ?>" class="btn btn-pharma-success px-4 fw-bold">✏ Editar Drogaria</a>
       </div>
     </div>
   </main>

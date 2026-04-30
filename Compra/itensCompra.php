@@ -184,7 +184,7 @@ unset($_SESSION['erro_compra']);
             <h5 class="fw-bold mb-3" style="color:#1a1c4b;">Catálogo do Laboratório</h5>
             <form method="POST" class="d-flex gap-2 mb-3">
               <input type="text" name="termo_cat" class="form-control" placeholder="Nome ou EAN..." value="<?= htmlspecialchars($_POST['termo_cat'] ?? '') ?>">
-              <button type="submit" name="pesquisa_cat" class="btn btn-pharma-primary fw-bold">Buscar</button>
+              <button type="submit" name="pesquisa_cat" class="btn btn-pharma-success fw-bold">Buscar</button>
               <?php if(isset($_POST['pesquisa_cat'])): ?>
                 <a href="itensCompra.php?nota_fiscal_entrada=<?= $nota_fiscal ?>&cnpj_lab=<?= $cnpj_lab ?>" class="btn btn-outline-secondary fw-bold">✕</a>
               <?php endif; ?>

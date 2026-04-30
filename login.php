@@ -5,7 +5,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if(isset($_POST["login"]) && isset($_POST["senha"])){
         $controller = new funcionarioController();
         $redirect = $_POST["redirect"] ?? "index.php";
-        $controller->login($_POST["login"], $_POST["senha"], $redirect);
+        $resultado_login = $controller->login($_POST["login"], $_POST["senha"], $redirect);
+        if ($resultado_login !== null) {
+            $erro = $resultado_login;
+        }
     } else {
         $erro = "Preencha todos os campos.";
     }
@@ -42,8 +45,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         <?php endif; ?>
         <form method="POST" action="login.php">
           <div class="mb-3">
-            <label for="login" class="form-label fw-bold">Login (CPF)</label>
-            <input type="text" id="login" name="login" class="form-control" placeholder="Digite seu CPF..." required autofocus>
+            <label for="login" class="form-label fw-bold">Login</label>
+            <input type="text" id="login" name="login" class="form-control" placeholder="Digite seu CPF, nome ou e-mail..." required autofocus>
           </div>
           <div class="mb-4">
             <label for="senha" class="form-label fw-bold">Senha</label>
