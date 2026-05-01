@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 include_once "../Objetos/vendaController.php";
 include_once "../Objetos/drogariaController.php";
@@ -99,8 +99,10 @@ $totalVendas = $vendas ? count($vendas) : 0;
         style="border-color: #fff;">
         <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
       </a>
-    
-    <ul class="nav nav-pills flex-column mb-auto gap-2">
+
+
+      <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
+      <ul class="nav nav-pills flex-column mb-auto gap-2">
       <li class="nav-item">
         <a href="../Medicamento/index.php" class="nav-link">
           <span class="fs-5">💊</span> Medicamentos

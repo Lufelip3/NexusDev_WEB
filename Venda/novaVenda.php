@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (session_status() !== PHP_SESSION_ACTIVE)
   session_start();
 include_once "../Objetos/vendaController.php";
@@ -130,7 +130,9 @@ unset($_SESSION['erro_venda']);
         <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
       </a>
 
-    <ul class="nav nav-pills flex-column mb-auto gap-2">
+
+      <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
+      <ul class="nav nav-pills flex-column mb-auto gap-2">
       <li class="nav-item">
         <a href="../Medicamento/index.php" class="nav-link">
           <span class="fs-5">💊</span> Medicamentos
@@ -214,9 +216,9 @@ unset($_SESSION['erro_venda']);
             <form method="POST" class="d-flex gap-2 mb-4 align-items-center">
               <input type="text" name="termo_med" class="form-control" placeholder="Nome do medicamento ou cód..."
                 value="<?= htmlspecialchars($_POST['termo_med'] ?? '') ?>">
-              <button type="submit" name="pesquisa_med" class="btn btn-pharma-success px-4 fw-bold">Buscar</button>
+              <button type="submit" name="pesquisa_med" class="btn btn-pharma-success px-4 fw-bold shadow-sm">Buscar</button>
               <?php if (isset($_POST['pesquisa_med'])): ?>
-                <a href="novaVenda.php?nota_fiscal_saida=<?= $nota_fiscal ?>" class="btn btn-outline-secondary">X</a>
+                <a href="novaVenda.php?nota_fiscal_saida=<?= $nota_fiscal ?>" class="btn btn-outline-secondary px-3 fw-bold shadow-sm">✕</a>
               <?php endif; ?>
             </form>
 
@@ -247,8 +249,8 @@ unset($_SESSION['erro_venda']);
                               <input type="hidden" name="cod_med" value="<?= $med->Cod_Med ?>">
                               <input type="number" name="qtd" min="1" max="<?= $med->Qtd_Med ?>" value="1"
                                 class="form-control form-control-sm text-center m-0" style="width: 60px;">
-                              <button type="submit" name="adicionar" class="btn btn-sm btn-pharma-success fw-bold p-0"
-                                style="width: 32px; height: 31px; line-height: 29px; border-radius: 6px;">+</button>
+                              <button type="submit" name="adicionar" class="btn btn-sm btn-pharma-success fw-bold p-0 shadow-sm"
+                                style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">+</button>
                             </div>
                           </form>
                         </td>
@@ -300,8 +302,8 @@ unset($_SESSION['erro_venda']);
                           <form method="POST" onsubmit="return confirm('Certerza que deseja remover do carrinho?')"
                             class="m-0" style="display: inline-block; vertical-align: middle;">
                             <input type="hidden" name="cod_item_venda" value="<?= $item->Cod_ItemVenda ?>">
-                            <button type="submit" name="remover" class="btn btn-sm btn-danger p-0"
-                              style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">✕</button>
+                            <button type="submit" name="remover" class="btn btn-sm btn-danger p-0 shadow-sm"
+                              style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">🗑</button>
                           </form>
                         </td>
                       </tr>
@@ -339,14 +341,12 @@ unset($_SESSION['erro_venda']);
                 <div class="form-text">Faturamento vinculado ao CNPJ destino.</div>
               </div>
 
-              <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center">
+              <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center mt-4 pt-3 border-top">
                 <button type="submit" name="cancelar" class="btn btn-danger px-4 fw-bold shadow-sm" formnovalidate
-                  onclick="return confirm('Isso excluirá a venda e esvaziará o carrinho. Confirmar?')">Cancelar
-                  Venda</button>
-                <button type="submit" name="salvar" class="btn btn-warning px-4 fw-bold shadow-sm" formnovalidate>Salvar
-                  Rascunho</button>
+                  onclick="return confirm('Isso excluirá a venda e esvaziará o carrinho. Confirmar?')">✖ Cancelar</button>
+                <button type="submit" name="salvar" class="btn btn-warning text-white px-4 fw-bold shadow-sm" formnovalidate>Salvar Rascunho</button>
                 <button type="submit" name="finalizar" id="btn_finalizar"
-                  class="btn btn-pharma-success px-4 fw-bold shadow-sm" disabled>✔ Finalizar Pagamento</button>
+                  class="btn btn-pharma-success px-4 fw-bold shadow-sm" disabled>✔ Finalizar Venda</button>
               </div>
             </form>
 

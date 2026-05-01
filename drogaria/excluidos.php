@@ -1,4 +1,4 @@
-<!DOCTYPE html><?php
+﻿<!DOCTYPE html><?php
 ob_start();
 include_once("../objetos/drogariaController.php");
 
@@ -32,6 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
         <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
       </a>
+
+
+      <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
       <ul class="nav nav-pills flex-column mb-auto gap-2">
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
         <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>

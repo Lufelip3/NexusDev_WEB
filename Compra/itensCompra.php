@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 include_once "../Objetos/compraController.php";
@@ -141,6 +141,9 @@ unset($_SESSION['erro_compra']);
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
         <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
       </a>
+
+
+      <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
       <ul class="nav nav-pills flex-column mb-auto gap-2">
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
         <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
@@ -184,9 +187,9 @@ unset($_SESSION['erro_compra']);
             <h5 class="fw-bold mb-3" style="color:#1a1c4b;">Catálogo do Laboratório</h5>
             <form method="POST" class="d-flex gap-2 mb-3">
               <input type="text" name="termo_cat" class="form-control" placeholder="Nome ou EAN..." value="<?= htmlspecialchars($_POST['termo_cat'] ?? '') ?>">
-              <button type="submit" name="pesquisa_cat" class="btn btn-pharma-success fw-bold">Buscar</button>
+              <button type="submit" name="pesquisa_cat" class="btn btn-pharma-success px-4 fw-bold shadow-sm">Buscar</button>
               <?php if(isset($_POST['pesquisa_cat'])): ?>
-                <a href="itensCompra.php?nota_fiscal_entrada=<?= $nota_fiscal ?>&cnpj_lab=<?= $cnpj_lab ?>" class="btn btn-outline-secondary fw-bold">✕</a>
+                <a href="itensCompra.php?nota_fiscal_entrada=<?= $nota_fiscal ?>&cnpj_lab=<?= $cnpj_lab ?>" class="btn btn-outline-secondary px-3 fw-bold shadow-sm">✕</a>
               <?php endif; ?>
             </form>
             <div class="table-responsive">
@@ -209,7 +212,7 @@ unset($_SESSION['erro_compra']);
                         <form method="POST" class="d-flex gap-1 align-items-center">
                           <input type="hidden" name="cod_catMed" value="<?= $cat->Cod_CatMed ?>">
                           <input type="number" name="qtd" min="1" max="<?= $cat->quantidade ?>" value="1" class="form-control form-control-sm" style="width:55px;">
-                          <button type="submit" name="adicionar" class="btn btn-sm btn-pharma-success fw-bold">Add</button>
+                          <button type="submit" name="adicionar" class="btn btn-sm btn-pharma-success fw-bold p-0 shadow-sm" style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">+</button>
                         </form>
                       </td>
                     </tr>
@@ -227,7 +230,7 @@ unset($_SESSION['erro_compra']);
       <!-- Itens da compra -->
       <div class="col-lg-6">
         <div class="card card-pharma h-100">
-          <div class="card-body p-4">
+          <div class="card-body p-4 d-flex flex-column">
             <h5 class="fw-bold mb-3" style="color:#1a1c4b;">Itens da Compra</h5>
             <div class="table-responsive">
               <table class="table table-pharma mb-0 align-middle" style="font-size:.88rem;">
@@ -249,7 +252,7 @@ unset($_SESSION['erro_compra']);
                       <td>
                         <form method="POST" onsubmit="return confirm('Remover este item?')">
                           <input type="hidden" name="cod_item" value="<?= $item->Cod_Item ?>">
-                          <button type="submit" name="remover" class="btn btn-sm btn-outline-danger">🗑</button>
+                          <button type="submit" name="remover" class="btn btn-sm btn-danger p-0 shadow-sm" style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">🗑</button>
                         </form>
                       </td>
                     </tr>
@@ -266,11 +269,11 @@ unset($_SESSION['erro_compra']);
               </table>
             </div>
 
-            <!-- Botões de ação -->
-            <form method="POST" class="d-flex gap-2 flex-wrap mt-4 pt-3 border-top">
-              <button type="submit" name="finalizar" class="btn btn-pharma-success fw-bold flex-fill" <?= empty($itensAtuais) ? 'disabled' : '' ?>>✔ Finalizar Compra</button>
-              <button type="submit" name="salvar" class="btn btn-warning text-white fw-bold flex-fill" formnovalidate>💾 Continuar Depois</button>
-              <button type="submit" name="cancelar" class="btn btn-danger fw-bold flex-fill" formnovalidate onclick="return confirm('Cancelar e excluir esta compra?')">✖ Cancelar</button>
+            <!-- Botões de ação no fundo da janela -->
+            <form method="POST" class="mt-auto pt-4 border-top d-flex flex-wrap gap-2 justify-content-end align-items-center">
+              <button type="submit" name="cancelar" class="btn btn-danger px-4 fw-bold shadow-sm" formnovalidate onclick="return confirm('Cancelar e excluir esta compra?')">✖ Cancelar</button>
+              <button type="submit" name="salvar" class="btn btn-warning text-white px-4 fw-bold shadow-sm" formnovalidate>Salvar Rascunho</button>
+              <button type="submit" name="finalizar" class="btn btn-pharma-success px-4 fw-bold shadow-sm" <?= empty($itensAtuais) ? 'disabled' : '' ?>>✔ Finalizar Compra</button>
             </form>
           </div>
         </div>
