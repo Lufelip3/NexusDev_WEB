@@ -37,7 +37,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
       <div class="p-4 text-white text-center" style="background: linear-gradient(135deg,#1a1c4b 0%,#2c2f8a 100%); border-radius: 12px 12px 0 0;">
         <div style="font-size: 2.5rem; margin-bottom: 8px;">💊</div>
         <h1 class="fw-bold fs-4 mb-1 text-white">PharmaPulse</h1>
-        <p class="opacity-75 mb-0 small">Distribuidora CFA — Sistema ERP</p>
+        <p class="opacity-75 mb-0 small">NEXUSDev — Sistema ERP</p>
       </div>
       <div class="card-body p-4">
         <?php if (isset($erro)): ?>
@@ -59,5 +59,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/validacoes.js"></script>
 </body>
 </html>

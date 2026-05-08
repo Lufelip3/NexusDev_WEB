@@ -18,3 +18,7 @@ $_sidebar_initials = count($_sidebar_parts) >= 2
   </div>
 </div>
 <hr style="border-color:rgba(255,255,255,0.12);margin:10px 4px 12px;opacity:1;">
+
+<style>
+  .b5-sidebar .nav-link { font-size: 16px !important; }
+</style>
