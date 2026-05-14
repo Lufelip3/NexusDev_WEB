@@ -35,7 +35,7 @@ class ItemCompra {
     }
 
     public function lerPorNotaFiscal($notaFiscal) {
-        $sql = "SELECT i.*, cm.Nome_CatMed AS Nome_Med, cm.EAN_Med, cm.dataValItemCat, cm.Desc_CatMed
+        $sql = "SELECT i.*, cm.Nome_CatMed AS Nome_Med, cm.Nome_CatMed, cm.EAN_Med, cm.dataValItemCat, cm.Desc_CatMed
                 FROM item i 
                 JOIN catalogo_medicamento cm ON i.Cod_CatMed = cm.Cod_CatMed
                 WHERE i.NotaFiscal_Entrada = :notaFiscal";

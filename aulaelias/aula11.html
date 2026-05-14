@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Bootstrap</title>
+  <!-- Bootstrap CSS -- ANTES do seu style.css -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Grid responsivo: 1 col mobile, 2 tablet, 3 desktop -->
+  <!-- Header simples com utilitarios Bootstrap -->
+    <header class="bg-primary text-white py-3">
+        <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="#">MeuSite</a>
+
+                <!-- Botao hamburger (aparece apenas no mobile) -->
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#menuPrincipal"
+                        aria-controls="menuPrincipal"
+                        aria-expanded="false"
+                        aria-label="Abrir menu">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Links (colapsam no mobile, expandem no tablet+) -->
+                <div class="collapse navbar-collapse" id="menuPrincipal">
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item">
+                    <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="#">Servicos</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="#">Contato</a>
+                    </li>
+                </ul>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+
+    <!-- Hero section com utilitarios -->
+    <section class="bg-dark text-white py-5 text-center">
+        <div class="container">
+            <h2 class="display-4 fw-bold mb-3">Transforme sua ideia em realidade</h2>
+            <p class="lead mb-4 text-white-50">Solucões digitais para o seu negócio crescer.</p>
+            <a href="#" class="btn btn-warning btn-lg me-2 fw-bold">Começar agora</a>
+            <a href="#" class="btn btn-outline-light btn-lg">Saiba mais</a>
+        </div>
+    </section>
+
+    <section class="container my-5">
+        <h2 class="mb-4">Nossos Serviços</h2>
+        <div class="row g-4">
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Serviço 1</h5>
+                <p class="card-text">Descricao detalhada do primeiro servico.</p>
+                <a href="#" class="btn btn-primary">Saiba mais</a>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Serviço 2</h5>
+                <p class="card-text">Descricao detalhada do segundo servico.</p>
+                <a href="#" class="btn btn-primary">Saiba mais</a>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Serviço 3</h5>
+                <p class="card-text">Descricao detalhada do terceiro servico.</p>
+                <a href="#" class="btn btn-primary">Saiba mais</a>
+            </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-1">
+            <span class="badge bg-primary me-1">Bootstrap 5</span>
+            <span class="badge bg-success me-1">Responsivo</span>
+            <span class="badge bg-warning text-dark">UC15</span>
+            </p>
+            <p class="mb-0 text-white-50">&copy; 2025 MeuSite -- Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

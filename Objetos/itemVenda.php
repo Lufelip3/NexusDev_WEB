@@ -61,6 +61,15 @@ Class itemVenda{
         }
     }
 
+    public function atualizarQuantidade()
+    {
+        $sql = "UPDATE item_venda SET Qtd_ItemVenda = :Qtd_ItemVenda WHERE Cod_ItemVenda = :Cod_ItemVenda";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":Qtd_ItemVenda", $this->Qtd_ItemVenda, PDO::PARAM_INT);
+        $stmt->bindParam(":Cod_ItemVenda", $this->Cod_ItemVenda, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     public function atualizarItemVenda()
     {
         $sql = "UPDATE item_venda SET DataVal_ItemVenda = :DataVal_ItemVenda, Qtd_ItemVenda = :Qtd_ItemVenda, 

@@ -28,6 +28,26 @@ public function pesquisarDrogaria($cnpj){
         $resultado->execute([$cnpj]);
 }
 
+    public function pesquisarGeral($termo)
+    {
+        $busca = "%$termo%";
+        $valorNumerico = preg_replace('/[^0-9]/', '', $termo);
+        
+        if (!empty($valorNumerico)) {
+            $buscaNumerica = "%$valorNumerico%";
+            $sql = "SELECT * FROM drogaria WHERE (Nome_Drog LIKE :busca OR REPLACE(REPLACE(REPLACE(CNPJ_Drog, '.', ''), '/', ''), '-', '') LIKE :buscaNumerica) AND Ativo_Drog = 1";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(':busca', $busca, PDO::PARAM_STR);
+            $stmt->bindParam(':buscaNumerica', $buscaNumerica, PDO::PARAM_STR);
+        } else {
+            $sql = "SELECT * FROM drogaria WHERE Nome_Drog LIKE :busca AND Ativo_Drog = 1";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(':busca', $busca, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
 
     public function cadastrar(){
         $sql = "INSERT INTO drogaria(Nome_Drog, Email_Drog, Telefone_Drog, Cep_Drog, Num_Drog, CNPJ_Drog, Foto_Drog) 

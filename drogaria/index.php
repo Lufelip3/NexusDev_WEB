@@ -41,14 +41,22 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
 
   <aside class="b5-sidebar offcanvas-lg offcanvas-start p-3" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
     <div class="offcanvas-header d-lg-none border-bottom border-opacity-25 border-light mb-3">
-      <h5 class="offcanvas-title fw-bold text-white text-uppercase" id="menuLateralLabel">Distribuidora CFA</h5>
+      <h5 class="offcanvas-title fw-bold text-white text-uppercase" id="menuLateralLabel"><img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid rounded" style="max-height: 70px;"></h5>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#menuLateral" aria-label="Fechar"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <span class="fs-4 fw-bold text-uppercase ms-3">Distribuidora CFA</span>
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
       </a>
+
+
+      <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
       <ul class="nav nav-pills flex-column mb-auto gap-2">
+      <li class="nav-item">
+        <a href="../index.php" class="nav-link">
+          <span class="fs-5">🏠</span> Menu Principal
+        </a>
+      </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
         <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
         <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
@@ -88,11 +96,11 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
       <div class="card-body p-4">
         <form method="POST" action="index.php" class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label for="pesquisar" class="form-label fw-bold">Pesquisar por CNPJ</label>
-            <input type="text" id="pesquisar" name="pesquisar" class="form-control" placeholder="Digite o CNPJ para buscar..." value="<?= htmlspecialchars($_POST['pesquisar'] ?? '') ?>">
+            <label for="pesquisar" class="form-label fw-bold">Pesquisar</label>
+            <input type="text" id="pesquisar" name="pesquisar" class="form-control" placeholder="Digite o nome ou CNPJ para buscar..." value="<?= htmlspecialchars($_POST['pesquisar'] ?? '') ?>">
           </div>
           <div class="col-md-3">
-            <button type="submit" class="btn btn-pharma-primary w-100 fw-bold">Filtrar</button>
+            <button type="submit" class="btn btn-pharma-success w-100 fw-bold">Filtrar</button>
           </div>
         </form>
 
@@ -128,7 +136,8 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
                 <div class="ph-card-btns">
                   <a href="atualizar.php?alterar=<?= $cnpj ?>" class="ph-btn--edit">✏ Editar</a>
                   <a href="visualizar.php?id=<?= $cnpj ?>" class="ph-btn--view">👁 Ver</a>
-                  <a href="index.php?excluir=<?= $cnpj ?>" class="ph-btn--delete" onclick="return confirm('Excluir esta drogaria?')">🗑</a>
+                  <a href="#" class="ph-btn--delete"
+                     onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $cnpj ?>', 'Excluir Drogaria', 'Deseja excluir a drogaria <?= htmlspecialchars(addslashes($nome ?? '')) ?>? Esta ação não pode ser desfeita.')">🗑</a>
                 </div>
               </div>
             </div>
@@ -179,7 +188,8 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
           <div class="ph-card-btns">
             <a href="atualizar.php?alterar=<?= $drog->CNPJ_Drog ?>" class="ph-btn--edit">✏ Editar</a>
             <a href="visualizar.php?id=<?= $drog->CNPJ_Drog ?>" class="ph-btn--view">👁 Ver</a>
-            <a href="index.php?excluir=<?= $drog->CNPJ_Drog ?>" class="ph-btn--delete" onclick="return confirm('Deseja excluir esta drogaria?')">🗑</a>
+            <a href="#" class="ph-btn--delete"
+               onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $drog->CNPJ_Drog ?>', 'Excluir Drogaria', 'Deseja excluir a drogaria <?= htmlspecialchars(addslashes($drog->Nome_Drog)) ?>? Esta ação não pode ser desfeita.')">🗑</a>
           </div>
         </div>
       </div>
@@ -193,7 +203,35 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
 
   </main>
 
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#c0392b;">
+          <h5 class="modal-title text-white fw-bold" id="modalExclusaoLabel">⚠️ Confirmar Exclusão</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-0 fw-bold" id="modalExclusaoMensagem" style="color:#333;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          <a href="#" id="modalExclusaoBtnConfirmar" class="btn btn-danger px-4 fw-bold">🗑 Confirmar Exclusão</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function abrirModalExcluir(e, url, titulo, mensagem) {
+      e.preventDefault();
+      document.getElementById('modalExclusaoLabel').textContent = '⚠️ ' + titulo;
+      document.getElementById('modalExclusaoMensagem').textContent = mensagem;
+      document.getElementById('modalExclusaoBtnConfirmar').href = url;
+      new bootstrap.Modal(document.getElementById('modalConfirmarExclusao')).show();
+    }
+  </script>
 </body>
 </html>
 <?php ob_end_flush(); ?>

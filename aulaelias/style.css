@@ -1,0 +1,55 @@
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/* Navbar com gradiente personalizado */
+.navbar {
+  background: linear-gradient(90deg, #1f4e79 0%, #6610f2 100%) !important;
+}
+
+/* Hero com fundo escuro personalizado */
+.bg-hero {
+  background: linear-gradient(135deg, #0d0d1a 0%, #1a1030 60%, #6610f2 100%);
+  min-height: 500px;
+}
+
+/* Cards com hover suave e sombra roxa */
+.card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(102, 16, 242, 0.18);
+}
+
+/* Botao primario com a cor do projeto */
+.btn-primary {
+  background-color: #6610f2;
+  border-color: #6610f2;
+}
+.btn-primary:hover {
+  background-color: #5200cc;
+  border-color: #5200cc;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f0ff;
+}
+::-webkit-scrollbar-thumb {
+  background: #7952b3;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6610f2;
+}
+
+/* Scroll suave ao clicar nos links da navbar */
+html {
+  scroll-behavior: smooth;
+}

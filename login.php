@@ -5,7 +5,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if(isset($_POST["login"]) && isset($_POST["senha"])){
         $controller = new funcionarioController();
         $redirect = $_POST["redirect"] ?? "index.php";
-        $controller->login($_POST["login"], $_POST["senha"], $redirect);
+        $resultado_login = $controller->login($_POST["login"], $_POST["senha"], $redirect);
+        if ($resultado_login !== null) {
+            $erro = $resultado_login;
+        }
     } else {
         $erro = "Preencha todos os campos.";
     }
@@ -34,7 +37,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
       <div class="p-4 text-white text-center" style="background: linear-gradient(135deg,#1a1c4b 0%,#2c2f8a 100%); border-radius: 12px 12px 0 0;">
         <div style="font-size: 2.5rem; margin-bottom: 8px;">💊</div>
         <h1 class="fw-bold fs-4 mb-1 text-white">PharmaPulse</h1>
-        <p class="opacity-75 mb-0 small">Distribuidora CFA — Sistema ERP</p>
+        <p class="opacity-75 mb-0 small">NEXUSDev — Sistema ERP</p>
       </div>
       <div class="card-body p-4">
         <?php if (isset($erro)): ?>
@@ -42,8 +45,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         <?php endif; ?>
         <form method="POST" action="login.php">
           <div class="mb-3">
-            <label for="login" class="form-label fw-bold">Login (CPF)</label>
-            <input type="text" id="login" name="login" class="form-control" placeholder="Digite seu CPF..." required autofocus>
+            <label for="login" class="form-label fw-bold">Login</label>
+            <input type="text" id="login" name="login" class="form-control" placeholder="Digite seu CPF, nome ou e-mail..." required autofocus>
           </div>
           <div class="mb-4">
             <label for="senha" class="form-label fw-bold">Senha</label>
@@ -56,5 +59,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/validacoes.js"></script>
 </body>
 </html>

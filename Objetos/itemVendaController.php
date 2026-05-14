@@ -42,6 +42,13 @@ class ItemVendaController
         return $this->itemVenda->excluirItemVenda();
     }
 
+    public function atualizarQtd($cod_item, $nova_qtd)
+    {
+        $this->itemVenda->Cod_ItemVenda = $cod_item;
+        $this->itemVenda->Qtd_ItemVenda = $nova_qtd;
+        return $this->itemVenda->atualizarQuantidade();
+    }
+
     /**
      * Calcula o total dos itens de uma venda diretamente do banco.
      */

@@ -17,22 +17,25 @@ class laboratorioController{
         return $this->laboratorio->lerTodos();
     }
 
-    public function pesquisarLaboratorio($tipo, $valor) {
-        if ($tipo == 'cnpj') {
-            // Remove qualquer símbolo (/, -, .) do valor pesquisado para comparar apenas números
-            $valor = preg_replace('/[^0-9]/', '', $valor);
+    public function pesquisarLaboratorio($valor) {
+        $busca = "%$valor%";
+        $valorNumerico = preg_replace('/[^0-9]/', '', $valor);
+        
+        if (!empty($valorNumerico)) {
+            $buscaNumerica = "%$valorNumerico%";
             $sql = "SELECT * FROM laboratorio 
-                    WHERE REPLACE(REPLACE(REPLACE(CNPJ_Lab, '.', ''), '/', ''), '-', '') = :busca 
+                    WHERE (Nome_Lab LIKE :busca 
+                    OR REPLACE(REPLACE(REPLACE(CNPJ_Lab, '.', ''), '/', ''), '-', '') LIKE :buscaNumerica) 
                     AND Ativo_Lab = 1";
-        } else if ($tipo == 'nome') {
-            $sql = "SELECT * FROM laboratorio WHERE Nome_Lab LIKE :busca AND Ativo_Lab = 1";
-            $valor = "%$valor%";
         } else {
-            return null;
+            $sql = "SELECT * FROM laboratorio WHERE Nome_Lab LIKE :busca AND Ativo_Lab = 1";
         }
-
+        
         $resultado = $this->bd->prepare($sql);
-        $resultado->bindParam(':busca', $valor);
+        $resultado->bindParam(':busca', $busca);
+        if (!empty($valorNumerico)) {
+            $resultado->bindParam(':buscaNumerica', $buscaNumerica);
+        }
         $resultado->execute();
         
         $dados = $resultado->fetchAll(PDO::FETCH_OBJ);
