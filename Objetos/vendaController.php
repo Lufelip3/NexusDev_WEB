@@ -47,6 +47,11 @@ class VendaController
      */
     public function salvarRascunhoVenda($notaFiscal, $valorTotal, $cnpj)
     {
+        if (empty($cnpj)) {
+            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+            $_SESSION['erro_venda'] = 'Erro: Selecione uma drogaria válida para salvar o rascunho.';
+            return false;
+        }
         return $this->venda->salvarRascunho($notaFiscal, $valorTotal, $cnpj);
     }
 
@@ -56,6 +61,33 @@ class VendaController
      */
     public function finalizarVenda($notaFiscal, $valorTotal, $cnpj)
     {
+        if (empty($cnpj)) {
+            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+            $_SESSION['erro_venda'] = 'Erro: Selecione uma drogaria válida para finalizar a venda.';
+            return false;
+        }
+
+        // Verifica Estoque (Task 7)
+        $sql = "SELECT i.Cod_Med, i.Qtd_ItemVenda, m.Nome_Med, m.Qtd_Med 
+                FROM item_venda i 
+                JOIN medicamento m ON i.Cod_Med = m.Cod_Med 
+                WHERE i.NotaFiscal_Saida = :nf AND i.Qtd_ItemVenda > m.Qtd_Med";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":nf", $notaFiscal, PDO::PARAM_INT);
+        $stmt->execute();
+        $semEstoque = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        if (!empty($semEstoque)) {
+            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+            $msg = "<strong>Estoque insuficiente para os seguintes itens:</strong><ul>";
+            foreach ($semEstoque as $item) {
+                $msg .= "<li>{$item->Nome_Med} (Solicitado: {$item->Qtd_ItemVenda}, Disponível: {$item->Qtd_Med})</li>";
+            }
+            $msg .= "</ul>";
+            $_SESSION['erro_venda_modal'] = $msg;
+            return false;
+        }
+
         // Primeiro salva os dados finais
         $this->venda->salvarRascunho($notaFiscal, $valorTotal, $cnpj);
         // Depois seta Finalizada=1 (dispara o trigger)

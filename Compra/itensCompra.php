@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 include_once "../Objetos/compraController.php";
@@ -94,7 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $totalCompra = $itemController->calcularTotal($nota_fiscal);
         if ($compraController->finalizarCompra($nota_fiscal, $totalCompra)) {
-            echo "<script>alert('Compra Finalizada com Sucesso!'); window.location.href='index.php';</script>";
+            $_SESSION['compra_sucesso'] = "Compra Finalizada com Sucesso!";
+            header("Location: index.php");
             exit();
         }
     }
@@ -142,14 +143,13 @@ unset($_SESSION['erro_compra']);
         <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
       </a>
 
-
       <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
       <ul class="nav nav-pills flex-column mb-auto gap-2">
-      <li class="nav-item">
-        <a href="../index.php" class="nav-link">
-          <span class="fs-5">🏠</span> Menu Principal
-        </a>
-      </li>
+        <li class="nav-item">
+          <a href="../index.php" class="nav-link">
+            <span class="fs-5">🏠</span> Menu Principal
+          </a>
+        </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
         <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
         <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
@@ -190,6 +190,7 @@ unset($_SESSION['erro_compra']);
         <div class="card card-pharma h-100">
           <div class="card-body p-4">
             <h5 class="fw-bold mb-3" style="color:#1a1c4b;">Catálogo do Laboratório</h5>
+            <p class="text-secondary mb-2" style="font-size:.82rem;">💡 Clique em qualquer linha para adicionar rapidamente via modal.</p>
             <form method="POST" class="d-flex gap-2 mb-3">
               <input type="text" name="termo_cat" class="form-control" placeholder="Nome ou EAN..." value="<?= htmlspecialchars($_POST['termo_cat'] ?? '') ?>">
               <button type="submit" name="pesquisa_cat" class="btn btn-pharma-success px-4 fw-bold shadow-sm">Buscar</button>
@@ -207,14 +208,18 @@ unset($_SESSION['erro_compra']);
                 <tbody>
                   <?php if($catalogos): ?>
                     <?php foreach($catalogos as $cat): ?>
-                    <tr>
+                    <tr class="catalogo-row" style="cursor:pointer;"
+                        data-cod="<?= $cat->Cod_CatMed ?>"
+                        data-nome="<?= htmlspecialchars($cat->Nome_CatMed, ENT_QUOTES) ?>"
+                        data-max="<?= $cat->quantidade ?>"
+                        data-valor="R$ <?= number_format($cat->Valor_CatMed, 2, ',', '.') ?>">
                       <td class="ps-3"><?= $cat->Cod_CatMed ?></td>
                       <td><?= $cat->EAN_Med ?></td>
                       <td class="fw-bold"><?= htmlspecialchars($cat->Nome_CatMed) ?></td>
                       <td><span class="badge bg-light text-dark border"><?= $cat->quantidade ?></span></td>
                       <td>R$ <?= number_format($cat->Valor_CatMed, 2, ',', '.') ?></td>
                       <td>
-                        <form method="POST" class="d-flex gap-1 align-items-center">
+                        <form method="POST" class="d-flex gap-1 align-items-center" onclick="event.stopPropagation()">
                           <input type="hidden" name="cod_catMed" value="<?= $cat->Cod_CatMed ?>">
                           <input type="number" name="qtd" min="1" max="<?= $cat->quantidade ?>" value="1" class="form-control form-control-sm" style="width:55px;">
                           <button type="submit" name="adicionar" class="btn btn-sm btn-pharma-success fw-bold p-0 shadow-sm" style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">+</button>
@@ -255,9 +260,10 @@ unset($_SESSION['erro_compra']);
                       <td>R$ <?= number_format($item->Valor_Item, 2, ',', '.') ?></td>
                       <td class="fw-bold text-success">R$ <?= number_format($item->Qtd_Item * $item->Valor_Item, 2, ',', '.') ?></td>
                       <td>
-                        <form method="POST" onsubmit="return confirm('Remover este item?')">
+                        <form method="POST" id="formRemover_<?= $item->Cod_Item ?>">
                           <input type="hidden" name="cod_item" value="<?= $item->Cod_Item ?>">
-                          <button type="submit" name="remover" class="btn btn-sm btn-danger p-0 shadow-sm" style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;">🗑</button>
+                          <button type="button" class="btn btn-sm btn-danger p-0 shadow-sm" style="width: 32px; height: 32px; line-height: 30px; border-radius: 6px;"
+                            onclick="abrirModalForm(event, 'formRemover_<?= $item->Cod_Item ?>', 'Remover Item', 'Deseja remover este item da compra?', 'remover')">🗑</button>
                         </form>
                       </td>
                     </tr>
@@ -275,8 +281,10 @@ unset($_SESSION['erro_compra']);
             </div>
 
             <!-- Botões de ação no fundo da janela -->
-            <form method="POST" class="mt-auto pt-4 border-top d-flex flex-wrap gap-2 justify-content-end align-items-center">
-              <button type="submit" name="cancelar" class="btn btn-danger px-4 fw-bold shadow-sm" formnovalidate onclick="return confirm('Cancelar e excluir esta compra?')">✖ Cancelar</button>
+            <form method="POST" id="formAcoesCompra" class="mt-auto pt-4 border-top d-flex flex-wrap gap-2 justify-content-end align-items-center">
+              <input type="hidden" name="_acao" id="formAcoesCompra_acao">
+              <button type="button" class="btn btn-danger px-4 fw-bold shadow-sm"
+                onclick="abrirModalForm(event, 'formAcoesCompra', 'Cancelar Compra', 'Cancelar e excluir esta compra permanentemente? Esta ação não pode ser desfeita.', 'cancelar')">✖ Cancelar</button>
               <button type="submit" name="salvar" class="btn btn-warning text-white px-4 fw-bold shadow-sm" formnovalidate>Salvar Rascunho</button>
               <button type="submit" name="finalizar" class="btn btn-pharma-success px-4 fw-bold shadow-sm" <?= empty($itensAtuais) ? 'disabled' : '' ?>>✔ Finalizar Compra</button>
             </form>
@@ -286,6 +294,101 @@ unset($_SESSION['erro_compra']);
     </div>
   </main>
 
+  <!-- Modal: Adicionar Item via Linha do Catálogo -->
+  <div class="modal fade" id="modalAdicionarCompra" tabindex="-1" aria-labelledby="modalAdicionarCompraLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#1a1c4b;">
+          <h5 class="modal-title text-white fw-bold" id="modalAdicionarCompraLabel">➕ Adicionar ao Carrinho</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-1 text-secondary" style="font-size:.8rem;">Produto selecionado:</p>
+          <h6 class="fw-bold mb-1" id="modal_compra_nome" style="color:#1a1c4b;"></h6>
+          <p class="text-secondary mb-3" style="font-size:.85rem;">Valor unit.: <span id="modal_compra_valor"></span> &nbsp;|&nbsp; Disponível: <strong id="modal_compra_max"></strong> unid.</p>
+          <form method="POST" id="formModalCompra">
+            <input type="hidden" name="cod_catMed" id="modal_compra_cod">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Quantidade</label>
+              <input type="number" name="qtd" id="modal_compra_qtd" min="1" value="1" class="form-control form-control-lg text-center fw-bold">
+            </div>
+            <div class="d-grid">
+              <button type="submit" name="adicionar" class="btn btn-pharma-success btn-lg fw-bold">✔ Confirmar Adição</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#c0392b;">
+          <h5 class="modal-title text-white fw-bold" id="modalExclusaoLabel">⚠️ Confirmar</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-0 fw-bold" id="modalExclusaoMensagem" style="color:#333;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="modalExclusaoBtnConfirmar" class="btn btn-danger px-4 fw-bold">🗑 Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll('.catalogo-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        var cod   = this.dataset.cod;
+        var nome  = this.dataset.nome;
+        var max   = parseInt(this.dataset.max);
+        var valor = this.dataset.valor;
+
+        document.getElementById('modal_compra_cod').value        = cod;
+        document.getElementById('modal_compra_nome').textContent  = nome;
+        document.getElementById('modal_compra_valor').textContent = valor;
+        document.getElementById('modal_compra_max').textContent   = max;
+
+        var qtdInput = document.getElementById('modal_compra_qtd');
+        qtdInput.max   = max;
+        qtdInput.value = 1;
+
+        var modal = new bootstrap.Modal(document.getElementById('modalAdicionarCompra'));
+        modal.show();
+      });
+    });
+
+    function abrirModalForm(e, formId, titulo, mensagem, nomeBtn) {
+      e.preventDefault();
+      document.getElementById('modalExclusaoLabel').textContent = '⚠️ ' + titulo;
+      document.getElementById('modalExclusaoMensagem').textContent = mensagem;
+      var modal = new bootstrap.Modal(document.getElementById('modalConfirmarExclusao'));
+      document.getElementById('modalExclusaoBtnConfirmar').onclick = function() {
+        var form = document.getElementById(formId);
+        if (nomeBtn) {
+          var hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = nomeBtn;
+          hidden.value = '1';
+          form.appendChild(hidden);
+        }
+        form.submit();
+      };
+      modal.show();
+    }
+
+    document.querySelectorAll('button[data-remover-form]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var formId = btn.dataset.removerForm;
+        abrirModalForm({ preventDefault: function(){} }, formId, 'Remover Item', 'Deseja remover este item da compra?', 'remover');
+      });
+    });
+  </script>
+
 </body>
 </html>

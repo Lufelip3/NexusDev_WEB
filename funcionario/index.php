@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 include_once("../Objetos/funcionarioController.php");
 
@@ -132,7 +132,8 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
                 <span class="ph-badge--active">● Ativo</span>
                 <div class="ph-card-btns">
                   <a href="atualizar.php?alterar=<?= urlencode($res->CPF) ?>" class="ph-btn--edit">✏ Editar</a>
-                  <a href="index.php?excluir=<?= urlencode($res->CPF) ?>" class="ph-btn--delete" onclick="return confirm('Excluir este funcionário?')">🗑</a>
+                  <a href="#" class="ph-btn--delete"
+                     onclick="abrirModalExcluir(event, 'index.php?excluir=<?= urlencode($res->CPF) ?>', 'Excluir Funcionário', 'Deseja excluir o funcionário <?= htmlspecialchars(addslashes($res->Nome_Fun ?? '')) ?>? Esta ação não pode ser desfeita.')">🗑</a>
                 </div>
               </div>
             </div>
@@ -187,7 +188,8 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
           <span class="ph-badge--active">● Ativo</span>
           <div class="ph-card-btns">
             <a href="atualizar.php?alterar=<?= urlencode($funcionario->CPF) ?>" class="ph-btn--edit">✏ Editar</a>
-            <a href="index.php?excluir=<?= urlencode($funcionario->CPF) ?>" class="ph-btn--delete" onclick="return confirm('Deseja excluir este funcionário?')">🗑</a>
+            <a href="#" class="ph-btn--delete"
+               onclick="abrirModalExcluir(event, 'index.php?excluir=<?= urlencode($funcionario->CPF) ?>', 'Excluir Funcionário', 'Deseja excluir o funcionário <?= htmlspecialchars(addslashes($funcionario->Nome_Fun)) ?>? Esta ação não pode ser desfeita.')">🗑</a>
           </div>
         </div>
       </div>
@@ -201,6 +203,34 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
 
   </main>
 
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#c0392b;">
+          <h5 class="modal-title text-white fw-bold" id="modalExclusaoLabel">⚠️ Confirmar Exclusão</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-0 fw-bold" id="modalExclusaoMensagem" style="color:#333;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          <a href="#" id="modalExclusaoBtnConfirmar" class="btn btn-danger px-4 fw-bold">🗑 Confirmar Exclusão</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function abrirModalExcluir(e, url, titulo, mensagem) {
+      e.preventDefault();
+      document.getElementById('modalExclusaoLabel').textContent = '⚠️ ' + titulo;
+      document.getElementById('modalExclusaoMensagem').textContent = mensagem;
+      document.getElementById('modalExclusaoBtnConfirmar').href = url;
+      new bootstrap.Modal(document.getElementById('modalConfirmarExclusao')).show();
+    }
+  </script>
 </body>
 </html>

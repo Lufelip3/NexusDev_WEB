@@ -149,7 +149,8 @@ Class venda{
         $sql = "UPDATE venda SET Valor_Venda = :Valor_Venda, CNPJ_Drog = :CNPJ_Drog WHERE NotaFiscal_Saida = :NotaFiscal_Saida";
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":Valor_Venda", $Valor_Venda);
-        $stmt->bindParam(":CNPJ_Drog", $CNPJ_Drog, PDO::PARAM_STR);
+        $cnpjFinal = empty($CNPJ_Drog) ? null : $CNPJ_Drog;
+        $stmt->bindValue(":CNPJ_Drog", $cnpjFinal, $cnpjFinal === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindParam(":NotaFiscal_Saida", $NotaFiscal_Saida, PDO::PARAM_INT);
         return $stmt->execute();
     }

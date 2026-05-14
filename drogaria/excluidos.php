@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html><?php
+<!DOCTYPE html><?php
 ob_start();
 include_once("../objetos/drogariaController.php");
 
@@ -96,9 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
                 <td><?= htmlspecialchars($drog->Email_Drog) ?></td>
                 <td><?= htmlspecialchars($drog->Telefone_Drog) ?></td>
                 <td class="text-end pe-4">
-                  <a href="excluidos.php?reativar=<?= urlencode($drog->CNPJ_Drog) ?>"
+                  <a href="#"
                      class="btn btn-sm btn-pharma-success fw-bold"
-                     onclick="return confirm('Deseja reativar a drogaria <?= htmlspecialchars(addslashes($drog->Nome_Drog)) ?>?')">♻ Reativar</a>
+                     onclick="abrirModalReativar(event, 'excluidos.php?reativar=<?= urlencode($drog->CNPJ_Drog) ?>', '<?= htmlspecialchars(addslashes($drog->Nome_Drog)) ?>')">♻ Reativar</a>
                 </td>
               </tr>
               <?php endforeach; ?>
@@ -114,7 +114,34 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
     </div>
   </main>
 
+  <!-- Modal de Confirmação de Reativação -->
+  <div class="modal fade" id="modalConfirmarReativacao" tabindex="-1" aria-labelledby="modalReativacaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#28a745;">
+          <h5 class="modal-title text-white fw-bold" id="modalReativacaoLabel">♻ Reativar Drogaria</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-0 fw-bold" id="modalReativacaoMensagem" style="color:#333;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          <a href="#" id="modalReativacaoBtnConfirmar" class="btn btn-success px-4 fw-bold">♻ Confirmar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function abrirModalReativar(e, url, nome) {
+      e.preventDefault();
+      document.getElementById('modalReativacaoMensagem').textContent = 'Deseja reativar a drogaria ' + nome + '?';
+      document.getElementById('modalReativacaoBtnConfirmar').href = url;
+      new bootstrap.Modal(document.getElementById('modalConfirmarReativacao')).show();
+    }
+  </script>
 </body>
 </html>
 <?php ob_end_flush(); ?>

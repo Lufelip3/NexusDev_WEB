@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 include_once("../Objetos/medicamentoController.php");
 
@@ -108,7 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <td class="fw-bold text-success">R$ <?= number_format($a->Valor_Med, 2, ',', '.') ?></td>
                 <td class="text-end pe-4">
                   <a href="atualizar.php?alterar=<?= $a->Cod_Med ?>" class="btn btn-sm btn-pharma-success me-1">✏ Editar</a>
-                  <a href="index.php?excluir=<?= $a->Cod_Med ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir este medicamento?')">🗑</a>
+                  <a href="#" class="btn btn-sm btn-outline-danger"
+                     onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $a->Cod_Med ?>', 'Excluir Medicamento', 'Deseja excluir o medicamento <?= htmlspecialchars(addslashes($a->Nome_Med)) ?>? Esta ação não pode ser desfeita.')">🗑</a>
                 </td>
               </tr>
             </tbody>
@@ -159,7 +160,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <td class="fw-bold text-success">R$ <?= number_format($med->Valor_Med, 2, ',', '.') ?></td>
                 <td class="text-end pe-4">
                   <a href="atualizar.php?alterar=<?= $med->Cod_Med ?>" class="btn btn-sm btn-pharma-success me-1">✏</a>
-                  <a href="index.php?excluir=<?= $med->Cod_Med ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir este medicamento?')">🗑</a>
+                  <a href="#" class="btn btn-sm btn-outline-danger"
+                     onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $med->Cod_Med ?>', 'Excluir Medicamento', 'Deseja excluir o medicamento <?= htmlspecialchars(addslashes($med->Nome_Med)) ?>? Esta ação não pode ser desfeita.')">🗑</a>
                 </td>
               </tr>
               <?php endforeach; ?>
@@ -175,6 +177,34 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     </div>
   </main>
 
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#c0392b;">
+          <h5 class="modal-title text-white fw-bold" id="modalExclusaoLabel">⚠️ Confirmar Exclusão</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-0 fw-bold" id="modalExclusaoMensagem" style="color:#333;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          <a href="#" id="modalExclusaoBtnConfirmar" class="btn btn-danger px-4 fw-bold">🗑 Confirmar Exclusão</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function abrirModalExcluir(e, url, titulo, mensagem) {
+      e.preventDefault();
+      document.getElementById('modalExclusaoLabel').textContent = '⚠️ ' + titulo;
+      document.getElementById('modalExclusaoMensagem').textContent = mensagem;
+      document.getElementById('modalExclusaoBtnConfirmar').href = url;
+      new bootstrap.Modal(document.getElementById('modalConfirmarExclusao')).show();
+    }
+  </script>
 </body>
 </html>

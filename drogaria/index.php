@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 ob_start();
 include_once("../Objetos/drogariaController.php");
 
@@ -136,7 +136,8 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
                 <div class="ph-card-btns">
                   <a href="atualizar.php?alterar=<?= $cnpj ?>" class="ph-btn--edit">✏ Editar</a>
                   <a href="visualizar.php?id=<?= $cnpj ?>" class="ph-btn--view">👁 Ver</a>
-                  <a href="index.php?excluir=<?= $cnpj ?>" class="ph-btn--delete" onclick="return confirm('Excluir esta drogaria?')">🗑</a>
+                  <a href="#" class="ph-btn--delete"
+                     onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $cnpj ?>', 'Excluir Drogaria', 'Deseja excluir a drogaria <?= htmlspecialchars(addslashes($nome ?? '')) ?>? Esta ação não pode ser desfeita.')">🗑</a>
                 </div>
               </div>
             </div>
@@ -187,7 +188,8 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
           <div class="ph-card-btns">
             <a href="atualizar.php?alterar=<?= $drog->CNPJ_Drog ?>" class="ph-btn--edit">✏ Editar</a>
             <a href="visualizar.php?id=<?= $drog->CNPJ_Drog ?>" class="ph-btn--view">👁 Ver</a>
-            <a href="index.php?excluir=<?= $drog->CNPJ_Drog ?>" class="ph-btn--delete" onclick="return confirm('Deseja excluir esta drogaria?')">🗑</a>
+            <a href="#" class="ph-btn--delete"
+               onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $drog->CNPJ_Drog ?>', 'Excluir Drogaria', 'Deseja excluir a drogaria <?= htmlspecialchars(addslashes($drog->Nome_Drog)) ?>? Esta ação não pode ser desfeita.')">🗑</a>
           </div>
         </div>
       </div>
@@ -201,7 +203,35 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
 
   </main>
 
+  <!-- Modal de Confirmação de Exclusão -->
+  <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#c0392b;">
+          <h5 class="modal-title text-white fw-bold" id="modalExclusaoLabel">⚠️ Confirmar Exclusão</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-0 fw-bold" id="modalExclusaoMensagem" style="color:#333;"></p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+          <a href="#" id="modalExclusaoBtnConfirmar" class="btn btn-danger px-4 fw-bold">🗑 Confirmar Exclusão</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function abrirModalExcluir(e, url, titulo, mensagem) {
+      e.preventDefault();
+      document.getElementById('modalExclusaoLabel').textContent = '⚠️ ' + titulo;
+      document.getElementById('modalExclusaoMensagem').textContent = mensagem;
+      document.getElementById('modalExclusaoBtnConfirmar').href = url;
+      new bootstrap.Modal(document.getElementById('modalConfirmarExclusao')).show();
+    }
+  </script>
 </body>
 </html>
 <?php ob_end_flush(); ?>
