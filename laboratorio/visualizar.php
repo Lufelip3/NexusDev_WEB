@@ -1,4 +1,5 @@
-﻿<?php
+<?php 
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 include_once("../objetos/laboratorioController.php");
 
 $controller = new laboratorioController();
@@ -27,6 +28,7 @@ if (!$lab) {
 </head>
 <body class="d-flex flex-nowrap" style="font-family: 'Manrope', sans-serif;">
 
+  <!-- Sidebar -->
   <aside class="b5-sidebar offcanvas-lg offcanvas-start p-3" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
     <div class="offcanvas-header d-lg-none border-bottom border-opacity-25 border-light mb-3">
       <h5 class="offcanvas-title fw-bold text-white text-uppercase" id="menuLateralLabel"><img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid rounded" style="max-height: 70px;"></h5>
@@ -37,32 +39,38 @@ if (!$lab) {
         <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
       </a>
 
-
       <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
       <ul class="nav nav-pills flex-column mb-auto gap-2">
-      <li class="nav-item">
-        <a href="../index.php" class="nav-link">
-          <span class="fs-5">🏠</span> Menu Principal
-        </a>
-      </li>
+        <li class="nav-item">
+          <a href="../index.php" class="nav-link">
+            <span class="fs-5">🏠</span> Menu Principal
+          </a>
+        </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
-        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
-        <li class="nav-item"><a href="index.php" class="nav-link active"><span class="fs-5">🔬</span> Laboratórios</a></li>
+        <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?>
+          <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php endif; ?>
+        <li class="nav-item"><a href="index.php" class="nav-link active" aria-current="page"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="../Compra/index.php" class="nav-link"><span class="fs-5">🛒</span> Compras</a></li>
         <li class="nav-item"><a href="../Venda/index.php" class="nav-link"><span class="fs-5">📈</span> Vendas</a></li>
       </ul>
       <hr class="border-secondary mt-auto">
       <div class="ph-sidebar-footer">
-        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none"><span class="fs-5">⏻</span> Sair do Sistema</a>
+        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none">
+          <span class="fs-5">⏻</span> Sair do Sistema
+        </a>
       </div>
     </div>
   </aside>
 
+  <!-- Conteúdo Principal -->
   <main class="b5-main p-4 p-md-5">
     <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
       <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"><span class="fs-4">☰</span></button>
+        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+          <span class="fs-4">☰</span>
+        </button>
         <div>
           <h1 class="display-6 fw-bold m-0" style="color:#1a1c4b;">Ficha do Laboratório</h1>
           <p class="text-secondary mb-0">Detalhes cadastrais e rastreamento.</p>
@@ -74,13 +82,13 @@ if (!$lab) {
     <div class="card card-pharma" style="max-width: 800px; margin: 0 auto;">
       <!-- Header colorido -->
       <div class="p-4 text-white d-flex align-items-center gap-4" style="background: linear-gradient(135deg,#1a1c4b 0%,#2c2f8a 100%); border-radius: 12px 12px 0 0;">
-        <div style="width:80px;height:80px;border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:2.5rem;flex-shrink:0;overflow:hidden;">
+        <div class="ph-lab-icon-wrap" style="width:80px;height:80px;border-radius:16px;background:rgba(255,255,255,.15);border:none;">
           <?php if (!empty($lab['Foto_Lab'])): ?>
-            <img src="../uploads/laboratorios/<?= htmlspecialchars($lab['Foto_Lab']) ?>" alt="Logo" style="width:100%;height:100%;object-fit:cover;">
+            <img src="../uploads/laboratorios/<?= htmlspecialchars($lab['Foto_Lab']) ?>" alt="Logo">
           <?php else: ?>🔬<?php endif; ?>
         </div>
         <div>
-          <span class="badge bg-success mb-1">● Unidade Ativa</span>
+          <span class="badge bg-success mb-1">✓ Unidade Ativa</span>
           <h2 class="fw-bold mb-0 text-white" style="font-size:1.5rem;"><?= htmlspecialchars($lab['Nome_Lab']) ?></h2>
           <p class="mb-0 opacity-75 small">Registrado no sistema PharmaPulse</p>
         </div>

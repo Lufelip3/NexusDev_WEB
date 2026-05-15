@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class medicamento {
 
@@ -131,3 +131,4 @@ class medicamento {
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
+

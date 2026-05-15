@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 include_once "../Objetos/vendaController.php";
 include_once "../Objetos/drogariaController.php";
@@ -62,6 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         header("Location: index.php");
         exit();
     }
+    if (isset($_GET["cancelar"]) && ($_SESSION['login']->Funcao ?? '') === 'Administrador') {
+        $controller->cancelarVenda($_GET["cancelar"]);
+        header("Location: index.php");
+        exit();
+    }
 }
 
 $totalVendas = $vendas ? count($vendas) : 0;
@@ -100,7 +105,7 @@ unset($_SESSION['venda_sucesso']);
       <a href="../index.php"
         class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25"
         style="border-color: #fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
 
@@ -116,11 +121,13 @@ unset($_SESSION['venda_sucesso']);
           <span class="fs-5">💊</span> Medicamentos
         </a>
       </li>
+      <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?>
       <li class="nav-item">
-        <a href="../index.php" class="nav-link">
+        <a href="../funcionario/index.php" class="nav-link">
           <span class="fs-5">👥</span> Funcionários
         </a>
       </li>
+      <?php endif; ?>
       <li class="nav-item">
         <a href="../Laboratorio/index.php" class="nav-link">
           <span class="fs-5">🔬</span> Laboratórios
@@ -276,16 +283,18 @@ unset($_SESSION['venda_sucesso']);
                   <?php endif; ?>
                 </td>
                 <td class="text-end pe-4">
-                  <?php if(!$venda->Finalizada): ?>
+                  <?php if($venda->Finalizada): ?>
+                    <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?>
+                    <a href="#" class="btn btn-sm btn-outline-danger"
+                       onclick="abrirModalExcluir(event, 'index.php?cancelar=<?= $venda->NotaFiscal_Saida ?>', 'Cancelar Venda', 'Deseja cancelar a venda NF #<?= $venda->NotaFiscal_Saida ?>? O estoque será estornado automaticamente.')">Cancelar Venda</a>
+                    <?php endif; ?>
+                  <?php else: ?>
                     <a href="novaVenda.php?nota_fiscal_saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
-                  <?php endif; ?>
-                  
-                  <a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-pharma-success me-1">Ver Itens</a>
-                  
-                  <?php if(!$venda->Finalizada): ?>
                     <a href="#" class="btn btn-sm btn-outline-danger"
                        onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $venda->NotaFiscal_Saida ?>', 'Excluir Venda', 'Tem certeza que deseja excluir a venda NF #<?= $venda->NotaFiscal_Saida ?>? Esta ação não pode ser desfeita.')">🗑</a>
                   <?php endif; ?>
+                  
+                  <a href="../ItemVenda/index.php?notaFiscal_Saida=<?= $venda->NotaFiscal_Saida ?>" class="btn btn-sm btn-pharma-success me-1">Ver Itens</a>
                 </td>
               </tr>
               <?php endforeach; ?>
@@ -307,7 +316,7 @@ unset($_SESSION['venda_sucesso']);
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
         <div class="modal-header border-0 p-4" style="background-color: #1a1c4b;">
-          <h5 class="modal-title fw-bold text-white" id="loginModalLabel">🔒 Área Restrita</h5>
+          <h5 class="modal-title fw-bold text-white" id="loginModalLabel">🔍’ Área Restrita</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
@@ -383,3 +392,4 @@ unset($_SESSION['venda_sucesso']);
   </script>
 </body>
 </html>
+

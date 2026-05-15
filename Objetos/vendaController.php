@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/venda.php";
@@ -47,11 +47,7 @@ class VendaController
      */
     public function salvarRascunhoVenda($notaFiscal, $valorTotal, $cnpj)
     {
-        if (empty($cnpj)) {
-            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-            $_SESSION['erro_venda'] = 'Erro: Selecione uma drogaria válida para salvar o rascunho.';
-            return false;
-        }
+        if(empty($cnpj)) $cnpj = null;
         return $this->venda->salvarRascunho($notaFiscal, $valorTotal, $cnpj);
     }
 
@@ -94,10 +90,24 @@ class VendaController
         return $this->venda->finalizarStatus($notaFiscal);
     }
 
+    /**
+     * Cancela uma venda finalizada, estornando o estoque via trigger.
+     */
+    public function cancelarVenda($NotaFiscal_Saida)
+    {
+        // A trigger trg_retorno_estoque_cancelamento no banco cuidará de devolver o estoque
+        // se Finalizada for 1. O ON DELETE CASCADE cuidará de remover os itens.
+        $this->venda->NotaFiscal_Saida = $NotaFiscal_Saida;
+        if ($this->venda->excluir()) {
+            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+            $_SESSION['venda_sucesso'] = "Venda #$NotaFiscal_Saida cancelada e estoque estornado com sucesso!";
+            header("location: index.php");
+            exit();
+        }
+    }
+
     public function excluirVenda($NotaFiscal_Saida)
     {
-        // Primeiro remove os itens (sem CASCADE no banco)
-        $this->bd->exec("DELETE FROM item_venda WHERE NotaFiscal_Saida = " . (int)$NotaFiscal_Saida);
         $this->venda->NotaFiscal_Saida = $NotaFiscal_Saida;
         $this->venda->excluir();
         header("location: index.php");
@@ -123,3 +133,4 @@ class VendaController
         return $this->venda->buscaVenda($NotaFiscal_Saida);
     }
 }
+

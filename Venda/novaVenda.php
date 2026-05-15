@@ -149,7 +149,7 @@ unset($_SESSION['erro_venda_modal']);
       <a href="../index.php"
         class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25"
         style="border-color: #fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
       <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>

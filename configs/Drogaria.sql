@@ -121,7 +121,7 @@ CREATE TABLE item (
   NotaFiscal_Entrada INT,
   Cod_CatMed INT,
   Cod_Med INT,
-  FOREIGN KEY (NotaFiscal_Entrada) REFERENCES compra(NotaFiscal_Entrada),
+  FOREIGN KEY (NotaFiscal_Entrada) REFERENCES compra(NotaFiscal_Entrada) ON DELETE CASCADE,
   FOREIGN KEY (Cod_CatMed) REFERENCES catalogo_medicamento(Cod_CatMed),
   FOREIGN KEY (Cod_Med) REFERENCES medicamento(Cod_Med)
 );
@@ -137,7 +137,7 @@ CREATE TABLE item_venda (
   Cod_Med INT,
   NotaFiscal_Saida INT,
   FOREIGN KEY (Cod_Med) REFERENCES medicamento(Cod_Med),
-  FOREIGN KEY (NotaFiscal_Saida) REFERENCES venda(NotaFiscal_Saida)
+  FOREIGN KEY (NotaFiscal_Saida) REFERENCES venda(NotaFiscal_Saida) ON DELETE CASCADE
 );
 
 -- ===============================
@@ -436,6 +436,19 @@ BEGIN
         JOIN item i ON cm.Cod_CatMed = i.Cod_CatMed
         SET cm.quantidade = cm.quantidade - i.Qtd_Item
         WHERE i.NotaFiscal_Entrada = NEW.NotaFiscal_Entrada;
+    END IF;
+END $$
+
+-- Trigger: estorna estoque de medicamentos ao CANCELAR (excluir) uma venda finalizada
+CREATE TRIGGER trg_cancelar_venda_finalizada
+BEFORE DELETE ON venda
+FOR EACH ROW
+BEGIN
+    IF OLD.Finalizada = 1 THEN
+        UPDATE medicamento m
+        JOIN item_venda iv ON m.Cod_Med = iv.Cod_Med
+        SET m.Qtd_Med = m.Qtd_Med + iv.Qtd_ItemVenda
+        WHERE iv.NotaFiscal_Saida = OLD.NotaFiscal_Saida;
     END IF;
 END $$
 

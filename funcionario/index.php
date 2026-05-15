@@ -1,5 +1,9 @@
-<?php
+﻿<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (($_SESSION["login"]->Funcao ?? "") !== "Administrador") {
+    header("location: ../index.php");
+    exit();
+}
 include_once("../Objetos/funcionarioController.php");
 
 if (!isset($_SESSION["login"])){
@@ -55,7 +59,7 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
 
@@ -115,16 +119,16 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
           <div class="ph-lab-list">
             <?php foreach ($resultados as $res): ?>
             <div class="ph-lab-card func-card">
-              <div class="ph-lab-icon-wrap func-icon" <?= empty($res->imagem) ? 'style="background:transparent;"' : '' ?>>
+              <div class="ph-lab-icon-wrap func-icon" >
                 <?php if (!empty($res->imagem)): ?>
-                  <img src="../uploads/funcionarios/<?= htmlspecialchars($res->imagem) ?>" alt="Foto" style="width: 46px; height: 46px; border-radius: var(--ph-radius-sm); object-fit: cover;">
+                  <img src="../uploads/funcionarios/<?= htmlspecialchars($res->imagem) ?>" alt="Foto">
                 <?php else: ?>
                   <span style="font-size:2rem;">👥</span>
                 <?php endif; ?>
               </div>
               <div class="ph-lab-body">
                 <strong><?= htmlspecialchars($res->Nome_Fun ?? '') ?></strong>
-                <span>🪪 <?= htmlspecialchars($res->CPF ?? '') ?></span>
+                <span>🆔 <?= htmlspecialchars($res->CPF ?? '') ?></span>
                 <span>✉ <?= htmlspecialchars($res->Email_Fun ?? '') ?></span>
                 <span>📞 <?= htmlspecialchars($res->Telefone_Fun ?? '') ?></span>
               </div>
@@ -167,9 +171,9 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
       <?php foreach ($funcionarios as $funcionario): ?>
       <div class="ph-lab-card func-card">
         <!-- Foto / Avatar -->
-        <div class="ph-lab-icon-wrap func-icon" <?= empty($funcionario->imagem) ? 'style="background:transparent;"' : '' ?>>
+        <div class="ph-lab-icon-wrap func-icon">
           <?php if (!empty($funcionario->imagem)): ?>
-            <img src="../uploads/funcionarios/<?= htmlspecialchars($funcionario->imagem) ?>" alt="Foto" style="width: 46px; height: 46px; border-radius: var(--ph-radius-sm); object-fit: cover;">
+            <img src="../uploads/funcionarios/<?= htmlspecialchars($funcionario->imagem) ?>" alt="Foto">
           <?php else: ?>
             <span style="font-size:2rem;">👥</span>
           <?php endif; ?>
@@ -178,7 +182,7 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
         <!-- Dados -->
         <div class="ph-lab-body">
           <strong><?= htmlspecialchars($funcionario->Nome_Fun) ?></strong>
-          <span>🪪 <?= htmlspecialchars($funcionario->CPF) ?></span>
+          <span>🆔 <?= htmlspecialchars($funcionario->CPF) ?></span>
           <span>✉ <?= htmlspecialchars($funcionario->Email_Fun) ?></span>
           <span>📞 <?= htmlspecialchars($funcionario->Telefone_Fun) ?></span>
         </div>
@@ -234,3 +238,4 @@ if($_SERVER["REQUEST_METHOD"] === "GET") {
   </script>
 </body>
 </html>
+

@@ -1,4 +1,6 @@
-<!DOCTYPE html><?php
+<!DOCTYPE html>
+<?php 
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 ob_start();
 include_once("../objetos/drogariaController.php");
 
@@ -33,16 +35,17 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
         <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
       </a>
 
-
       <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
       <ul class="nav nav-pills flex-column mb-auto gap-2">
-      <li class="nav-item">
-        <a href="../index.php" class="nav-link">
-          <span class="fs-5">🏠</span> Menu Principal
-        </a>
-      </li>
+        <li class="nav-item">
+          <a href="../index.php" class="nav-link">
+            <span class="fs-5">🏠</span> Menu Principal
+          </a>
+        </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
-        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?>
+          <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php endif; ?>
         <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="index.php" class="nav-link active"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="../Compra/index.php" class="nav-link"><span class="fs-5">🛒</span> Compras</a></li>
@@ -50,7 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
       </ul>
       <hr class="border-secondary mt-auto">
       <div class="ph-sidebar-footer">
-        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none"><span class="fs-5">⏻</span> Sair do Sistema</a>
+        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none">
+          <span class="fs-5">⏻</span> Sair do Sistema
+        </a>
       </div>
     </div>
   </aside>
@@ -58,7 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
   <main class="b5-main p-4 p-md-5">
     <div class="d-flex justify-content-between flex-wrap align-items-center mb-4 gap-3">
       <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"><span class="fs-4">☰</span></button>
+        <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+          <span class="fs-4">☰</span>
+        </button>
         <div>
           <h1 class="display-6 fw-bold m-0" style="color:#1a1c4b;">Drogarias Desativadas</h1>
           <p class="text-secondary mb-0">Unidades removidas – possível reativação.</p>
@@ -98,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
                 <td class="text-end pe-4">
                   <a href="#"
                      class="btn btn-sm btn-pharma-success fw-bold"
-                     onclick="abrirModalReativar(event, 'excluidos.php?reativar=<?= urlencode($drog->CNPJ_Drog) ?>', '<?= htmlspecialchars(addslashes($drog->Nome_Drog)) ?>')">♻ Reativar</a>
+                     onclick="abrirModalReativar(event, 'excluidos.php?reativar=<?= urlencode($drog->CNPJ_Drog) ?>', '<?= htmlspecialchars(addslashes($drog->Nome_Drog)) ?>')">♻️ Reativar</a>
                 </td>
               </tr>
               <?php endforeach; ?>
@@ -119,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius:16px; overflow:hidden;">
         <div class="modal-header" style="background:#28a745;">
-          <h5 class="modal-title text-white fw-bold" id="modalReativacaoLabel">♻ Reativar Drogaria</h5>
+          <h5 class="modal-title text-white fw-bold" id="modalReativacaoLabel">♻️ Reativar Drogaria</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body p-4">
@@ -127,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
         </div>
         <div class="modal-footer border-0">
           <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
-          <a href="#" id="modalReativacaoBtnConfirmar" class="btn btn-success px-4 fw-bold">♻ Confirmar</a>
+          <a href="#" id="modalReativacaoBtnConfirmar" class="btn btn-success px-4 fw-bold">♻️ Confirmar</a>
         </div>
       </div>
     </div>

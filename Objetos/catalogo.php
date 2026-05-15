@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class Catalogo {
     public $Cod_CatMed;
@@ -55,3 +55,4 @@ class Catalogo {
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
+

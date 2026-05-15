@@ -1,4 +1,6 @@
-<?php
+<?php if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+?>
+﻿<?php
 include "configs/database.php";
 $db = (new Database())->conectar();
 $stmt = $db->query("DESCRIBE laboratorio");
@@ -7,3 +9,4 @@ print_r($result);
 $stmt = $db->query("SHOW INDEX FROM laboratorio");
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 print_r($result);
+

@@ -338,27 +338,29 @@
    transform: translateY(-2px);
  }
 
- /* Ícone / Foto */
- .ph-lab-icon-wrap {
-   flex-shrink: 0;
-   width: 52px;
-   height: 52px;
-   border-radius: 50%;
-   background: var(--ph-navy);
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   font-size: 1.5rem;
-   color: #fff;
-   overflow: hidden;
- }
+   /* Ícone / Foto (Avatares/Logos) */
+  .ph-lab-icon-wrap {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--ph-slate-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--ph-navy);
+    overflow: hidden;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
 
- .ph-lab-icon-wrap img {
-   width: 100%;
-   height: 100%;
-   object-fit: cover;
-   border-radius: 50%;
- }
+  .ph-lab-icon-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
  /* Bloco de texto central */
  .ph-lab-body {

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class Compra
 {
@@ -171,3 +171,4 @@ class Compra
         return $stmt->execute();
     }
 }
+
