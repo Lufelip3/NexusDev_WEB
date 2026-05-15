@@ -96,13 +96,45 @@ Class venda{
 
     public function excluir()
     {
-        $sql = "DELETE FROM venda WHERE NotaFiscal_Saida = :NotaFiscal_Saida";
-        $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":NotaFiscal_Saida", $this->NotaFiscal_Saida, PDO::PARAM_INT);
+        try {
+            $this->bd->beginTransaction();
 
-        if ($stmt->execute()) {
+            // 1. Localizar a venda para verificar se está finalizada
+            $sqlBusca = "SELECT Finalizada FROM venda WHERE NotaFiscal_Saida = :nf";
+            $stmtBusca = $this->bd->prepare($sqlBusca);
+            $stmtBusca->bindParam(":nf", $this->NotaFiscal_Saida, PDO::PARAM_INT);
+            $stmtBusca->execute();
+            $vendaAtual = $stmtBusca->fetch(PDO::FETCH_OBJ);
+
+            if ($vendaAtual && $vendaAtual->Finalizada == 1) {
+                // Estornar estoque manualmente (caso a trigger não exista ou não funcione)
+                $sqlEstorno = "UPDATE medicamento m
+                               JOIN item_venda iv ON m.Cod_Med = iv.Cod_Med
+                               SET m.Qtd_Med = m.Qtd_Med + iv.Qtd_ItemVenda
+                               WHERE iv.NotaFiscal_Saida = :nf";
+                $stmtEstorno = $this->bd->prepare($sqlEstorno);
+                $stmtEstorno->bindParam(":nf", $this->NotaFiscal_Saida, PDO::PARAM_INT);
+                $stmtEstorno->execute();
+            }
+
+            // 2. Deletar os itens da venda primeiro (evita erro de Integrity constraint violation)
+            $sqlItens = "DELETE FROM item_venda WHERE NotaFiscal_Saida = :nf";
+            $stmtItens = $this->bd->prepare($sqlItens);
+            $stmtItens->bindParam(":nf", $this->NotaFiscal_Saida, PDO::PARAM_INT);
+            $stmtItens->execute();
+
+            // 3. Deletar a venda em si
+            $sqlVenda = "DELETE FROM venda WHERE NotaFiscal_Saida = :NotaFiscal_Saida";
+            $stmtVenda = $this->bd->prepare($sqlVenda);
+            $stmtVenda->bindParam(":NotaFiscal_Saida", $this->NotaFiscal_Saida, PDO::PARAM_INT);
+            $stmtVenda->execute();
+
+            $this->bd->commit();
             return true;
-        } else {
+        } catch (Exception $e) {
+            if ($this->bd->inTransaction()) {
+                $this->bd->rollBack();
+            }
             return false;
         }
     }

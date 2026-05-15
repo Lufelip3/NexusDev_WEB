@@ -88,7 +88,7 @@ unset($_SESSION['compra_sucesso']);
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
 
@@ -100,7 +100,7 @@ unset($_SESSION['compra_sucesso']);
         </a>
       </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
-        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?><li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li><?php endif; ?>
         <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="index.php" class="nav-link active" aria-current="page"><span class="fs-5">🛒</span> Compras</a></li>

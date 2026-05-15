@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once "../configs/database.php";
 include_once "drogaria.php";
 
@@ -135,3 +135,4 @@ public function localizarDrogaria($cnpj){
         return false;
     }
 }
+

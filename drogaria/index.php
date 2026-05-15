@@ -1,4 +1,6 @@
 <?php
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+
 ob_start();
 include_once("../Objetos/drogariaController.php");
 
@@ -46,7 +48,7 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
 
@@ -58,7 +60,7 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
         </a>
       </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
-        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?><li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li><?php endif; ?>
         <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="index.php" class="nav-link active" aria-current="page"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="../Compra/index.php" class="nav-link"><span class="fs-5">🛒</span> Compras</a></li>
@@ -118,9 +120,9 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
               $foto  = is_array($res) ? ($res['Foto_Drog'] ?? '') : ($res->Foto_Drog ?? '');
             ?>
             <div class="ph-lab-card drog-card">
-              <div class="ph-lab-icon-wrap drog-icon" <?= empty($foto) ? 'style="background:transparent;"' : '' ?>>
+              <div class="ph-lab-icon-wrap drog-icon" >
                 <?php if (!empty($foto)): ?>
-                  <img src="../uploads/drogarias/<?= htmlspecialchars($foto) ?>" alt="Logo" style="width: 46px; height: 46px; border-radius: var(--ph-radius-sm); object-fit: cover;">
+                  <img src="../uploads/drogarias/<?= htmlspecialchars($foto) ?>" alt="Logo">
                 <?php else: ?>
                   <span style="font-size:2rem;">🏪</span>
                 <?php endif; ?>
@@ -170,9 +172,9 @@ $totalDrogs = $drogaria ? count($drogaria) : 0;
     <div class="ph-lab-list">
       <?php foreach ($drogaria as $drog): ?>
       <div class="ph-lab-card drog-card">
-        <div class="ph-lab-icon-wrap drog-icon" <?= empty($drog->Foto_Drog) ? 'style="background:transparent;"' : '' ?>>
+        <div class="ph-lab-icon-wrap drog-icon" >
           <?php if (!empty($drog->Foto_Drog)): ?>
-            <img src="../uploads/drogarias/<?= htmlspecialchars($drog->Foto_Drog) ?>" alt="Logo" style="width: 46px; height: 46px; border-radius: var(--ph-radius-sm); object-fit: cover;">
+            <img src="../uploads/drogarias/<?= htmlspecialchars($drog->Foto_Drog) ?>" alt="Logo">
           <?php else: ?>
             <span style="font-size:2rem;">🏪</span>
           <?php endif; ?>

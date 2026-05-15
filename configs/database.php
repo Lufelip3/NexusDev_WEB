@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class Database
 {
@@ -21,3 +21,4 @@ class Database
         return $this->con;
     }
 }
+

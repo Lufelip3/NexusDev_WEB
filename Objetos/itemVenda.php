@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 Class itemVenda{
     public $Cod_ItemVenda;
@@ -102,3 +102,4 @@ Class itemVenda{
         return $resultado->fetchAll(PDO::FETCH_OBJ);
     }
 }
+

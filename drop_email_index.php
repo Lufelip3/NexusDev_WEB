@@ -1,4 +1,6 @@
-<?php
+<?php if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+?>
+﻿<?php
 include "configs/database.php";
 $db = (new Database())->conectar();
 try {
@@ -7,3 +9,4 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+

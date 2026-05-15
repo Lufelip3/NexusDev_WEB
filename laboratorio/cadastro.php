@@ -1,4 +1,6 @@
-﻿<?php
+<?php
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+
 include_once("../objetos/laboratorioController.php");
 if($_SERVER["REQUEST_METHOD"] === "POST"){
     $controller = new laboratorioController();
@@ -28,7 +30,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
 
@@ -40,7 +42,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         </a>
       </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
-        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?><li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li><?php endif; ?>
         <li class="nav-item"><a href="index.php" class="nav-link active"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="../Compra/index.php" class="nav-link"><span class="fs-5">🛒</span> Compras</a></li>
@@ -92,7 +94,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
             </div>
             <div class="col-12">
               <label class="form-label fw-bold">Foto / Logotipo</label>
-              <img id="preview" src="#" alt="Preview da Foto" style="display:none; width:100%; max-height:200px; object-fit:contain; border-radius:var(--ph-radius-sm); margin-bottom:12px;">
+              <img id="preview" src="#" alt="Preview da Foto" style="display:none; width:100%; max-height:200px; object-fit:cover; border-radius:var(--ph-radius-sm); margin-bottom:12px;">
               <input type="file" name="Foto_Lab" id="fotoInput" class="form-control" accept="image/*">
             </div>
           </div>

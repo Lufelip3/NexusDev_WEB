@@ -1,7 +1,10 @@
 <?php
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+
 // Pega os dados do usuário logado diretamente da sessão (já preenchida no login)
 $_sidebar_nome  = $_SESSION['login']->Nome_Fun ?? ($_SESSION['nome'] ?? 'Usuário');
-$_sidebar_cargo = $_SESSION['login']->Funcao   ?? 'Colaborador';
+$_sidebar_cargo    = $_SESSION['login']->Funcao   ?? 'Colaborador';
+$_sidebar_is_admin = ($_sidebar_cargo === 'Administrador');
 
 // Gera as iniciais (primeiro + último nome)
 $_sidebar_parts    = array_filter(explode(' ', trim($_sidebar_nome)));
@@ -22,3 +25,4 @@ $_sidebar_initials = count($_sidebar_parts) >= 2
 <style>
   .b5-sidebar .nav-link { font-size: 16px !important; }
 </style>
+

@@ -1,3 +1,5 @@
+<?php if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+?>
 <?php
 include_once "Objetos/funcionarioController.php";
 
@@ -50,7 +52,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
           </div>
           <div class="mb-4">
             <label for="senha" class="form-label fw-bold">Senha</label>
-            <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••" required>
+            <div class="input-group">
+              <input type="password" id="senha" name="senha" class="form-control" style="border-top-right-radius: 0; border-bottom-right-radius: 0;" placeholder="••••••••" required>
+              <button class="btn btn-outline-secondary" type="button" id="toggleSenha" style="border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-color: #dee2e6;">
+                👁️
+              </button>
+            </div>
           </div>
           <button type="submit" class="btn btn-pharma-success w-100 fw-bold py-2 fs-5">Entrar no Sistema</button>
         </form>
@@ -60,5 +67,18 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/validacoes.js"></script>
+  <script>
+    document.getElementById('toggleSenha').addEventListener('click', function() {
+      const senhaInput = document.getElementById('senha');
+      const icon = this;
+      if (senhaInput.type === 'password') {
+        senhaInput.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        senhaInput.type = 'password';
+        icon.textContent = '👁️';
+      }
+    });
+  </script>
 </body>
 </html>

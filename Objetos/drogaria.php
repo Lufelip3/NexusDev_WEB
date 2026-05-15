@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 Class drogaria{
     public $numerodrog;
     public $nome;
@@ -130,3 +130,4 @@ public function excluir($cnpj){
         return $resultado->fetchAll(PDO::FETCH_OBJ);
     }
 }
+

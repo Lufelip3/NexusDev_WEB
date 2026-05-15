@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/itemVenda.php";
@@ -62,3 +62,4 @@ class ItemVendaController
         return $stmt->fetchColumn();
     }
 }
+

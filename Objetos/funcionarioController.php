@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/funcionario.php"; // ajuste conforme onde o arquivo está
 
@@ -66,9 +66,11 @@ class FuncionarioController
             exit();
         }
 
-//        $_SESSION['sucesso'] = $resultado['mensagem'];
-//        header("Location: ../funcionario/cadastro.php");
-//        exit();
+        if ($resultado['sucesso']) {
+            $_SESSION['sucesso'] = $resultado['mensagem'];
+            header("Location: index.php");
+            exit();
+        }
 //        CREATE TABLE funcionario (
 //        CPF VARCHAR(14) UNIQUE PRIMARY KEY,
 //Nome_Fun VARCHAR(50) NOT NULL,
@@ -165,6 +167,10 @@ class FuncionarioController
 
         if ($uploadOk == 0) {
             return false;
+        }
+
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
         }
 
         if (move_uploaded_file($arquivo['tmp_name']['fileToUpload'], $upload_file)) {

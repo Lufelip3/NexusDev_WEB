@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/itemCompra.php";
 
@@ -36,6 +36,10 @@ class ItemCompraController {
         return $this->item->atualizarCodMed($cod_item, $cod_med);
     }
 
+    public function atualizarQtd($cod_item, $nova_qtd) {
+        return $this->item->atualizarQuantidade($cod_item, $nova_qtd);
+    }
+
     /**
      * Calcula o total dos itens de uma compra diretamente do banco.
      */
@@ -48,3 +52,4 @@ class ItemCompraController {
         return $stmt->fetchColumn();
     }
 }
+

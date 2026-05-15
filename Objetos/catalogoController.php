@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/catalogo.php";
 
@@ -28,3 +28,4 @@ class CatalogoController {
         return $this->catalogo->pesquisarPorTermo($cnpj, $termo);
     }
 }
+

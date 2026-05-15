@@ -61,6 +61,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+    if (isset($_POST['atualizar_qtd'])) {
+        $codItem = (int) $_POST['cod_item'];
+        $novaQtd = (int) $_POST['nova_qtd'];
+        if ($novaQtd > 0) {
+            $itemController->atualizarQtd($codItem, $novaQtd);
+        }
+        header("Location: itensCompra.php?nota_fiscal_entrada={$nota_fiscal}&cnpj_lab={$cnpj_lab}");
+        exit();
+    }
+
     if (isset($_POST['salvar'])) {
         $totalCompra = $itemController->calcularTotal($nota_fiscal);
         $compraController->salvarRascunhoCompra($nota_fiscal, $totalCompra);
@@ -140,7 +150,7 @@ unset($_SESSION['erro_compra']);
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
       <?php include_once __DIR__ . '/../includes/sidebar_user.php'; ?>
@@ -151,7 +161,7 @@ unset($_SESSION['erro_compra']);
           </a>
         </li>
         <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
-        <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
+        <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?><li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li><?php endif; ?>
         <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="index.php" class="nav-link active"><span class="fs-5">🛒</span> Compras</a></li>
@@ -190,7 +200,7 @@ unset($_SESSION['erro_compra']);
         <div class="card card-pharma h-100">
           <div class="card-body p-4">
             <h5 class="fw-bold mb-3" style="color:#1a1c4b;">Catálogo do Laboratório</h5>
-            <p class="text-secondary mb-2" style="font-size:.82rem;">💡 Clique em qualquer linha para adicionar rapidamente via modal.</p>
+            <p class="text-secondary mb-2" style="font-size:.82rem;">ðŸ’¡ Clique em qualquer linha para adicionar rapidamente via modal.</p>
             <form method="POST" class="d-flex gap-2 mb-3">
               <input type="text" name="termo_cat" class="form-control" placeholder="Nome ou EAN..." value="<?= htmlspecialchars($_POST['termo_cat'] ?? '') ?>">
               <button type="submit" name="pesquisa_cat" class="btn btn-pharma-success px-4 fw-bold shadow-sm">Buscar</button>
@@ -241,24 +251,36 @@ unset($_SESSION['erro_compra']);
       <div class="col-lg-6">
         <div class="card card-pharma h-100">
           <div class="card-body p-4 d-flex flex-column">
-            <h5 class="fw-bold mb-3" style="color:#1a1c4b;">Itens da Compra</h5>
+            <h4 class="fw-bold mb-4" style="color: #1a1c4b;">🛒 Carrinho / Itens da NF</h4>
             <div class="table-responsive">
-              <table class="table table-pharma mb-0 align-middle" style="font-size:.88rem;">
-                <thead>
+              <table class="table table-sm align-middle">
+                <thead class="table-light">
                   <tr>
-                    <th class="ps-3">Cód.</th><th>EAN</th><th>Nome</th><th>Qtd</th><th>Valor</th><th>Subtotal</th><th></th>
+                    <th>Item</th>
+                    <th>EAN</th>
+                    <th>Med.</th>
+                    <th>Qtd</th>
+                    <th>V. Unit</th>
+                    <th>V. Total</th>
+                    <th>Remover</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php if(!empty($itensAtuais)): ?>
                     <?php foreach($itensAtuais as $item): ?>
-                    <tr>
+                    <tr class="item-carrinho" data-cod-item="<?= $item->Cod_Item ?>" data-valor="<?= $item->Valor_Item ?>" data-max="<?= $item->quantidade ?>">
                       <td class="ps-3"><?= $item->Cod_Item ?></td>
                       <td><?= $item->EAN_Med ?></td>
                       <td class="fw-bold"><?= htmlspecialchars($item->Nome_CatMed) ?></td>
-                      <td><?= $item->Qtd_Item ?></td>
-                      <td>R$ <?= number_format($item->Valor_Item, 2, ',', '.') ?></td>
-                      <td class="fw-bold text-success">R$ <?= number_format($item->Qtd_Item * $item->Valor_Item, 2, ',', '.') ?></td>
+                      <td>
+                        <form method="POST" class="d-flex align-items-center gap-1 mb-0 m-0" onclick="event.stopPropagation()">
+                          <input type="hidden" name="cod_item" value="<?= $item->Cod_Item ?>">
+                          <input type="number" name="nova_qtd" class="form-control form-control-sm input-qtd-carrinho text-center fw-bold" style="width:70px;" min="1" max="<?= $item->quantidade ?>" value="<?= $item->Qtd_Item ?>">
+                          <button type="submit" name="atualizar_qtd" class="btn btn-sm btn-outline-secondary p-0 shadow-sm" style="width: 30px; height: 30px; border-radius: 6px;" title="Atualizar">↻</button>
+                        </form>
+                      </td>
+                      <td>R$ <span class="valor-unitario"><?= number_format($item->Valor_Item, 2, ',', '.') ?></span></td>
+                      <td class="fw-bold text-success">R$ <span class="subtotal-item"><?= number_format($item->Qtd_Item * $item->Valor_Item, 2, ',', '.') ?></span></td>
                       <td>
                         <form method="POST" id="formRemover_<?= $item->Cod_Item ?>">
                           <input type="hidden" name="cod_item" value="<?= $item->Cod_Item ?>">
@@ -270,7 +292,7 @@ unset($_SESSION['erro_compra']);
                     <?php endforeach; ?>
                     <tr class="table-light">
                       <td colspan="5" class="text-end fw-bold pe-2">Total Estimado:</td>
-                      <td class="fw-bold text-success fs-5">R$ <?= number_format($totalCompra, 2, ',', '.') ?></td>
+                      <td class="fw-bold text-success fs-5">R$ <span id="totalGeralSpan"><?= number_format($totalCompra, 2, ',', '.') ?></span></td>
                       <td></td>
                     </tr>
                   <?php else: ?>
@@ -388,7 +410,31 @@ unset($_SESSION['erro_compra']);
         abrirModalForm({ preventDefault: function(){} }, formId, 'Remover Item', 'Deseja remover este item da compra?', 'remover');
       });
     });
+
+    document.querySelectorAll('.input-qtd-carrinho').forEach(function(input) {
+      input.addEventListener('input', function() {
+        atualizarTotais();
+      });
+    });
+
+    function atualizarTotais() {
+      let totalGeral = 0;
+      document.querySelectorAll('.item-carrinho').forEach(function(row) {
+        let qtd = parseInt(row.querySelector('.input-qtd-carrinho').value) || 0;
+        let max = parseInt(row.dataset.max) || 0;
+        if (qtd > max) {
+          qtd = max;
+          row.querySelector('.input-qtd-carrinho').value = max;
+        }
+        let valor = parseFloat(row.dataset.valor) || 0;
+        let subtotal = qtd * valor;
+        totalGeral += subtotal;
+        row.querySelector('.subtotal-item').textContent = subtotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      });
+      document.getElementById('totalGeralSpan').textContent = totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
   </script>
 
 </body>
 </html>
+

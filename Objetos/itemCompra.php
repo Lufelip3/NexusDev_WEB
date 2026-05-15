@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class ItemCompra {
     public $Cod_Item;
@@ -35,7 +35,7 @@ class ItemCompra {
     }
 
     public function lerPorNotaFiscal($notaFiscal) {
-        $sql = "SELECT i.*, cm.Nome_CatMed AS Nome_Med, cm.Nome_CatMed, cm.EAN_Med, cm.dataValItemCat, cm.Desc_CatMed
+        $sql = "SELECT i.*, cm.Nome_CatMed AS Nome_Med, cm.Nome_CatMed, cm.EAN_Med, cm.dataValItemCat, cm.Desc_CatMed, cm.quantidade
                 FROM item i 
                 JOIN catalogo_medicamento cm ON i.Cod_CatMed = cm.Cod_CatMed
                 WHERE i.NotaFiscal_Entrada = :notaFiscal";
@@ -59,4 +59,12 @@ class ItemCompra {
         $stmt->bindParam(":Cod_Item", $Cod_Item, PDO::PARAM_INT);
         return $stmt->execute();
     }
+    public function atualizarQuantidade($Cod_Item, $Nova_Qtd) {
+        $sql = "UPDATE item SET Qtd_Item = :qtd WHERE Cod_Item = :cod";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":qtd", $Nova_Qtd, PDO::PARAM_INT);
+        $stmt->bindParam(":cod", $Cod_Item, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
+

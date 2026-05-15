@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 Class laboratorio{
     public $numerolab;
     public $nome;
@@ -120,3 +120,4 @@ public function excluir($cnpj){
         return $resultado->fetchAll(PDO::FETCH_OBJ);
     }
 }
+

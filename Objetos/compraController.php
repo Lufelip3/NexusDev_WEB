@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/compra.php";
@@ -88,3 +88,4 @@ class CompraController
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once "../configs/database.php";
 include_once "medicamento.php";
 
@@ -154,3 +154,4 @@ class medicamentoController{
         return false;
     }
 }
+

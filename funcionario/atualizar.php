@@ -1,4 +1,9 @@
-﻿<?php
+<?php
+if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (($_SESSION['login']->Funcao ?? '') !== 'Administrador') {
+    header("Location: ../index.php");
+    exit();
+}
 include_once("../Objetos/funcionarioController.php");
 
 $controller = new funcionarioController();
@@ -36,7 +41,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['alterar'])){
     </div>
     <div class="offcanvas-body d-flex flex-column flex-grow-1 p-0">
       <a href="../index.php" class="d-none d-lg-flex align-items-center mb-4 text-white text-decoration-none border-bottom pb-3 border-opacity-25" style="border-color:#fff;">
-        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: contain;">
+        <img src="../cfa_logo.png" alt="Distribuidora CFA" class="img-fluid w-100 rounded" style="object-fit: cover;">
       </a>
 
 
@@ -110,9 +115,9 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['alterar'])){
             <div class="col-12">
               <label class="form-label fw-bold">Foto de Perfil</label>
               <?php if ($a->imagem): ?>
-                <img id="preview" src="../uploads/funcionarios/<?= htmlspecialchars($a->imagem) ?>" alt="Foto atual" style="display:block; width:100%; max-height:200px; object-fit:contain; border-radius:var(--ph-radius-sm); margin-bottom:12px;">
+                <img id="preview" src="../uploads/funcionarios/<?= htmlspecialchars($a->imagem) ?>" alt="Foto atual" style="display:block; width:100%; max-height:200px; object-fit:cover; border-radius:var(--ph-radius-sm); margin-bottom:12px;">
               <?php else: ?>
-                <img id="preview" src="#" alt="Preview da Foto" style="display:none; width:100%; max-height:200px; object-fit:contain; border-radius:var(--ph-radius-sm); margin-bottom:12px;">
+                <img id="preview" src="#" alt="Preview da Foto" style="display:none; width:100%; max-height:200px; object-fit:cover; border-radius:var(--ph-radius-sm); margin-bottom:12px;">
               <?php endif; ?>
               <input type="file" name="funcionario[fileToUpload]" id="fotoInput" class="form-control" accept="image/*">
             </div>
@@ -145,3 +150,4 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['alterar'])){
   </script>
 </body>
 </html>
+

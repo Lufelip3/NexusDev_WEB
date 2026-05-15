@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once "../configs/database.php";
 include_once "laboratorio.php";
 
@@ -168,3 +168,4 @@ public function localizarLaboratorio($cnpj){
         return false;
     }
 }
+

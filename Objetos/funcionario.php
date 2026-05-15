@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class Funcionario
 {
@@ -177,4 +177,5 @@ class Funcionario
         }
     }
 }
+
 
