@@ -1,5 +1,9 @@
 <?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (!isset($_SESSION["login"])) {
+    header("Location: " . (file_exists("login.php") ? "" : "../") . "login.php");
+    exit();
+}
 include_once("../Objetos/medicamentoController.php");
 
 $controller = new medicamentoController();
@@ -75,7 +79,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <p class="text-secondary mb-0">Controle do estoque de medicamentos.</p>
         </div>
       </div>
-      <a href="cadastro.php" class="btn btn-pharma-success fw-bold shadow-sm px-4">+ Novo Medicamento</a>
+      <div class="d-flex gap-2">
+        <a href="excluidos.php" class="btn btn-outline-danger fw-bold shadow-sm px-4">🗑 Ver Excluídos</a>
+        <a href="cadastro.php" class="btn btn-pharma-success fw-bold shadow-sm px-4">+ Novo Medicamento</a>
+      </div>
     </div>
 
     <!-- Busca -->

@@ -1,7 +1,8 @@
-﻿<?php
+<?php
 
 include_once __DIR__ . "/../configs/database.php";
 include_once __DIR__ . "/compra.php";
+include_once __DIR__ . "/itemCompra.php";
 
 class CompraController
 {
@@ -72,6 +73,40 @@ class CompraController
             header("location: index.php");
             exit();
         }
+    }
+
+    /**
+     * Cancela uma compra FINALIZADA (somente Admin).
+     * Estorna a quantidade de cada item do estoque de medicamentos,
+     * remove os itens e exclui o registro da compra.
+     */
+    public function cancelarCompra($NotaFiscal_Entrada)
+    {
+        $NotaFiscal_Entrada = (int)$NotaFiscal_Entrada;
+
+        // 1. Busca os itens para fazer o estorno
+        $itemObj = new ItemCompra($this->bd);
+        $itens = $itemObj->lerPorNotaFiscal($NotaFiscal_Entrada);
+
+        // 2. Estorna o estoque de cada medicamento
+        foreach ($itens as $item) {
+            if (!empty($item->Cod_Med)) {
+                $sql = "UPDATE medicamento SET Qtd_Med = Qtd_Med - :qtd WHERE Cod_Med = :cod";
+                $stmt = $this->bd->prepare($sql);
+                $stmt->bindParam(':qtd', $item->Qtd_Item, PDO::PARAM_INT);
+                $stmt->bindParam(':cod', $item->Cod_Med,  PDO::PARAM_INT);
+                $stmt->execute();
+            }
+        }
+
+        // 3. Remove os itens e a compra
+        $this->bd->exec("DELETE FROM item WHERE NotaFiscal_Entrada = {$NotaFiscal_Entrada}");
+        $this->compra->NotaFiscal_Entrada = $NotaFiscal_Entrada;
+        $this->compra->excluir();
+
+        $_SESSION['compra_sucesso'] = 'Compra cancelada e estoque estornado com sucesso.';
+        header('Location: index.php');
+        exit();
     }
 
     public function atualizarCompra($dados)

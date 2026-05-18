@@ -78,6 +78,7 @@ CREATE TABLE medicamento (
   Valor_Med DECIMAL(10,2) NOT NULL,
   Cod_CatMed INT,
   Foto_Med VARCHAR(255) NULL,
+  Ativo_Med TINYINT(1) NOT NULL DEFAULT 1,
   FOREIGN KEY (Cod_CatMed) REFERENCES catalogo_medicamento(Cod_CatMed)
 );
 

@@ -160,7 +160,10 @@ Class venda{
 
     public function buscaVenda($NotaFiscal_Saida)
     {
-        $sql = "SELECT * FROM venda WHERE NotaFiscal_Saida = :NotaFiscal_Saida";
+        $sql = "SELECT v.*, d.Nome_Drog 
+                FROM venda v 
+                LEFT JOIN drogaria d ON v.CNPJ_Drog = d.CNPJ_Drog 
+                WHERE v.NotaFiscal_Saida = :NotaFiscal_Saida";
         $resultado = $this->bd->prepare($sql);
         $resultado->bindParam(":NotaFiscal_Saida", $NotaFiscal_Saida);
         $resultado->execute();

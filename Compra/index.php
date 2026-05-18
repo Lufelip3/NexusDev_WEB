@@ -1,5 +1,9 @@
 <?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (!isset($_SESSION["login"])) {
+    header("Location: " . (file_exists("login.php") ? "" : "../") . "login.php");
+    exit();
+}
 include_once "../Objetos/compraController.php";
 include_once "../Objetos/laboratorioController.php";
 
@@ -59,6 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $controller->excluirCompra($_GET["excluir"]);
         header("Location: index.php");
         exit();
+    }
+
+    if (isset($_GET["cancelar"]) && ($_SESSION['login']->Funcao ?? '') === 'Administrador') {
+        $controller->cancelarCompra($_GET["cancelar"]);
+        // cancelarCompra já redireciona internamente
     }
 }
 
@@ -278,14 +287,17 @@ unset($_SESSION['compra_sucesso']);
                   <?php endif; ?>
                 </td>
                 <td class="text-end pe-4">
-                  <?php if(!$compra->Finalizada): ?>
+                  <?php if($compra->Finalizada): ?>
+                    <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?>
+                    <a href="#" class="btn btn-sm btn-outline-danger"
+                       onclick="abrirModalExcluir(event, 'index.php?cancelar=<?= $compra->NotaFiscal_Entrada ?>', 'Cancelar Compra', 'Deseja cancelar a compra NF #<?= $compra->NotaFiscal_Entrada ?>? O estoque será estornado automaticamente.')">Cancelar Compra</a>
+                    <?php endif; ?>
+                  <?php else: ?>
                     <a href="itensCompra.php?nota_fiscal_entrada=<?= $compra->NotaFiscal_Entrada ?>&cnpj_lab=<?= urlencode($compra->CNPJ_Lab ?? '') ?>" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
-                  <?php endif; ?>
-                  <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-pharma-success me-1">Ver Itens</a>
-                  <?php if(!$compra->Finalizada): ?>
                     <a href="#" class="btn btn-sm btn-outline-danger"
                        onclick="abrirModalExcluir(event, 'index.php?excluir=<?= $compra->NotaFiscal_Entrada ?>', 'Excluir Compra', 'Tem certeza que deseja excluir a compra NF #<?= $compra->NotaFiscal_Entrada ?>? Esta ação não pode ser desfeita.')">🗑</a>
                   <?php endif; ?>
+                  <a href="../ItemCompra/index.php?notaFiscal_Entrada=<?= $compra->NotaFiscal_Entrada ?>" class="btn btn-sm btn-pharma-success me-1">Ver Itens</a>
                 </td>
               </tr>
               <?php endforeach; ?>

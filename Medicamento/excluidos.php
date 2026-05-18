@@ -1,26 +1,26 @@
-<!DOCTYPE html>
-<?php 
+<?php
 if(session_status() !== PHP_SESSION_ACTIVE) session_start();
 if (!isset($_SESSION["login"])) {
     header("Location: " . (file_exists("login.php") ? "" : "../") . "login.php");
     exit();
 }
 ob_start();
-include_once ("../objetos/laboratorioController.php");
+include_once("../Objetos/medicamentoController.php");
 
-$controller = new laboratorioController();
-$excluidos  = $controller->excluidos();
-global $excluidos;
+$controller  = new medicamentoController();
+$excluidos   = $controller->lerExcluidos();
 
 if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
-    $controller->reativarLaboratorio($_GET["reativar"]);
+    $controller->reativarMedicamento((int)$_GET["reativar"]);
+    // reativarMedicamento já redireciona
 }
 ?>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laboratórios Excluídos – PharmaPulse</title>
+  <title>Medicamentos Excluídos – PharmaPulse</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,20 +46,18 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
             <span class="fs-5">🏠</span> Menu Principal
           </a>
         </li>
-        <li class="nav-item"><a href="../Medicamento/index.php" class="nav-link"><span class="fs-5">💊</span> Medicamentos</a></li>
+        <li class="nav-item"><a href="index.php" class="nav-link active"><span class="fs-5">💊</span> Medicamentos</a></li>
         <?php if (($_SESSION['login']->Funcao ?? '') === 'Administrador'): ?>
           <li class="nav-item"><a href="../funcionario/index.php" class="nav-link"><span class="fs-5">👥</span> Funcionários</a></li>
         <?php endif; ?>
-        <li class="nav-item"><a href="index.php" class="nav-link active"><span class="fs-5">🔬</span> Laboratórios</a></li>
+        <li class="nav-item"><a href="../laboratorio/index.php" class="nav-link"><span class="fs-5">🔬</span> Laboratórios</a></li>
         <li class="nav-item"><a href="../drogaria/index.php" class="nav-link"><span class="fs-5">🏪</span> Drogarias</a></li>
         <li class="nav-item"><a href="../Compra/index.php" class="nav-link"><span class="fs-5">🛒</span> Compras</a></li>
         <li class="nav-item"><a href="../Venda/index.php" class="nav-link"><span class="fs-5">📈</span> Vendas</a></li>
       </ul>
       <hr class="border-secondary mt-auto">
       <div class="ph-sidebar-footer">
-        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none">
-          <span class="fs-5">⏻</span> Sair do Sistema
-        </a>
+        <a href="../logout.php" class="ph-btn-exit w-100 mt-2 text-decoration-none"><span class="fs-5">⏻</span> Sair do Sistema</a>
       </div>
     </div>
   </aside>
@@ -71,11 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
           <span class="fs-4">☰</span>
         </button>
         <div>
-          <h1 class="display-6 fw-bold m-0" style="color:#1a1c4b;">Laboratórios Desativados</h1>
-          <p class="text-secondary mb-0">Unidades removidas – possível reativação.</p>
+          <h1 class="display-6 fw-bold m-0" style="color:#1a1c4b;">Medicamentos Excluídos</h1>
+          <p class="text-secondary mb-0">Itens removidos do estoque ativo — possível reativação.</p>
         </div>
       </div>
-      <a href="index.php" class="btn btn-outline-secondary fw-bold px-4">← Voltar ao Painel</a>
+      <a href="index.php" class="btn btn-outline-secondary fw-bold px-4">← Voltar ao Estoque</a>
     </div>
 
     <!-- Indicador -->
@@ -83,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
       <div class="col-md-4">
         <div class="card border-0 bg-white shadow-sm" style="border-left: 4px solid #dc3545 !important;">
           <div class="card-body">
-            <h6 class="text-secondary mb-1">Desativados</h6>
+            <h6 class="text-secondary mb-1">Medicamentos Desativados</h6>
             <h2 class="fw-bold mb-0 text-danger"><?= $excluidos ? count($excluidos) : 0 ?></h2>
           </div>
         </div>
@@ -97,20 +95,30 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
           <table class="table table-pharma mb-0 align-middle">
             <thead>
               <tr>
-                <th class="ps-4">Nome</th><th>CNPJ</th><th>E-mail</th><th>Telefone</th><th class="text-end pe-4">Ações</th>
+                <th class="ps-4">Cód.</th>
+                <th>EAN</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Qtd.</th>
+                <th>Validade</th>
+                <th>Valor</th>
+                <th class="text-end pe-4">Ações</th>
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($excluidos as $lab): ?>
+              <?php foreach ($excluidos as $med): ?>
               <tr>
-                <td class="ps-4 fw-bold text-secondary"><?= htmlspecialchars($lab->Nome_Lab) ?></td>
-                <td><?= htmlspecialchars($lab->CNPJ_Lab) ?></td>
-                <td><?= htmlspecialchars($lab->Email_Lab) ?></td>
-                <td><?= htmlspecialchars($lab->Telefone_Lab) ?></td>
+                <td class="ps-4 fw-bold text-secondary">#<?= htmlspecialchars($med->Cod_Med) ?></td>
+                <td><span class="badge bg-light text-dark border" style="font-size:.8rem;"><?= htmlspecialchars($med->EAN_Med ?? '—') ?></span></td>
+                <td class="fw-bold"><?= htmlspecialchars($med->Nome_Med) ?></td>
+                <td class="text-secondary"><?= htmlspecialchars($med->Desc_Med) ?></td>
+                <td><span class="badge bg-light text-dark border"><?= htmlspecialchars($med->Qtd_Med) ?> un.</span></td>
+                <td><?= $med->DataVal_Med ? date('d/m/Y', strtotime($med->DataVal_Med)) : '—' ?></td>
+                <td class="fw-bold text-success">R$ <?= number_format($med->Valor_Med, 2, ',', '.') ?></td>
                 <td class="text-end pe-4">
                   <a href="#"
                      class="btn btn-sm btn-pharma-success fw-bold"
-                     onclick="abrirModalReativar(event, 'excluidos.php?reativar=<?= urlencode($lab->CNPJ_Lab) ?>', '<?= htmlspecialchars(addslashes($lab->Nome_Lab)) ?>')">♻️ Reativar</a>
+                     onclick="abrirModalReativar(event, 'excluidos.php?reativar=<?= $med->Cod_Med ?>', '<?= htmlspecialchars(addslashes($med->Nome_Med)) ?>')">♻️ Reativar</a>
                 </td>
               </tr>
               <?php endforeach; ?>
@@ -119,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
         </div>
         <?php else: ?>
         <div class="p-5 text-center">
-          <p class="text-secondary fs-5 mb-0">✅ Nenhum laboratório desativado. Tudo limpo!</p>
+          <p class="text-secondary fs-5 mb-0">✅ Nenhum medicamento desativado. Tudo limpo!</p>
         </div>
         <?php endif; ?>
       </div>
@@ -131,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius:16px; overflow:hidden;">
         <div class="modal-header" style="background:#28a745;">
-          <h5 class="modal-title text-white fw-bold" id="modalReativacaoLabel">♻️ Reativar Laboratório</h5>
+          <h5 class="modal-title text-white fw-bold" id="modalReativacaoLabel">♻️ Reativar Medicamento</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body p-4">
@@ -149,7 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["reativar"])) {
   <script>
     function abrirModalReativar(e, url, nome) {
       e.preventDefault();
-      document.getElementById('modalReativacaoMensagem').textContent = 'Deseja reativar o laboratório ' + nome + '?';
+      document.getElementById('modalReativacaoMensagem').textContent = 'Deseja reativar o medicamento "' + nome + '"? Ele voltará a aparecer no estoque ativo.';
       document.getElementById('modalReativacaoBtnConfirmar').href = url;
       new bootstrap.Modal(document.getElementById('modalConfirmarReativacao')).show();
     }
