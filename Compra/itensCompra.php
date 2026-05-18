@@ -312,7 +312,9 @@ unset($_SESSION['erro_compra']);
               <button type="button" class="btn btn-danger px-4 fw-bold shadow-sm"
                 onclick="abrirModalForm(event, 'formAcoesCompra', 'Cancelar Compra', 'Cancelar e excluir esta compra permanentemente? Esta ação não pode ser desfeita.', 'cancelar')">✖ Cancelar</button>
               <button type="submit" name="salvar" class="btn btn-warning text-white px-4 fw-bold shadow-sm" formnovalidate>Salvar Rascunho</button>
-              <button type="submit" name="finalizar" class="btn btn-pharma-success px-4 fw-bold shadow-sm" <?= empty($itensAtuais) ? 'disabled' : '' ?>>✔ Finalizar Compra</button>
+              <button type="button" id="btn_finalizar_compra" class="btn btn-pharma-success px-4 fw-bold shadow-sm"
+                <?= empty($itensAtuais) ? 'disabled' : '' ?>
+                onclick="abrirModalResumoCompra()">✔ Finalizar Compra</button>
             </form>
           </div>
         </div>
@@ -347,7 +349,7 @@ unset($_SESSION['erro_compra']);
     </div>
   </div>
 
-  <!-- Modal de Confirmação de Exclusão -->
+  <!-- Modal de Confirmação de Exclusão / Cancelamento -->
   <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalExclusaoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius:16px; overflow:hidden;">
@@ -366,8 +368,65 @@ unset($_SESSION['erro_compra']);
     </div>
   </div>
 
+  <!-- Modal Resumo da Compra (Confirmação de Finalização) -->
+  <div class="modal fade" id="modalResumoCompra" tabindex="-1" aria-labelledby="modalResumoCompraLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+        <div class="modal-header" style="background:#1a1c4b;">
+          <h5 class="modal-title text-white fw-bold" id="modalResumoCompraLabel">🧾 Resumo da Compra</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <span class="fw-bold text-secondary">Nota Fiscal:</span>
+              <span class="badge bg-primary rounded-pill" style="font-size:1rem;">#<?= $nota_fiscal ?></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <span class="fw-bold text-secondary">Itens no Carrinho:</span>
+              <span id="resumo_compra_qtd_itens" class="badge bg-secondary rounded-pill" style="font-size:1rem;"><?= count($itensAtuais) ?></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <span class="fw-bold text-secondary">Fornecedor / Lab.:</span>
+              <span class="fw-bold text-dark text-end"><?= htmlspecialchars($cnpj_lab) ?></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-bottom-0">
+              <span class="fw-bold text-secondary fs-5">Total da NF:</span>
+              <span id="resumo_compra_total" class="fw-bold text-success fs-4">R$ <?= number_format($totalCompra, 2, ',', '.') ?></span>
+            </li>
+          </ul>
+          <p class="text-muted text-center mb-0" style="font-size:0.85rem;">Ao confirmar, o estoque será atualizado e a compra finalizada.</p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Voltar</button>
+          <button type="button" class="btn btn-pharma-success px-4 fw-bold" onclick="submeterFinalizacaoCompra()">✔ Confirmar Finalização</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // ── Modal Resumo da Compra ──
+    function abrirModalResumoCompra() {
+      // Atualiza o total com o valor dinâmico do span (caso o usuário tenha alterado qtds)
+      var totalSpan = document.getElementById('totalGeralSpan');
+      if (totalSpan) {
+        document.getElementById('resumo_compra_total').textContent = 'R$ ' + totalSpan.textContent;
+      }
+      new bootstrap.Modal(document.getElementById('modalResumoCompra')).show();
+    }
+
+    function submeterFinalizacaoCompra() {
+      var form = document.getElementById('formAcoesCompra');
+      var hidden = document.createElement('input');
+      hidden.type  = 'hidden';
+      hidden.name  = 'finalizar';
+      hidden.value = '1';
+      form.appendChild(hidden);
+      form.submit();
+    }
+
     document.querySelectorAll('.catalogo-row').forEach(function(row) {
       row.addEventListener('click', function() {
         var cod   = this.dataset.cod;

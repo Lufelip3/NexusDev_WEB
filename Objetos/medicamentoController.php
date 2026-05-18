@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include_once "../configs/database.php";
 include_once "medicamento.php";
 
@@ -113,10 +113,19 @@ class medicamentoController{
     }
 
     public function excluirMedicamento($cod_Med){
-        if($this->medicamento->excluir($cod_Med)){
-            header("location: index.php");
-            exit();
-        }
+        $this->medicamento->excluir($cod_Med);
+        header("location: index.php");
+        exit();
+    }
+
+    public function lerExcluidos(){
+        return $this->medicamento->lerExcluidos();
+    }
+
+    public function reativarMedicamento($cod_Med){
+        $this->medicamento->reativar($cod_Med);
+        header("location: excluidos.php");
+        exit();
     }
 
     public function pesquisarPorTermo($termo){

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 Class itemVenda{
     public $Cod_ItemVenda;
@@ -94,7 +94,10 @@ Class itemVenda{
 
     public function buscaItemVenda($NotaFiscal_Saida)
     {
-        $sql = "SELECT * FROM item_venda WHERE NotaFiscal_Saida = :NotaFiscal_Saida";
+        $sql = "SELECT iv.*, m.Nome_Med, m.EAN_Med 
+                FROM item_venda iv 
+                LEFT JOIN medicamento m ON iv.Cod_Med = m.Cod_Med 
+                WHERE iv.NotaFiscal_Saida = :NotaFiscal_Saida";
         $resultado = $this->bd->prepare($sql);
         $resultado->bindParam(":NotaFiscal_Saida", $NotaFiscal_Saida);
         $resultado->execute();

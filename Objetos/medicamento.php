@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class medicamento {
 
@@ -19,9 +19,24 @@ class medicamento {
     }
 
     public function lerTodos() {
-        $sql = "SELECT * FROM medicamento";
-        $stmt = $this->bd->query($sql);
+        try {
+            $sql = "SELECT * FROM medicamento WHERE Ativo_Med = 1 ORDER BY Cod_Med DESC";
+            $stmt = $this->bd->query($sql);
+        } catch (\PDOException $e) {
+            $sql = "SELECT * FROM medicamento ORDER BY Cod_Med DESC";
+            $stmt = $this->bd->query($sql);
+        }
         return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function lerExcluidos() {
+        try {
+            $sql = "SELECT * FROM medicamento WHERE Ativo_Med = 0 ORDER BY Cod_Med DESC";
+            $stmt = $this->bd->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch (\PDOException $e) {
+            return [];
+        }
     }
 
     public function buscarMedicamento($codMed) {
@@ -106,10 +121,28 @@ class medicamento {
     }
 
     public function excluir($codMed) {
-        $sql = "DELETE FROM medicamento WHERE Cod_Med = :codMed";
-        $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":codMed", $codMed, PDO::PARAM_INT);
-        return $stmt->execute();
+        try {
+            $sql = "UPDATE medicamento SET Ativo_Med = 0 WHERE Cod_Med = :codMed";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(":codMed", $codMed, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            $sql = "DELETE FROM medicamento WHERE Cod_Med = :codMed";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(":codMed", $codMed, PDO::PARAM_INT);
+            return $stmt->execute();
+        }
+    }
+
+    public function reativar($codMed) {
+        try {
+            $sql = "UPDATE medicamento SET Ativo_Med = 1 WHERE Cod_Med = :codMed";
+            $stmt = $this->bd->prepare($sql);
+            $stmt->bindParam(":codMed", $codMed, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            return false;
+        }
     }
 
     public function codMedExiste($codMed) {
